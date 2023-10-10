@@ -1,15 +1,19 @@
 <?php
 
-require 'vendor/autoload.php';
+require dirname(__DIR__).'/vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 ini_set('memory_limit', '5120M');
 
-$year = $argv[1] ?? '2023';
+define('YEAR', $argv[1] ?? date('Y'));
 
-$fileList = require('file_list.php');
+$fileList = require(dirname(__DIR__).'/resources/list.php');
+$fileList = array_values(array_filter($fileList, function ($file) {
+    return starts_with($file, YEAR);
+}));
+// $fileList = array_slice($fileList, 0, 20);
 
 function sortBy($arr, $colName, $n = 0, $asc = false)
 {
@@ -77,9 +81,8 @@ $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
 foreach ($fileList as $fileIndex => $file) {
-    if (!starts_with($file, $year)) continue;
     $fileNumber = $file;
-    $file = "./tdx_txt/行业概念{$file}.txt";
+    $file = dirname(__DIR__)."/resources/raw/tdx_txt/行业概念/行业概念{$file}.txt";
     $colData = readTxt($file);
 
     $data = array_merge(
@@ -97,8 +100,8 @@ foreach ($fileList as $fileIndex => $file) {
         $sheet->setCellValueByColumnAndRow($fileIndex + 1, $key + 1, $value);
     }
 
-    echo $file . ' SUCCESS' . PHP_EOL;
+    // echo $fileNumber . ' SUCCESS' . PHP_EOL;
 }
 
 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-$writer->save('./' . $year . '.xlsx');
+$writer->save(dirname(__DIR__).'/resources/processed/GNBK' . YEAR . '.xlsx');

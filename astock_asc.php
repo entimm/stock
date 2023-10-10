@@ -33,7 +33,7 @@ $maList = [
     'ma20',
     'ma60',
 ];
-$yearList = range(2011, 2023);
+$yearList = range(date('Y'), 2011);
 $lineList = [
   '1,2,3,4,5,10,20,30,40',
   '1,2,3,4,5,6,7,8,9,10',
@@ -41,13 +41,13 @@ $lineList = [
   '10,20,30,40,50,60,70,80,90,100',
 ];
 
-$ma = $_GET['ma'] ?? 'ma5';
-$year = $_GET['year'] ?? 2011;
+$ma = $_GET['ma'] ?? $maList[0];
+$year = $_GET['year'] ?? $yearList[0];
 $lineId = $_GET['line_id'] ?? 0;
 
 $rows = explode(',', $lineList[$lineId]);
 
-$filePath = "./ok/{$year}-{$ma}.xlsx";
+$filePath = __DIR__."/resources/processed/{$year}-{$ma}-asc.xlsx";
 
 $data = readEvenColumnsFromRow($filePath, $rows);
 ?>

@@ -1,6 +1,6 @@
 <?php
 
-require 'vendor/autoload.php';
+require dirname(__DIR__).'/vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -8,26 +8,24 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 ini_set('memory_limit', '5120M');
 
 const OPTIONS = [
-    'ma5' => 14,
-    'ma10' => 15,
-    'ma20' => 16,
-    'ma60' => 17,
+    'ma5' => 22,
+    'ma10' => 23,
+    'ma20' => 24,
+    'ma60' => 25,
 ];
+define('YEAR', $argv[1] ?? date('Y'));
+define('NAMES', require(dirname(__DIR__).'/support/names.php'));
 
-$fileList = [
-    20230103,
-    20230104,
-    20230105,
-];
-$fileList = require('file_list.php');
-
-define('YEAR', $argv[1] ?? '2023');
-define('NAMES', require('names.php'));
+$fileList = require(dirname(__DIR__).'/resources/list.php');
+$fileList = array_values(array_filter($fileList, function ($file) {
+    return starts_with($file, YEAR);
+}));
+// $fileList = array_slice($fileList, 0, 100);
 
 function sortBy($arr, $colName, $n = 0, $asc = false)
 {
     $arr = array_filter($arr, function ($item) use ($colName) {
-        return $item[$colName] !== '';
+        return $item[$colName] !== '' && !is_null($item[$colName]);
     });
     usort($arr, function ($a, $b) use ($colName, $asc) {
         if ($a[$colName] == $b[$colName]) {
@@ -50,9 +48,9 @@ function sortBy($arr, $colName, $n = 0, $asc = false)
     return $arr;
 }
 
-function readExcel($inputFileName)
+function readExcel($file)
 {
-    $spreadsheet = IOFactory::load($inputFileName);
+    $spreadsheet = IOFactory::load($file);
     $worksheet = $spreadsheet->getActiveSheet();
 
     $allData = [];
@@ -74,10 +72,41 @@ function readExcel($inputFileName)
     unset($spreadsheet);
 
     $allData = [
-        'ma5' => sortBy($allData, 'ma5', 100),
-        'ma10' => sortBy($allData, 'ma10', 100),
-        'ma20' => sortBy($allData, 'ma20', 100),
-        'ma60' => sortBy($allData, 'ma60', 100),
+        'ma5' => sortBy($allData, 'ma5', 100, true),
+        'ma10' => sortBy($allData, 'ma10', 100, true),
+        'ma20' => sortBy($allData, 'ma20', 100, true),
+        'ma60' => sortBy($allData, 'ma60', 100, true),
+    ];
+
+    return $allData;
+}
+
+function readTxt($file)
+{
+    $fileContent = file_get_contents($file);
+    $fileContent = mb_convert_encoding($fileContent, 'UTF-8', 'GBK');
+    $fileContent = preg_replace('/\t/', ',', $fileContent);
+    $fileLines = explode(PHP_EOL, $fileContent);
+    array_shift($fileLines);
+    array_shift($fileLines);
+    array_pop($fileLines);
+    array_pop($fileLines);
+    $allData = array_map(function ($item) {
+        $data = explode(',', $item);
+        return [
+            'name' => $data[1],
+            'ma5' => $data[21] ?? '',
+            'ma10' => $data[22] ?? '',
+            'ma20' => $data[23] ?? '',
+            'ma60' => $data[24] ?? '',
+        ];
+    }, $fileLines);
+
+    $allData = [
+        'ma5' => sortBy($allData, 'ma5', 100, true),
+        'ma10' => sortBy($allData, 'ma10', 100, true),
+        'ma20' => sortBy($allData, 'ma20', 100, true),
+        'ma60' => sortBy($allData, 'ma60', 100, true),
     ];
 
     return $allData;
@@ -107,11 +136,11 @@ function writeExcel($jsonArr, $ma)
         $index++;
     }
     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-    $writer->save('./ok/' . YEAR . '-' . $ma . '.xlsx');
+    $writer->save(dirname(__DIR__).'/resources/processed/' . YEAR . '-' . $ma . '-asc.xlsx');
 }
 
 $jsonArr = [];
-$jsonFile = './ok/' . YEAR . '.json';
+$jsonFile = dirname(__DIR__).'/resources/processed/' . YEAR . '-asc.json';
 if (file_exists($jsonFile)) {
     $jsonArr = json_decode(file_get_contents($jsonFile), true);
 }
@@ -119,18 +148,27 @@ if (file_exists($jsonFile)) {
 $dateListInJson = array_keys($jsonArr);
 echo '原先json数据:' . count($jsonArr) . PHP_EOL;
 foreach ($fileList as $file) {
-    if (!starts_with($file, YEAR)) continue;
     if (in_array($file, $dateListInJson)) continue;
-    $fileNumber = $file;
-    $file = "./tdx_excel/全部Ａ股{$file}.xls";
-    $colData = readExcel($file);
+    $fileTxt = dirname(__DIR__)."/resources/raw/tdx_txt/全部Ａ股/全部Ａ股{$file}.txt";
+    $fileXls = dirname(__DIR__)."/resources/raw/tdx_excel/全部Ａ股{$file}.xls";
+    if (is_file($fileTxt)) {
+        $colData = readTxt($fileTxt);
+    } elseif (is_file($fileXls)) {
+        $colData = readExcel($fileXls);
+    } else {
+        echo $fileTxt.' 文件不存在'.PHP_EOL;
+        echo $fileXls.' 文件不存在'.PHP_EOL;
+        exit;
+    }
 
-    $jsonArr[$fileNumber] = $colData;
+    $jsonArr[$file] = $colData;
     echo $file . ' SUCCESS' . PHP_EOL;
-}
-echo '现在json数据:' . count($jsonArr) . PHP_EOL;
 
-file_put_contents($jsonFile, json_encode($jsonArr, JSON_UNESCAPED_UNICODE));
+    echo '现在json数据:' . count($jsonArr) . PHP_EOL;
+
+    file_put_contents($jsonFile, json_encode($jsonArr, JSON_UNESCAPED_UNICODE));
+}
+
 
 foreach (array_keys(OPTIONS) as $ma) {
     writeExcel($jsonArr, $ma);
