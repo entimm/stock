@@ -189,6 +189,10 @@ $data = readEvenColumnsFromRow($filePath, $rows, $worksheetName);
         },
     }));
     densityChart.setOption(chartConfig);
+    densityChart.setOption(chartConfig);
+    window.addEventListener('resize', function() {
+        densityChart.resize();
+    });
   </script>
 </body>
 </html>

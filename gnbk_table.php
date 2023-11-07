@@ -47,7 +47,7 @@ $data = readEvenColumnsFromRow($filePath);
             width: max-content;
         }
         td, th {
-            border: 1px solid black;
+            border: 1px solid rgba(0, 0, 0, 0.23);
             width: 100px;
             text-align: center;
             cursor: pointer;
@@ -60,9 +60,7 @@ $data = readEvenColumnsFromRow($filePath);
         }
         #grid-container {
             width: 100%;
-            height: 100vh;
             overflow-x: auto;
-            overflow-y: auto;
         }
         .fixed-links {
           margin: 10px;
@@ -79,6 +77,15 @@ $data = readEvenColumnsFromRow($filePath);
           border: 1px solid #ccc;
           padding: 10px;
           font-size: 20px;
+        }
+        .table-empty1 {
+          background-color: red;
+        }
+        .table-empty2 {
+            background-color: #ffb700;
+        }
+        .table-empty3 {
+            background-color: #2fff00;
         }
     </style>
 </head>
@@ -120,37 +127,42 @@ $data = readEvenColumnsFromRow($filePath);
                 let row = document.createElement('tr');
                 for (let colName in data) {
                     let cell = document.createElement('td');
+                    row.appendChild(cell);
                     let value = data[colName][i] || "";
                     value = value.split('|');
                     cell.textContent = value[0];  // 如果超出列长度，则设置为空
+                    if (cell.textContent == "") {
+                        cell.classList.add("table-empty" + parseInt(i / 20));
+                        continue;
+                    }
                     cell.setAttribute('v', value[1]);
-                    if (cell.textContent == "") cell.style.backgroundColor = "#8D4004";
                     cell.addEventListener('click', function() {
                         highlightCells(cell.textContent);
                     });
                     cell.addEventListener('mouseover', function() {
-                        var myValue = this.getAttribute('v');
-                        tooltip.textContent = myValue;
+                        tooltip.textContent = this.getAttribute('v');
+
+                        // 计算tooltip的位置
+                        var boundingRect = this.getBoundingClientRect();
+                        var tooltipX = boundingRect.right + window.pageXOffset -10;
+                        var tooltipY = boundingRect.bottom + window.pageYOffset -10;
+
                         tooltip.style.display = 'block';
-                        tooltip.style.left = event.clientX + 'px';
-                        tooltip.style.top = event.clientY + 'px';
+                        tooltip.style.left = tooltipX + 'px';
+                        tooltip.style.top = tooltipY + 'px';
                     });
-                    row.appendChild(cell);
                 }
                 table.appendChild(row);
             }
         }
 
         function getRandomColor() {
-            // 生成随机的红、绿、蓝色值
-            let r = Math.floor(Math.random() * 256);
-            let g = Math.floor(Math.random() * 256);
-            let b = Math.floor(Math.random() * 256);
-
-            // 将RGB值转换成十六进制，并拼接成颜色值
-            let hexColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-            
-            return hexColor;
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 3; i++) {
+                color += letters[Math.floor(Math.random() * 6) + 8]; // 从8到F中选择亮色
+            }
+            return color;
         }
 
         function highlightCells(value) {

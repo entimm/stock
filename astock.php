@@ -212,6 +212,10 @@ $data = readEvenColumnsFromRow($filePath, $rows);
         },
     }));
     densityChart.setOption(chartConfig);
+    densityChart.setOption(chartConfig);
+    window.addEventListener('resize', function() {
+        densityChart.resize();
+    });
   </script>
 </body>
 </html>
