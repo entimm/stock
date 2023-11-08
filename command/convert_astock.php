@@ -161,14 +161,17 @@ foreach ($fileList as $file) {
     } else {
         echo $fileTxt.' 文件不存在'.PHP_EOL;
         echo $fileXls.' 文件不存在'.PHP_EOL;
+        exit;
     }
 
     $jsonArr[$file] = $colData;
     echo $file . ' SUCCESS' . PHP_EOL;
-}
-echo '现在json数据:' . count($jsonArr) . PHP_EOL;
 
-file_put_contents($jsonFile, json_encode($jsonArr, JSON_UNESCAPED_UNICODE));
+    echo '现在json数据:' . count($jsonArr) . PHP_EOL;
+
+    file_put_contents($jsonFile, json_encode($jsonArr, JSON_UNESCAPED_UNICODE));
+}
+
 
 foreach (array_keys(OPTIONS) as $ma) {
     writeCSV($jsonArr, $ma);

@@ -134,7 +134,7 @@ $data = readEvenColumnsFromRow($filePath, $rows, $worksheetName);
       },
       yAxis: {
         type: 'value',
-        interval: 50,
+        interval: 20,
       },
       dataZoom: [
         {

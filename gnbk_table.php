@@ -74,12 +74,15 @@ $data = readEvenColumnsFromRow($filePath);
         }
         .table-empty1 {
           background-color: red;
+          border-color: red;
         }
         .table-empty2 {
             background-color: #ffb700;
+            border-color: #ffb700;
         }
         .table-empty3 {
             background-color: #2fff00;
+            border-color: #2fff00;
         }
     </style>
 </head>

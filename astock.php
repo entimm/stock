@@ -41,9 +41,22 @@ $ma = $_GET['ma'] ?? $maList[0];
 $year = $_GET['year'] ?? $yearList[0];
 $lineId = $_GET['line_id'] ?? 0;
 
+$typeList = [
+    '1' => [
+      'name' => '涨',
+      'file' => __DIR__."/resources/processed/{$year}-{$ma}.csv",
+    ],
+    '2' => [
+      'name' => '跌',
+      'file' => __DIR__."/resources/processed/{$year}-{$ma}-asc.csv"
+    ],
+];
+
+$type = $_GET['type'] ?? 1;
+
 $rows = explode(',', $lineList[$lineId]);
 
-$filePath = __DIR__."/resources/processed/{$year}-{$ma}.csv";
+$filePath = $typeList[$type]['file'];
 
 $data = readEvenColumnsFromRow($filePath, $rows);
 ?>
@@ -86,6 +99,13 @@ $data = readEvenColumnsFromRow($filePath, $rows);
       margin: 20px 40px;
       z-index: 9999; 
     }
+    .fixed-links4 {
+      position: fixed;
+      top: 150px;
+      right: 0;
+      margin: 20px 40px;
+      z-index: 9999; 
+    }
 
     .highlight {
       color: #FF5733;
@@ -98,17 +118,22 @@ $data = readEvenColumnsFromRow($filePath, $rows);
 <body>
     <div class="fixed-links1">
         <?php foreach ($maList as $value): ?>
-            <a href="?ma=<?=$value?>&year=<?=$year?>&line_id=<?=$lineId?>" <?php if ($value == $ma): ?>class="highlight"<?php endif ?>><?=$value?></a>
+            <a href="?ma=<?=$value?>&year=<?=$year?>&line_id=<?=$lineId?>&type=<?=$type?>" <?php if ($value == $ma): ?>class="highlight"<?php endif ?>><?=$value?></a>
         <?php endforeach ?>
     </div>
     <div class="fixed-links2">
         <?php foreach ($yearList as $value): ?>
-            <a href="?ma=<?=$ma?>&year=<?=$value?>&line_id=<?=$lineId?>" <?php if ($value == $year): ?>class="highlight"<?php endif ?>><?=$value?></a>
+            <a href="?ma=<?=$ma?>&year=<?=$value?>&line_id=<?=$lineId?>&type=<?=$type?>" <?php if ($value == $year): ?>class="highlight"<?php endif ?>><?=$value?></a>
         <?php endforeach ?>
     </div>
     <div class="fixed-links3">
         <?php foreach ($lineList as $key => $value): ?>
-            <a href="?ma=<?=$ma?>&year=<?=$year?>&line_id=<?=$key?>" <?php if ($lineId == $key): ?>class="highlight"<?php endif ?>>线<?=$key?></a>
+            <a href="?ma=<?=$ma?>&year=<?=$year?>&line_id=<?=$key?>&type=<?=$type?>" <?php if ($lineId == $key): ?>class="highlight"<?php endif ?>>线<?=$key?></a>
+        <?php endforeach ?>
+    </div>
+    <div class="fixed-links4">
+        <?php foreach ($typeList as $key => $value): ?>
+            <a href="?ma=<?=$ma?>&year=<?=$year?>&line_id=<?=$key?>&type=<?=$key?>" <?php if ($type == $key): ?>class="highlight"<?php endif ?>><?=$value['name']?></a>
         <?php endforeach ?>
     </div>
     <div style="clear: both;"></div>
@@ -153,7 +178,7 @@ $data = readEvenColumnsFromRow($filePath, $rows);
       },
       yAxis: {
         type: 'value',
-        interval: 50,
+        interval: 20,
       },
       dataZoom: [
         {

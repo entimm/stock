@@ -29,8 +29,22 @@ $yearList = range(date('Y'), 2011);
 
 $ma = $_GET['ma'] ?? $maList[0];
 $year = $_GET['year'] ?? $yearList[0];
+$type = $_GET['type'] ?? 1;
 
-$filePath = __DIR__."/resources/processed/{$year}-{$ma}.csv";
+$typeList = [
+    '1' => [
+      'name' => '涨',
+      'file' => __DIR__."/resources/processed/{$year}-{$ma}.csv",
+    ],
+    '2' => [
+      'name' => '跌',
+      'file' => __DIR__."/resources/processed/{$year}-{$ma}-asc.csv"
+    ],
+];
+
+$type = $_GET['type'] ?? 1;
+
+$filePath = $typeList[$type]['file'];
 
 $data = readEvenColumnsFromRow($filePath);
 
@@ -80,17 +94,45 @@ $data = readEvenColumnsFromRow($filePath);
           padding: 10px;
           font-size: 20px;
         }
+        table tr:nth-child(11) {  
+          border-bottom: 3px solid #112233;
+        }
+        table tr:nth-child(21) {  
+          border-bottom: 3px solid #112233;
+        }
+        table tr:nth-child(31) {  
+          border-bottom: 3px solid #112233;
+        }
+        table tr:nth-child(41) {  
+          border-bottom: 3px solid #112233;
+        }
+        table tr:nth-child(51) {  
+          border-bottom: 3px solid #112233;
+        }
+        table tr:nth-child(61) {  
+          border-bottom: 3px solid #112233;
+        }
+        table tr:nth-child(71) {  
+          border-bottom: 3px solid #112233;
+        }
+        table tr:nth-child(81) {  
+          border-bottom: 3px solid #112233;
+        }
+        table tr:nth-child(91) {  
+          border-bottom: 3px solid #112233;
+        }
     </style>
 </head>
 <body>
     <div class="fixed-links">
         <?php foreach ($maList as $value): ?>
-            <a href="?ma=<?=$value?>&year=<?=$year?>" <?php if ($value == $ma): ?>class="highlight"<?php endif ?>><?=$value?></a>
+            <a href="?ma=<?=$value?>&year=<?=$year?>&type=<?=$type?>" <?php if ($value == $ma): ?>class="highlight"<?php endif ?>><?=$value?></a>
         <?php endforeach ?>
-    </div>
-    <div class="fixed-links">
         <?php foreach ($yearList as $value): ?>
-            <a href="?year=<?=$value?>" <?php if ($value == $year): ?>class="highlight"<?php endif ?>><?=$value?></a>
+            <a href="?ma=<?=$ma?>&year=<?=$value?>&type=<?=$type?>" <?php if ($value == $year): ?>class="highlight"<?php endif ?>><?=$value?></a>
+        <?php endforeach ?>
+        <?php foreach ($typeList as $key => $value): ?>
+            <a href="?ma=<?=$ma?>&year=<?=$year?>&type=<?=$key?>" <?php if ($type == $key): ?>class="highlight"<?php endif ?>><?=$value['name']?></a>
         <?php endforeach ?>
     </div>
     <div id="grid-container">
