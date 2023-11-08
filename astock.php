@@ -197,6 +197,9 @@ $data = readEvenColumnsFromRow($filePath, $rows);
         smooth: 0.3,
         emphasis: {
           focus: 'series',
+          lineStyle: {
+            width: 2,
+          },
         },
         blur: {
           lineStyle: {
