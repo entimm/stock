@@ -6,18 +6,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 function readEvenColumnsFromRow($filePath) {
-    $spreadsheet = IOFactory::load($filePath);
-    $worksheet = $spreadsheet->getActiveSheet();
-    $highestColumn = $worksheet->getHighestColumn();
-    $highestColumnIndex = Coordinate::columnIndexFromString($highestColumn);
-
     $result = [];
-
-    for ($i = 1; $i <= $highestColumnIndex; $i += 1) {
-        $date = $worksheet->getCellByColumnAndRow($i, 1)->getValue();
-
-        foreach (range(2, 87) as $index => $rowNumber) {
-            $value = $worksheet->getCellByColumnAndRow($i, $rowNumber)->getValue();
+    $file = fopen($filePath, 'r');
+    $dataList = fgetcsv($file);
+    while (($row = fgetcsv($file)) !== false) {
+        foreach($row as $colIndex => $value) {
+            $date = $dataList[$colIndex];
             $result["-{$date}-"][] = str_replace('概念', '', $value ?: '');
         }
     }
@@ -28,7 +22,7 @@ $yearList = range(date('Y'), 2018);
 
 $year = $_GET['year'] ?? $yearList[0];
 
-$filePath = __DIR__."/resources/processed/GNBK{$year}.xlsx";
+$filePath = __DIR__."/resources/processed/GNBK{$year}.csv";
 
 $data = readEvenColumnsFromRow($filePath);
 

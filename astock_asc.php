@@ -6,18 +6,14 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 function readEvenColumnsFromRow($filePath, $rowNumbers) {
-    $spreadsheet = IOFactory::load($filePath);
-    $worksheet = $spreadsheet->getActiveSheet();
-    $highestColumn = $worksheet->getHighestColumn();
-    $highestColumnIndex = Coordinate::columnIndexFromString($highestColumn);
-
     $result = [];
-
-    for ($i = 1; $i <= $highestColumnIndex; $i += 1) {
-        $date = $worksheet->getCellByColumnAndRow($i, 1)->getValue();
-
-        foreach ($rowNumbers as $index => $rowNumber) {
-            $value = $worksheet->getCellByColumnAndRow($i, $rowNumber + 1)->getValue();
+    $file = new SplFileObject($filePath, 'r');
+    $dataList = $file->fgetcsv();
+    foreach($rowNumbers as $rowNumber) {
+        $file->seek($rowNumber);
+        $row = $file->fgetcsv();
+        foreach($row as $colIndex => $value) {
+            $date = $dataList[$colIndex];
             $arr = explode('|', $value);
             $result['name'][$date][] = $arr[0];
             $result['value'][$date][] = $arr[1];
@@ -47,7 +43,7 @@ $lineId = $_GET['line_id'] ?? 0;
 
 $rows = explode(',', $lineList[$lineId]);
 
-$filePath = __DIR__."/resources/processed/{$year}-{$ma}-asc.xlsx";
+$filePath = __DIR__."/resources/processed/{$year}-{$ma}-asc.csv";
 
 $data = readEvenColumnsFromRow($filePath, $rows);
 ?>

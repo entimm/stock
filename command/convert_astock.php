@@ -123,20 +123,23 @@ function starts_with($haystack, $needles)
     return false;
 }
 
-function writeExcel($jsonArr, $ma)
+function writeCsv($jsonArr, $ma)
 {
-    $spreadsheet = new Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
-    $index = 0;
+    $dates = array_keys($jsonArr);
+
+    $rows = [];
     foreach ($jsonArr as $date => $colData) {
-        $sheet->setCellValueByColumnAndRow($index + 1, 1, $date);
-        foreach ($colData[$ma] as $rowIndex => $value) {
-            $sheet->setCellValueByColumnAndRow($index + 1, $rowIndex + 2, $value);
+        $rows[0][] = $date;
+        foreach ($colData[$ma] as $index => $item) {
+            $rows[$index + 1][] = $item;
         }
-        $index++;
     }
-    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-    $writer->save(dirname(__DIR__).'/resources/processed/' . YEAR . '-' . $ma . '.xlsx');
+
+    $csvFile = fopen(dirname(__DIR__).'/resources/processed/' . YEAR . '-' . $ma . '.csv', 'w');
+    foreach ($rows as $row) {
+        fputcsv($csvFile, $row);
+    }
+    fclose($csvFile);
 }
 
 $jsonArr = [];
@@ -168,5 +171,5 @@ echo '现在json数据:' . count($jsonArr) . PHP_EOL;
 file_put_contents($jsonFile, json_encode($jsonArr, JSON_UNESCAPED_UNICODE));
 
 foreach (array_keys(OPTIONS) as $ma) {
-    writeExcel($jsonArr, $ma);
+    writeCSV($jsonArr, $ma);
 }

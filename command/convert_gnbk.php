@@ -77,9 +77,8 @@ function starts_with($haystack, $needles)
     return false;
 }
 
-$spreadsheet = new Spreadsheet();
-$sheet = $spreadsheet->getActiveSheet();
 
+$dataList = [];
 foreach ($fileList as $fileIndex => $file) {
     $fileNumber = $file;
     $file = dirname(__DIR__)."/resources/raw/tdx_txt/行业概念/行业概念{$file}.txt";
@@ -96,12 +95,18 @@ foreach ($fileList as $fileIndex => $file) {
         sortBy($colData, 'total', 20, true)
     );
 
-    foreach ($data as $key => $value) {
-        $sheet->setCellValueByColumnAndRow($fileIndex + 1, $key + 1, $value);
-    }
-
-    // echo $fileNumber . ' SUCCESS' . PHP_EOL;
+    $dataList[] = $data;
 }
 
-$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-$writer->save(dirname(__DIR__).'/resources/processed/GNBK' . YEAR . '.xlsx');
+$newDataList = [];
+foreach ($dataList as $colIndex => $valueList) {
+    foreach ($valueList as $rowIndex => $value) {
+        $newDataList[$rowIndex][] = $value;
+    }
+}
+
+$csvFile = fopen(dirname(__DIR__).'/resources/processed/GNBK' . YEAR . '.csv', 'w');
+foreach ($newDataList as $row) {
+    fputcsv($csvFile, $row);
+}
+fclose($csvFile);
