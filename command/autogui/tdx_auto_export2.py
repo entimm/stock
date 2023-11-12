@@ -2,6 +2,9 @@ import pyautogui
 import time
 import os
 
+import root
+
+
 def export():
     pyautogui.press('3')
     pyautogui.press('4')
@@ -53,7 +56,7 @@ def read_nth_line(filename, n):
                 return line.strip()
 
 directory = "/Volumes/[C] Windows 11/Apps/通达信金融终端(开心果整合版)V2023.03/T0002/export"
-date_list_filename = '../resources/date_from_2018.txt'
+date_list_filename = f'{root.path}/resources/date_from_2018.txt'
 
 times = 0
 load_time = 5

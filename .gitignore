@@ -1,2 +1,3 @@
 vendor/
 resources/
+__pycache__/
