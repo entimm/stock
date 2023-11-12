@@ -7,27 +7,7 @@ import numpy as np
 import pandas as pd
 
 import root
-
-
-def filter_files_by_date(directory, file_pattern):
-    file_regex = re.compile(file_pattern)
-
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            match = file_regex.match(file)
-            if match:
-                yield os.path.join(root, file), match.group(1)
-
-
-def read_csv(file_path):
-    df = pd.read_csv(file_path, header=1, skipfooter=1, engine='python', encoding='gbk', sep='\t', index_col=None,
-                     dtype={0: str}, skipinitialspace=True)
-
-    df.columns = df.columns.str.strip()
-    df = df.iloc[:, :-1]
-    df.iloc[:, 0] = df.iloc[:, 0].astype(str)
-
-    return df
+from common.utils import read_tdx_text, filter_files_by_date
 
 
 def sort(df, col, asc):
@@ -38,7 +18,7 @@ def sort(df, col, asc):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='转换处理A股')
+    parser = argparse.ArgumentParser(description='转换处理概念板块')
     current_year = datetime.datetime.now().year
     parser.add_argument('year', type=int, nargs='?', default=current_year)
     args = parser.parse_args()
@@ -56,9 +36,10 @@ if __name__ == "__main__":
 
     container = {}
 
-    file_iter = filter_files_by_date(directory_path, file_pattern)
-    for file_path, date in file_iter:
-        df = read_csv(file_path)
+    file_list = filter_files_by_date(directory_path, file_pattern)
+    file_list = sorted(file_list, key=lambda x: x[0], reverse=False)
+    for file_path, date in file_list:
+        df = read_tdx_text(file_path)
         for sort_col in sort_col_config:
             container[date] = np.hstack((
                 sort(df, '超短强度', False),
