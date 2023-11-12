@@ -25,10 +25,9 @@ def read_data(file_path: str, row_numbers: List[int], type_val: int = 0) -> Dict
     df = pd.read_csv(file_path)
 
     for row_number in row_numbers:
-        row = df.iloc[row_number - 1 + type_val * 21]
+        row = df.loc[row_number - 1 + type_val * 21]
 
-        for col_index, value in enumerate(row):
-            date = df.columns[col_index]
+        for date, value in zip(df.columns, row):
             arr = value.split('|')
             result['name'].setdefault(date, []).append(symbol_name_dict.get(arr[0], arr[0]))
             result['value'].setdefault(date, []).append(arr[2])
@@ -41,10 +40,8 @@ def read_table_data(file_path: str, is_gnbk: bool = False) -> Dict[str, List[str
 
     df = pd.read_csv(file_path)
 
-    data_list = list(df.columns)
-    for index, row in df.iterrows():
+    for date, row in df.items():
         for col_index, value in enumerate(row):
-            date = data_list[col_index]
             if type(value) is str:
                 if is_gnbk:
                     value = value.replace('概念', '')
