@@ -53,4 +53,4 @@ if __name__ == '__main__':
 
     df = pd.DataFrame(container)
     df = df.reindex(sorted(df.columns), axis=1)
-    df.to_csv(os.path.join(resources_path, 'new_processed', f'/GNBK{year}.csv'), index=False)
+    df.to_csv(os.path.join(resources_path, 'new_processed', f'GNBK{year}.csv'), index=False)
