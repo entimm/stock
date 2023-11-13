@@ -150,19 +150,10 @@
                         var screenWidth = window.innerWidth;
                         var screenHeight = window.innerHeight;
 
-                      if (event.clientX <= screenWidth / 2 && event.clientY <= screenHeight / 2) {
+                      if (event.clientY <= screenHeight / 2) {
                         // 右下角
                         tooltip.style.left = screenWidth - tooltip.offsetWidth + 'px';
                         tooltip.style.top = screenHeight - tooltip.offsetHeight + 'px';
-                      } else if (event.clientX > screenWidth / 2 && event.clientY <= screenHeight / 2) {
-                        // 左下角
-                        tooltip.style.left = '0px';
-                        tooltip.style.top = screenHeight - tooltip.offsetHeight + 'px';
-                      } else if (event.clientX > screenWidth / 2 && event.clientY > screenHeight / 2) {
-                        // 左上角
-                        tooltip.style.left = '0px';
-                        tooltip.style.top = '0px';
-
                       } else {
                         // 右上角
                         tooltip.style.left = screenWidth - tooltip.offsetWidth + 'px';
