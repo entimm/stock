@@ -5,12 +5,12 @@ require 'vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
-function readEvenColumnsFromRow($filePath, $rowNumbers, $type) {
+function readEvenColumnsFromRow($filePath, $rowNumbers) {
     $result = [];
     $file = new SplFileObject($filePath, 'r');
     $dataList = $file->fgetcsv();
     foreach($rowNumbers as $rowNumber) {
-        $file->seek($rowNumber + 22 * $type);
+        $file->seek($rowNumber);
         $row = $file->fgetcsv();
         foreach($row as $colIndex => $value) {
             $date = $dataList[$colIndex];
@@ -23,33 +23,48 @@ function readEvenColumnsFromRow($filePath, $rowNumbers, $type) {
     return $result;
 }
 
-$typeList = [
-    '超短↖',
-    '综合↖',
-    '超短↘',
-    '综合↘',
+$maList = [
+    'ma5',
+    'ma10',
+    'ma20',
+    'ma60',
 ];
-$yearList = range(date('Y'), 2018);
+$yearList = range(date('Y'), 2011);
 $lineList = [
-  '1,2,3,4,5',
-  '5,10,15,20',
+  '1,2,3,4,5,10,20,30,40',
+  '1,2,3,4,5,6,7,8,9,10',
+  '5,10,15,20,25,30,35,40,45,50',
+  '10,20,30,40,50,60,70,80,90,100',
 ];
 
-$type = $_GET['type'] ?? '0';
+$ma = $_GET['ma'] ?? $maList[0];
 $year = $_GET['year'] ?? $yearList[0];
 $lineId = $_GET['line_id'] ?? 0;
 
+$typeList = [
+    '1' => [
+      'name' => '涨',
+      'file' => dirname(__DIR__)."/resources/processed/{$year}-{$ma}.csv",
+    ],
+    '2' => [
+      'name' => '跌',
+      'file' => dirname(__DIR__)."/resources/processed/{$year}-{$ma}-asc.csv"
+    ],
+];
+
+$type = $_GET['type'] ?? 1;
+
 $rows = explode(',', $lineList[$lineId]);
 
-$filePath = __DIR__."/resources/processed/GNBK{$year}.csv";
+$filePath = $typeList[$type]['file'];
 
-$data = readEvenColumnsFromRow($filePath, $rows, $type);
+$data = readEvenColumnsFromRow($filePath, $rows);
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-  <title>A股概念趋势图 - <?=$typeList[$type]?></title>
+  <title>A股龙头趋势图 - <?=$ma?></title>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js"></script>
   <style>
     body, html {
@@ -84,6 +99,13 @@ $data = readEvenColumnsFromRow($filePath, $rows, $type);
       margin: 20px 40px;
       z-index: 9999; 
     }
+    .fixed-links4 {
+      position: fixed;
+      top: 150px;
+      right: 0;
+      margin: 20px 40px;
+      z-index: 9999; 
+    }
 
     .highlight {
       color: #FF5733;
@@ -95,18 +117,23 @@ $data = readEvenColumnsFromRow($filePath, $rows, $type);
 </head>
 <body>
     <div class="fixed-links1">
-        <?php foreach ($typeList as $key => $value): ?>
-            <a href="?type=<?=$key?>&year=<?=$year?>&line_id=<?=$lineId?>" <?php if ($key == $type): ?>class="highlight"<?php endif ?>><?=$value?></a>
+        <?php foreach ($maList as $value): ?>
+            <a href="?ma=<?=$value?>&year=<?=$year?>&line_id=<?=$lineId?>&type=<?=$type?>" <?php if ($value == $ma): ?>class="highlight"<?php endif ?>><?=$value?></a>
         <?php endforeach ?>
     </div>
     <div class="fixed-links2">
         <?php foreach ($yearList as $value): ?>
-            <a href="?type=<?=$type?>&year=<?=$value?>&line_id=<?=$lineId?>" <?php if ($value == $year): ?>class="highlight"<?php endif ?>><?=$value?></a>
+            <a href="?ma=<?=$ma?>&year=<?=$value?>&line_id=<?=$lineId?>&type=<?=$type?>" <?php if ($value == $year): ?>class="highlight"<?php endif ?>><?=$value?></a>
         <?php endforeach ?>
     </div>
     <div class="fixed-links3">
         <?php foreach ($lineList as $key => $value): ?>
-            <a href="?type=<?=$type?>&year=<?=$year?>&line_id=<?=$key?>" <?php if ($lineId == $key): ?>class="highlight"<?php endif ?>>线<?=$key?></a>
+            <a href="?ma=<?=$ma?>&year=<?=$year?>&line_id=<?=$key?>&type=<?=$type?>" <?php if ($lineId == $key): ?>class="highlight"<?php endif ?>>线<?=$key?></a>
+        <?php endforeach ?>
+    </div>
+    <div class="fixed-links4">
+        <?php foreach ($typeList as $key => $value): ?>
+            <a href="?ma=<?=$ma?>&year=<?=$year?>&line_id=<?=$key?>&type=<?=$key?>" <?php if ($type == $key): ?>class="highlight"<?php endif ?>><?=$value['name']?></a>
         <?php endforeach ?>
     </div>
     <div style="clear: both;"></div>
@@ -151,7 +178,7 @@ $data = readEvenColumnsFromRow($filePath, $rows, $type);
       },
       yAxis: {
         type: 'value',
-        interval: 3,
+        interval: 20,
       },
       dataZoom: [
         {
@@ -208,6 +235,7 @@ $data = readEvenColumnsFromRow($filePath, $rows, $type);
           width: 2,
         },
     }));
+    densityChart.setOption(chartConfig);
     densityChart.setOption(chartConfig);
     window.addEventListener('resize', function() {
         densityChart.resize();

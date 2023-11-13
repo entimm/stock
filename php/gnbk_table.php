@@ -12,39 +12,17 @@ function readEvenColumnsFromRow($filePath) {
     while (($row = fgetcsv($file)) !== false) {
         foreach($row as $colIndex => $value) {
             $date = $dataList[$colIndex];
-            $result["-{$date}-"][] = $value;
+            $result["-{$date}-"][] = str_replace('概念', '', $value ?: '');
         }
     }
 
     return array_reverse($result, true);
 }
+$yearList = range(date('Y'), 2018);
 
-$maList = [
-    'ma5',
-    'ma10',
-    'ma20',
-    'ma60',
-];
-$yearList = range(date('Y'), 2011);
-
-$ma = $_GET['ma'] ?? $maList[0];
 $year = $_GET['year'] ?? $yearList[0];
-$type = $_GET['type'] ?? 1;
 
-$typeList = [
-    '1' => [
-      'name' => '涨',
-      'file' => __DIR__."/resources/processed/{$year}-{$ma}.csv",
-    ],
-    '2' => [
-      'name' => '跌',
-      'file' => __DIR__."/resources/processed/{$year}-{$ma}-asc.csv"
-    ],
-];
-
-$type = $_GET['type'] ?? 1;
-
-$filePath = $typeList[$type]['file'];
+$filePath = dirname(__DIR__)."/resources/processed/GNBK{$year}.csv";
 
 $data = readEvenColumnsFromRow($filePath);
 
@@ -56,7 +34,7 @@ $data = readEvenColumnsFromRow($filePath);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个股趋势涨幅榜</title>
+    <title>概念板块大势榜</title>
     <style>
         table {
             border-collapse: collapse;
@@ -94,45 +72,24 @@ $data = readEvenColumnsFromRow($filePath);
           padding: 10px;
           font-size: 20px;
         }
-        table tr:nth-child(11) {  
-          border-bottom: 3px solid #112233;
+        .table-empty1 {
+          background-color: red;
+          border-color: red;
         }
-        table tr:nth-child(21) {  
-          border-bottom: 3px solid #112233;
+        .table-empty2 {
+            background-color: #ffb700;
+            border-color: #ffb700;
         }
-        table tr:nth-child(31) {  
-          border-bottom: 3px solid #112233;
-        }
-        table tr:nth-child(41) {  
-          border-bottom: 3px solid #112233;
-        }
-        table tr:nth-child(51) {  
-          border-bottom: 3px solid #112233;
-        }
-        table tr:nth-child(61) {  
-          border-bottom: 3px solid #112233;
-        }
-        table tr:nth-child(71) {  
-          border-bottom: 3px solid #112233;
-        }
-        table tr:nth-child(81) {  
-          border-bottom: 3px solid #112233;
-        }
-        table tr:nth-child(91) {  
-          border-bottom: 3px solid #112233;
+        .table-empty3 {
+            background-color: #2fff00;
+            border-color: #2fff00;
         }
     </style>
 </head>
 <body>
     <div class="fixed-links">
-        <?php foreach ($maList as $value): ?>
-            <a href="?ma=<?=$value?>&year=<?=$year?>&type=<?=$type?>" <?php if ($value == $ma): ?>class="highlight"<?php endif ?>><?=$value?></a>
-        <?php endforeach ?>
         <?php foreach ($yearList as $value): ?>
-            <a href="?ma=<?=$ma?>&year=<?=$value?>&type=<?=$type?>" <?php if ($value == $year): ?>class="highlight"<?php endif ?>><?=$value?></a>
-        <?php endforeach ?>
-        <?php foreach ($typeList as $key => $value): ?>
-            <a href="?ma=<?=$ma?>&year=<?=$year?>&type=<?=$key?>" <?php if ($type == $key): ?>class="highlight"<?php endif ?>><?=$value['name']?></a>
+            <a href="?year=<?=$value?>" <?php if ($value == $year): ?>class="highlight"<?php endif ?>><?=$value?></a>
         <?php endforeach ?>
     </div>
     <div id="grid-container">
@@ -147,6 +104,8 @@ $data = readEvenColumnsFromRow($filePath);
         function renderGrid() {
             let table = document.getElementById('grid');
             table.innerHTML = ''; 
+
+            var tooltip = document.getElementById('tooltip');
 
             // 添加表头
             let thead = document.createElement('thead');
