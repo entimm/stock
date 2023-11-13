@@ -40,8 +40,8 @@
           border: 1px solid #ccc;
           padding: 10px;
           font-size: 20px;
-          width: 1112px;
-          height: 350px;
+          width: 1640px;
+          height: 340px;
         }
         table tr:nth-child(11) {
           border-bottom: 3px solid #112233;
@@ -140,6 +140,9 @@
                         let img2 = document.createElement("img");
                         img2.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif`;
                         tooltip.appendChild(img2);
+                        let img3 = document.createElement("img");
+                        img3.src = `https://image2.sinajs.cn/newchart/weekly/n/${code}.gif`;
+                        tooltip.appendChild(img3);
 
                         // 计算tooltip的位置
 
