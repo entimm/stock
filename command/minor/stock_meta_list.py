@@ -1,6 +1,6 @@
-import tushare as ts
+import os
 
-import root
+import tushare as ts
 
 pro = ts.pro_api('a2cc6ae6dfeb3c9123e9994fa2f1b68ae394d8e4c923c7a3a5867b1e')
 
@@ -23,4 +23,7 @@ df = pro.stock_basic(**{
     "market",
     "list_date"
 ])
-df.to_csv(f"{root.path}/resources/stock_meta_list.csv", index=False)
+
+root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
+df.to_csv(os.path.join(root_path, 'resources', 'stock_meta_list.csv'), index=False)

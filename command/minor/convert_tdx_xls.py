@@ -40,8 +40,7 @@ def process_text_files(directory='.'):
 
 
 if __name__ == "__main__":
-    # 指定目录路径
-    directory_path = './tdx_excel'
+    root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    tdx_xls_path = os.path.join(root_path, 'resources', 'raw', 'tdx_excel')
 
-    # 调用函数处理文本文件
-    process_text_files(directory_path)
+    process_text_files(tdx_xls_path)

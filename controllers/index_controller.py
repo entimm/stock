@@ -6,12 +6,10 @@ from typing import Dict, List
 import pandas as pd
 from flask import render_template, request, Blueprint
 
-import root
-
 blueprint = Blueprint('main', __name__)
 
-STOCK_META_FILE_PATH = os.path.join(root.path, 'resources', 'a_stock_meta_list.csv')
-PROCESSED_PATH = os.path.join(root.path, 'resources', 'new_processed')
+STOCK_META_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources', 'a_stock_meta_list.csv')
+PROCESSED_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources', 'new_processed')
 
 YEAR = datetime.datetime.now().year
 

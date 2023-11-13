@@ -1,8 +1,7 @@
-import pyautogui
-import time
 import os
+import time
 
-import root
+import pyautogui
 
 
 def export():
@@ -14,6 +13,7 @@ def export():
     print("执行导出...")
     time.sleep(2)
 
+
 def auto_load_next(cur_line):
     global load_time
     current_timestamp = time.time()
@@ -24,7 +24,7 @@ def auto_load_next(cur_line):
     export()
 
     findfilename = read_nth_line(date_list_filename, cur_line)
-    findfilename = "行业概念"+findfilename+".txt"
+    findfilename = "行业概念" + findfilename + ".txt"
     while True:
         print('>>>')
         cost_time = int(time.time() - current_timestamp)
@@ -39,12 +39,15 @@ def auto_load_next(cur_line):
                 pyautogui.press('esc')
                 export()
 
+
 def is_file_exists(directory, filename):
     return os.path.exists(os.path.join(directory, filename))
+
 
 def count_lines(filePath):
     with open(filePath, 'r') as file:
         return len(file.readlines())
+
 
 def read_nth_line(filename, n):
     if n == 0:
@@ -55,8 +58,10 @@ def read_nth_line(filename, n):
             if i == n:
                 return line.strip()
 
+
 directory = "/Volumes/[C] Windows 11/Apps/通达信金融终端(开心果整合版)V2023.03/T0002/export"
-date_list_filename = f'{root.path}/resources/date_from_2018.txt'
+root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+date_list_filename = os.path.join(root_path, 'resources', 'date_from_2018.txt')
 
 times = 0
 load_time = 5
@@ -64,7 +69,7 @@ cur_line = count_lines(date_list_filename)
 
 while True:
     findfilename = read_nth_line(date_list_filename, cur_line)
-    findfilename = "行业概念"+findfilename+".txt"
+    findfilename = "行业概念" + findfilename + ".txt"
     if is_file_exists(directory, findfilename):
         cur_line -= 1
     else:
