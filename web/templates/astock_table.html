@@ -40,32 +40,34 @@
           border: 1px solid #ccc;
           padding: 10px;
           font-size: 20px;
+          width: 1112px;
+          height: 350px;
         }
-        table tr:nth-child(11) {  
+        table tr:nth-child(11) {
           border-bottom: 3px solid #112233;
         }
-        table tr:nth-child(21) {  
+        table tr:nth-child(21) {
           border-bottom: 3px solid #112233;
         }
-        table tr:nth-child(31) {  
+        table tr:nth-child(31) {
           border-bottom: 3px solid #112233;
         }
-        table tr:nth-child(41) {  
+        table tr:nth-child(41) {
           border-bottom: 3px solid #112233;
         }
-        table tr:nth-child(51) {  
+        table tr:nth-child(51) {
           border-bottom: 3px solid #112233;
         }
-        table tr:nth-child(61) {  
+        table tr:nth-child(61) {
           border-bottom: 3px solid #112233;
         }
-        table tr:nth-child(71) {  
+        table tr:nth-child(71) {
           border-bottom: 3px solid #112233;
         }
-        table tr:nth-child(81) {  
+        table tr:nth-child(81) {
           border-bottom: 3px solid #112233;
         }
-        table tr:nth-child(91) {  
+        table tr:nth-child(91) {
           border-bottom: 3px solid #112233;
         }
     </style>
@@ -93,7 +95,7 @@
 
         function renderGrid() {
             let table = document.getElementById('grid');
-            table.innerHTML = ''; 
+            table.innerHTML = '';
 
             // 添加表头
             let thead = document.createElement('thead');
@@ -116,21 +118,54 @@
                     let value = data[colName][i] || "";
                     value = value.split('|');
                     cell.textContent = value[0];
-                    if (cell.textContent == "") {
+                    if (cell.textContent === "") {
                         cell.classList.add("table-empty" + parseInt(i / 20));
                         continue;
                     }
-                    cell.setAttribute('v', `${value[1]} # ${value[2]}`);
+                    cell.setAttribute('v', `${value[2]} # ${value[3]}`);
+                    cell.setAttribute('symbol', value[1]);
                     cell.addEventListener('click', function() {
                         highlightCells(cell.textContent);
                     });
                     cell.addEventListener('mouseover', function() {
+                        let symbol = this.getAttribute('symbol');
+                        let code = getExchangeCode(symbol)
                         tooltip.textContent = this.getAttribute('v');
 
+                        tooltip.appendChild(document.createElement('br'));
+
+                        let img1 = document.createElement("img");
+                        img1.src = `https://image2.sinajs.cn/newchart/min/n/${code}.gif`;
+                        tooltip.appendChild(img1);
+                        let img2 = document.createElement("img");
+                        img2.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif`;
+                        tooltip.appendChild(img2);
+
                         // 计算tooltip的位置
-                        var boundingRect = this.getBoundingClientRect();
-                        var tooltipX = boundingRect.right + window.pageXOffset -10;
-                        var tooltipY = boundingRect.bottom + window.pageYOffset -10;
+
+                        // 获取屏幕的宽度和高度
+                        var screenWidth = window.innerWidth;
+                        var screenHeight = window.innerHeight;
+
+                      if (event.clientX <= screenWidth / 2 && event.clientY <= screenHeight / 2) {
+                        // 右下角
+                        tooltip.style.left = screenWidth - tooltip.offsetWidth + 'px';
+                        tooltip.style.top = screenHeight - tooltip.offsetHeight + 'px';
+                      } else if (event.clientX > screenWidth / 2 && event.clientY <= screenHeight / 2) {
+                        // 左下角
+                        tooltip.style.left = '0px';
+                        tooltip.style.top = screenHeight - tooltip.offsetHeight + 'px';
+                      } else if (event.clientX > screenWidth / 2 && event.clientY > screenHeight / 2) {
+                        // 左上角
+                        tooltip.style.left = '0px';
+                        tooltip.style.top = '0px';
+
+                      } else {
+                        // 右上角
+                        tooltip.style.left = screenWidth - tooltip.offsetWidth + 'px';
+                        tooltip.style.top = '0px';
+
+                      }
 
                         tooltip.style.display = 'block';
                         tooltip.style.left = tooltipX + 'px';
@@ -157,6 +192,20 @@
                 if (cell.textContent == value) {
                     cell.style.backgroundColor = cell.style.backgroundColor ? "" : color;
                 }
+            }
+        }
+
+        function getExchangeCode(symbol) {
+            let exchangeCode = symbol.slice(0, 2);
+
+            if (exchangeCode === "60" || exchangeCode === "68") {
+                return `sh${symbol}`;
+            } else if (exchangeCode === "00" || exchangeCode === "30") {
+                return `sz${symbol}`;
+            } else if (exchangeCode === "43" || exchangeCode === "83" || exchangeCode === "87") {
+                return `bj${symbol}`;
+            } else {
+                return symbol;
             }
         }
 

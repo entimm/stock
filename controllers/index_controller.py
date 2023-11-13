@@ -44,9 +44,8 @@ def read_table_data(file_path: str, is_gnbk: bool = False) -> Dict[str, List[str
                 if is_gnbk:
                     value = value.replace('概念', '')
                 else:
-                    arr = value.split('|')
-                    arr[0] = symbol_name_dict.get(arr[0], arr[0])
-                    value = '|'.join(arr)
+                    symbol, *rest = value.split('|')
+                    value = '|'.join([symbol_name_dict.get(symbol, symbol), symbol, *rest])
             result.setdefault(f'-{date}-', []).append(value)
 
     result = dict(reversed(result.items()))

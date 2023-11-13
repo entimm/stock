@@ -97,7 +97,7 @@
                     let value = data[colName][i] || "";
                     value = value.split('|');
                     cell.textContent = value[0];
-                    if (cell.textContent == "") {
+                    if (cell.textContent === "") {
                         cell.classList.add("table-empty" + parseInt(i / 20));
                         continue;
                     }
