@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="KLineChart example"/>
+    <title>K线图</title>
+    <script type="text/javascript" src="/static/klinecharts.min.js"></script>
+    <style>
+        html {
+            background: #FFFFFF;
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            height: 100%;
+        }
+
+        #chart {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+  var output_text = true
+  var chart = klinecharts.init('chart', {
+    timezone: 'Asia/Shanghai',
+    customApi: {
+      formatDate: function (dateTimeFormat, timestamp, format, type) {
+        return timestamp
+      }
+    }
+  })
+  chart._chartStore._timeScaleStore.setBarSpaceLimitConfig(0.01, 20)
+  chart.createIndicator({
+    name: 'MA',
+    precision: 3,
+    calcParams: [5, 10, 20, 60, 240, 480, 960],
+    styles: {
+      lines: [
+        {style: 'solid', size: 1, color: '#930606'},
+        {style: 'solid', size: 1, color: '#ECAB07'},
+        {style: 'solid', size: 1, color: '#EF15DE'},
+        {style: 'solid', size: 2, color: '#16de45'},
+        {style: 'solid', size: 1, color: '#6e28e5'},
+        {style: 'solid', size: 1, color: '#e50b33'},
+        {style: 'solid', size: 1, color: '#1620de'},
+      ]
+    }
+  }, false, {id: 'candle_pane'})
+  chart.createIndicator('VOL')
+  chart.createIndicator('MACD')
+  chart.setStyles({
+    // 网格线
+    grid: {
+      show: true,
+      horizontal: {
+        show: true,
+        size: 1,
+        color: '#E6E6E6',
+        style: 'solid',
+      },
+      vertical: {
+        show: false,
+        size: 0,
+        color: '#E6E6E6',
+        style: 'solid',
+      }
+    },
+    candle: {
+      // 蜡烛图类型 'candle_solid'|'candle_stroke'|'candle_up_stroke'|'candle_down_stroke'|'ohlc'|'area'
+      type: 'candle_solid',
+      bar: {
+        upColor: '#F21414',
+        downColor: '#08B536',
+        noChangeColor: '#888888',
+        upBorderColor: '#F21414',
+        downBorderColor: '#08B536',
+        noChangeBorderColor: '#888888',
+        upWickColor: '#F21414',
+        downWickColor: '#08B536',
+        noChangeWickColor: '#888888'
+      },
+    },
+    indicator: {
+      bars: [{
+        // 'fill' | 'stroke' | 'stroke_fill'
+        style: 'fill',
+        // 'solid' | 'dashed'
+        borderStyle: 'solid',
+        borderSize: 1,
+        borderDashedValue: [2, 2],
+        upColor: '#F21414',
+        downColor: '#08B536',
+        noChangeColor: '#888888'
+      }],
+      lastValueMark: {
+        show: true,
+      },
+    }
+  });
+
+  chart._chartStore.getTimeScaleStore().zoom(1000)
+  chart.applyNewData({{ kline_list | tojson }})
+
+
+  function resizeChart() {
+    chart.resize()
+  }
+
+  window.addEventListener('resize', resizeChart);
+  window.addEventListener('load', resizeChart);
+</script>
+</body>
+</html>
