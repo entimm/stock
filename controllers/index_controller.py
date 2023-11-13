@@ -141,7 +141,7 @@ def gnbk():
 
     rows = list(map(int, line_list[line_id].split(',')))
 
-    file_path = os.path.join(PROCESSED_PATH, f"GNBK{year}.csv")
+    file_path = os.path.join(PROCESSED_PATH, f'GNBK{year}.csv')
 
     data = read_data(file_path, rows, type_val)
 
@@ -164,7 +164,7 @@ def gnbk_table():
     year_list = list(range(YEAR, 2017, -1))
     year = request.args.get('year', year_list[0], type=int)
 
-    file_path = os.path.join(PROCESSED_PATH, f"GNBK{year}.csv")
+    file_path = os.path.join(PROCESSED_PATH, f'GNBK{year}.csv')
 
     data = read_table_data(file_path, is_gnbk=True)
 

@@ -16,7 +16,7 @@ def sort(df, col, asc):
 
 resources_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='转换处理A股')
     current_year = datetime.datetime.now().year
     parser.add_argument('year', type=int, nargs='?', default=current_year)
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     year = args.year
     update_n = args.update_n
 
-    directory_path = os.path.join(resources_path, 'raw', "全部Ａ股")
+    directory_path = os.path.join(resources_path, 'raw', '全部Ａ股')
     file_pattern = r'(\d{4})'
     file_pattern = f'全部Ａ股({year}{file_pattern}).txt'
 
@@ -56,7 +56,7 @@ if __name__ == "__main__":
             container[sort_col][date] = sort(df, sort_col, is_asc)
 
     for sort_col, data in container.items():
-        csv_file = os.path.join(resources_path, 'new_processed', f"{year}-{sort_col}.csv")
+        csv_file = os.path.join(resources_path, 'new_processed', f'{year}-{sort_col}.csv')
         try:
             df = pd.read_csv(csv_file)
         except FileNotFoundError:

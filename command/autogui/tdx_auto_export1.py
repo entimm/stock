@@ -10,7 +10,7 @@ def export():
     pyautogui.press('enter')
     time.sleep(1)
     pyautogui.press('enter')
-    print("执行导出...")
+    print('执行导出...')
     time.sleep(5)
 
 
@@ -18,18 +18,18 @@ def auto_load_next(cur_line):
     global load_time
     current_timestamp = time.time()
     pyautogui.press(']')
-    print(f"按键],加载数据{load_time}...")
+    print(f'按键],加载数据{load_time}...')
     time.sleep(load_time)
 
     export()
 
     findfilename = read_nth_line(date_list_filename, cur_line)
-    findfilename = "全部Ａ股" + findfilename + ".xls"
+    findfilename = '全部Ａ股' + findfilename + '.xls'
     while True:
         print('>>>')
         cost_time = int(time.time() - current_timestamp)
         if is_file_exists(directory, findfilename):
-            print(f"{findfilename}->SUCCESS({cost_time})")
+            print(f'{findfilename}->SUCCESS({cost_time})')
             pyautogui.press('esc')
             break
         else:
@@ -51,7 +51,7 @@ def count_lines(filePath):
 
 def read_nth_line(filename, n):
     if n == 0:
-        print("cur_line为0了")
+        print('cur_line为0了')
         exit()
     with open(filename, 'r') as file:
         for i, line in enumerate(file, 1):
@@ -59,7 +59,7 @@ def read_nth_line(filename, n):
                 return line.strip()
 
 
-directory = "/Volumes/[C] Windows 11/Apps/通达信金融终端(开心果整合版)V2023.03/T0002/export"
+directory = '/Volumes/[C] Windows 11/Apps/通达信金融终端(开心果整合版)V2023.03/T0002/export'
 root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 date_list_filename = os.path.join(root_path, 'resources', 'date_from_2018.txt')
 
@@ -69,24 +69,24 @@ cur_line = count_lines(date_list_filename)
 
 while True:
     findfilename = read_nth_line(date_list_filename, cur_line)
-    findfilename = "全部Ａ股" + findfilename + ".xls"
+    findfilename = '全部Ａ股' + findfilename + '.xls'
     if is_file_exists(directory, findfilename):
         cur_line -= 1
     else:
         break
 
 findfilename = read_nth_line(date_list_filename, cur_line)
-print(f"findfilename开始值为{findfilename}")
+print(f'findfilename开始值为{findfilename}')
 
 time.sleep(10)
-print("START！！！")
+print('START！！！')
 
 while True:
     auto_load_next(cur_line)
     cur_line -= 1
     times += 1
-    print(f"NO.{str(times)}->OK")
+    print(f'NO.{str(times)}->OK')
 
     if cur_line == 0:
-        print("END！！！")
+        print('END！！！')
         exit()

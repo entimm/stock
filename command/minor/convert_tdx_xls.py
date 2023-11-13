@@ -39,7 +39,7 @@ def process_text_files(directory='.'):
         print(f'Processed: {filename}')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     tdx_xls_path = os.path.join(root_path, 'resources', 'raw', 'tdx_excel')
 
