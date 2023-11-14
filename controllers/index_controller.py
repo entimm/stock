@@ -71,7 +71,18 @@ def index():
     df = pd.concat([local_df, pd.DataFrame(real_time_df)], axis=0)
     kline_list = df.apply(row_to_kline, axis=1).to_list()
 
-    return render_template('index.html', kline_list=kline_list)
+    template_var = {
+        'symbol': symbol,
+        'period': period,
+        'kline_list': kline_list,
+        'period_list': {
+            PeriodEnum.F1.name: '1分钟',
+            PeriodEnum.F5.name: '5分钟',
+            PeriodEnum.D.name: '天',
+        },
+    }
+
+    return render_template('index.html', **template_var)
 
 
 def row_to_kline(row):

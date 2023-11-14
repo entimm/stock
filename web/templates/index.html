@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="description" content="KLineChart example"/>
     <title>K线图</title>
-    <script type="text/javascript" src="/static/klinecharts.min.js"></script>
     <style>
         html {
             background: #FFFFFF;
@@ -20,10 +19,32 @@
         #chart {
             height: 100%;
         }
+        .fixed-links {
+            position: fixed;
+            top: 0;
+            right: 0;
+            margin: 20px 100px;
+            z-index: 9999;
+        }
+        .fixed-links a {
+            margin: 0 2px;
+        }
+        .highlight {
+          color: #FF5733;
+          font-weight: bold;
+          font-size: 20px;
+          text-decoration: underline;
+        }
     </style>
 </head>
 <body>
+<div class="fixed-links">
+    {% for period_key, period_name in period_list.items() %}
+        <a href="/?symbol={{symbol}}&period={{period_key}}" {% if period_key == period %}class="highlight"{% endif %}>{{period_name}}</a>
+    {% endfor %}
+</div>
 <div id="chart"></div>
+<script type="text/javascript" src="/static/klinecharts.min.js"></script>
 <script>
   var output_text = true
   var chart = klinecharts.init('chart', {
@@ -47,7 +68,7 @@
         {style: 'solid', size: 2, color: '#16de45'},
         {style: 'solid', size: 1, color: '#6e28e5'},
         {style: 'solid', size: 1, color: '#e50b33'},
-        {style: 'solid', size: 1, color: '#1620de'},
+        {style: 'solid', size: 1, color: '#16b9de'},
       ]
     }
   }, false, {id: 'candle_pane'})

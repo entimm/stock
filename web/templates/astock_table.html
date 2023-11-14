@@ -35,7 +35,7 @@
           text-decoration: underline;
         }
         #tooltip {
-          position: absolute;
+          position: fixed;
           background-color: #fff;
           border: 1px solid #ccc;
           padding: 10px;
@@ -44,31 +44,76 @@
           height: 340px;
         }
         table tr:nth-child(11) {
-          border-bottom: 3px solid #112233;
+          border-bottom: 4px solid #FF0000;
         }
         table tr:nth-child(21) {
-          border-bottom: 3px solid #112233;
+          border-bottom: 4px solid #FF4500;
         }
         table tr:nth-child(31) {
-          border-bottom: 3px solid #112233;
+          border-bottom: 4px solid #FFA500;
         }
         table tr:nth-child(41) {
-          border-bottom: 3px solid #112233;
+          border-bottom: 4px solid #FFD700;
         }
         table tr:nth-child(51) {
-          border-bottom: 3px solid #112233;
+          border-bottom: 4px solid #FFFF00;
         }
         table tr:nth-child(61) {
-          border-bottom: 3px solid #112233;
+          border-bottom: 4px solid #ADFF2F;
         }
         table tr:nth-child(71) {
-          border-bottom: 3px solid #112233;
+          border-bottom: 4px solid #7FFF00;
         }
         table tr:nth-child(81) {
-          border-bottom: 3px solid #112233;
+          border-bottom: 4px solid #00FF00;
         }
         table tr:nth-child(91) {
-          border-bottom: 3px solid #112233;
+          border-bottom: 4px solid #008000;
+        }
+        td {
+            position: relative;
+        }
+        .dot::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 6px;
+            height: 6px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        .red-dot1::after {
+            background-color: #ffcccc;
+        }
+        .red-dot2::after {
+            background-color: #ff0000;
+        }
+        .red-dot3::after {
+            background-color: #f500ff;
+        }
+        .green-dot1::after {
+            background-color: #ccffcc;
+        }
+        .green-dot2::after {
+            background-color: #00ff00;
+        }
+        .green-dot3::after {
+            background-color: #16b9de;
+        }
+        #myDialog {
+            height: 80%;
+            width: 80%;
+            border: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+        }
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            font-size: 30px;
+            font-weight: bolder;
+            color: red;
         }
     </style>
 </head>
@@ -84,15 +129,21 @@
             <a href="?ma={{ma}}&year={{year}}&direction={{key}}" {% if direction == key %}class="highlight"{% endif %}>{{value['name']}}</a>
         {% endfor %}
     </div>
+
+    <dialog id="myDialog" style="overflow: hidden;">
+        <span class="close-button" onclick="closeDialog()">×</span>
+        <iframe id="iframeContent" style="width: 100%; height: 100%; border: none;"></iframe>
+    </dialog>
+
     <div id="grid-container">
         <table id="grid"></table>
         <div id="tooltip" style="display:none;"></div>
     </div>
-
     <script>
         // 提供的数据
         let data = {{ data | safe }};
 
+        const myDialog = document.getElementById('myDialog');
         function renderGrid() {
             let table = document.getElementById('grid');
             table.innerHTML = '';
@@ -122,10 +173,19 @@
                         cell.classList.add("table-empty" + parseInt(i / 20));
                         continue;
                     }
+                    addDotClass(cell, value[2])
                     cell.setAttribute('v', `${value[2]} # ${value[3]}`);
                     cell.setAttribute('symbol', value[1]);
                     cell.addEventListener('click', function() {
-                        highlightCells(cell.textContent);
+                        var cellRect = cell.getBoundingClientRect();
+
+                        var clickX = event.clientX - cellRect.left;
+
+                        if (clickX < cellRect.width / 2) {
+                            highlightCells(cell.textContent);
+                        } else {
+                            openDialog(`/?symbol=${value[1]}&period=F5`, '_blank');
+                        }
                     });
                     cell.addEventListener('mouseover', function() {
                         let symbol = this.getAttribute('symbol');
@@ -162,8 +222,6 @@
                       }
 
                         tooltip.style.display = 'block';
-                        tooltip.style.left = tooltipX + 'px';
-                        tooltip.style.top = tooltipY + 'px';
                     });
                 }
                 table.appendChild(row);
@@ -201,6 +259,44 @@
             } else {
                 return symbol;
             }
+        }
+
+        function openDialog(url) {
+            var iframe = document.getElementById('iframeContent');
+            iframe.src = url;
+
+            myDialog.showModal();
+
+            document.addEventListener('click', handleClickOutside);
+        }
+
+
+        function closeDialog() {
+            myDialog.close();
+            document.removeEventListener('click', handleClickOutside);
+        }
+
+        function handleClickOutside(event) {
+            if (event.target === myDialog) {
+                closeDialog();
+            }
+        }
+
+        function addDotClass(element, price) {
+            const dotClasses = [
+                { condition: price >= 15, className: 'red-dot3' },
+                { condition: price >= 9.6, className: 'red-dot2' },
+                { condition: price >= 5, className: 'red-dot1' },
+                { condition: price <= -5, className: 'green-dot1' },
+                { condition: price <= -9, className: 'green-dot2' },
+                { condition: price <= -15, className: 'green-dot3' },
+            ];
+
+            dotClasses.forEach((dotClass) => {
+                if (dotClass.condition) {
+                    element.classList.add('dot', dotClass.className);
+                }
+            });
         }
 
         renderGrid();
