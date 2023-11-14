@@ -135,6 +135,12 @@
 
   window.addEventListener('resize', resizeChart);
   window.addEventListener('load', resizeChart);
+
+  document.addEventListener('keydown', function() {
+    if (['Escape', 'Space'].includes(event.code)) {
+      window.parent.postMessage('close_me', '*');
+    }
+  });
 </script>
 </body>
 </html>

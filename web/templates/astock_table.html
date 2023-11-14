@@ -301,6 +301,12 @@
 
         renderGrid();
 
+        window.addEventListener('message', function(event) {
+          if (event.data === 'close_me') {
+            closeDialog();
+          }
+        });
+
     </script>
 </body>
 </html>
