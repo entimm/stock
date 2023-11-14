@@ -166,7 +166,7 @@
             let cells = document.querySelectorAll('td');
             color = getRandomColor();
             for (let cell of cells) {
-                if (cell.textContent == value) {
+                if (cell.textContent === value) {
                     cell.style.backgroundColor = cell.style.backgroundColor ? "" : color;
                 }
             }

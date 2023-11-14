@@ -184,7 +184,7 @@
                         if (clickX < cellRect.width / 2) {
                             highlightCells(cell.textContent);
                         } else {
-                            openDialog(`/?symbol=${value[1]}&period=F5`, '_blank');
+                            openDialog(`/?symbol=${value[1]}&period=F5`);
                         }
                     });
                     cell.addEventListener('mouseover', function() {
@@ -241,7 +241,7 @@
             let cells = document.querySelectorAll('td');
             color = getRandomColor();
             for (let cell of cells) {
-                if (cell.textContent == value) {
+                if (cell.textContent === value) {
                     cell.style.backgroundColor = cell.style.backgroundColor ? "" : color;
                 }
             }

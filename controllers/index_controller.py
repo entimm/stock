@@ -55,20 +55,23 @@ def cal_real_offset(period):
 def index():
     symbol = request.args.get('symbol', '', type=str)
     period = request.args.get('period', '', type=str).upper()
+    req_real = request.args.get('req_real', 0, type=int)
 
     if not symbol or not period:
-        return redirect(url_for('index.index', symbol='600519', period=PeriodEnum.F5.name))
+        return redirect(url_for('index.index', symbol='600519', period=PeriodEnum.F5.name, req_real=0))
 
     reader = Reader.factory(market='std', tdxdir=TDX_DIR)
-    client = Quotes.factory(market='std')
 
     period_enum = PeriodEnum[period]
     frequency = FREQUENCY_MAP.get(period_enum)
 
-    local_df = fetch_local_data(reader, symbol, period_enum)
-    real_time_df = client.bars(symbol=symbol, frequency=frequency, offset=cal_real_offset(period_enum))
+    df = fetch_local_data(reader, symbol, period_enum)
 
-    df = pd.concat([local_df, pd.DataFrame(real_time_df)], axis=0)
+    if req_real and period_enum != PeriodEnum.D:
+        client = Quotes.factory(market='std')
+        real_time_df = client.bars(symbol=symbol, frequency=frequency, offset=cal_real_offset(period_enum))
+        df = pd.concat([df, pd.DataFrame(real_time_df)], axis=0)
+
     kline_list = df.apply(row_to_kline, axis=1).to_list()
 
     template_var = {
@@ -80,6 +83,7 @@ def index():
             PeriodEnum.F5.name: '5分钟',
             PeriodEnum.D.name: '天',
         },
+        'req_real': req_real,
     }
 
     return render_template('index.html', **template_var)
