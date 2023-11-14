@@ -14,7 +14,7 @@ def is_recently_created(file_path, threshold_minutes=120):
 
 
 TDX_EXPORT_DIR = '/Volumes/[C] Windows 11/Apps/通达信金融终端(开心果整合版)V2023.03/T0002/export'
-RESOURCES_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources')
+RESOURCES_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'resources')
 RAW_DIR = os.path.join(RESOURCES_PATH, 'raw')
 
 if __name__ == '__main__':

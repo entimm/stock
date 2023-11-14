@@ -60,7 +60,7 @@ def read_nth_line(filename, n):
 
 
 directory = '/Volumes/[C] Windows 11/Apps/通达信金融终端(开心果整合版)V2023.03/T0002/export'
-root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+root_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 date_list_filename = os.path.join(root_path, 'resources', 'date_from_2018.txt')
 
 times = 0

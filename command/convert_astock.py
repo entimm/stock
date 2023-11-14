@@ -14,7 +14,7 @@ def sort(df, col, asc):
     return top_100.values
 
 
-resources_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources')
+resources_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'resources')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='转换处理A股')

@@ -24,6 +24,6 @@ df = pro.stock_basic(**{
     'list_date'
 ])
 
-root_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+root_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 df.to_csv(os.path.join(root_path, 'resources', 'stock_meta_list.csv'), index=False)
