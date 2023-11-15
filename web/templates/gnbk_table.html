@@ -83,6 +83,22 @@
         .green-dot3::after {
             background-color: #16b9de;
         }
+
+        #myDialog {
+            height: 80%;
+            width: 80%;
+            border: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+        }
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            font-size: 30px;
+            font-weight: bolder;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -91,6 +107,12 @@
             <a href="?year={{value}}" {% if value == year %}class="highlight"{% endif %}>{{value}}</a>
         {% endfor %}
     </div>
+
+    <dialog id="myDialog" style="overflow: hidden;">
+        <span class="close-button" onclick="closeDialog()">×</span>
+        <iframe id="iframeContent" style="width: 100%; height: 100%; border: none;"></iframe>
+    </dialog>
+
     <div id="grid-container">
         <table id="grid"></table>
         <div id="tooltip" style="display:none;"></div>
@@ -131,10 +153,19 @@
                         cell.classList.add("table-empty" + parseInt(i / 20));
                         continue;
                     }
-                    addDotClass(cell, value[1])
-                    cell.setAttribute('v', `${value[1]} # ${value[2]}`);
+                    addDotClass(cell, value[2])
+                    cell.setAttribute('v', `${value[2]} # ${value[3]}`);
+                    cell.setAttribute('symbol', value[1]);
                     cell.addEventListener('click', function() {
-                        highlightCells(cell.textContent);
+                        var cellRect = cell.getBoundingClientRect();
+
+                        var clickX = event.clientX - cellRect.left;
+
+                        if (clickX < cellRect.width / 2) {
+                            highlightCells(cell.textContent);
+                        } else {
+                            openDialog(`/?symbol=${value[1]}&period=D`);
+                        }
                     });
                     cell.addEventListener('mouseover', function() {
                         tooltip.textContent = this.getAttribute('v');
@@ -189,7 +220,34 @@
             });
         }
 
+        function openDialog(url) {
+            var iframe = document.getElementById('iframeContent');
+            iframe.src = url;
+
+            myDialog.showModal();
+
+            document.addEventListener('click', handleClickOutside);
+        }
+
+
+        function closeDialog() {
+            myDialog.close();
+            document.removeEventListener('click', handleClickOutside);
+        }
+
+        function handleClickOutside(event) {
+            if (event.target === myDialog) {
+                closeDialog();
+            }
+        }
+
         renderGrid();
+
+        window.addEventListener('message', function(event) {
+          if (event.data === 'close_me') {
+            closeDialog();
+          }
+        });
 
     </script>
 </body>

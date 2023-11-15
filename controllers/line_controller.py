@@ -8,6 +8,7 @@ from flask import render_template, request, Blueprint
 blueprint = Blueprint('line', __name__)
 
 STOCK_META_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources', 'a_stock_meta_list.csv')
+GNBK_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources', 'gnbk_list.csv')
 PROCESSED_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources', 'new_processed')
 
 YEAR = datetime.datetime.now().year
@@ -15,8 +16,11 @@ YEAR = datetime.datetime.now().year
 stock_meta_df = pd.read_csv(STOCK_META_FILE_PATH, dtype={1: str})
 symbol_name_dict = dict(zip(stock_meta_df['symbol'], stock_meta_df['name']))
 
+gnbk_df = pd.read_csv(GNBK_FILE_PATH, dtype={0: str})
+gnbk_dict = dict(zip(gnbk_df['symbol'], gnbk_df['name']))
 
-def read_data(file_path: str, row_numbers: List[int], type_val: int = 0) -> Dict[str, Dict[str, List[str]]]:
+
+def read_data(file_path: str, row_numbers: List[int], type_val: int = 0, is_gnbk: bool = False) -> Dict[str, Dict[str, List[str]]]:
     result = {'name': {}, 'value': {}}
 
     df = pd.read_csv(file_path)
@@ -26,7 +30,8 @@ def read_data(file_path: str, row_numbers: List[int], type_val: int = 0) -> Dict
 
         for date, value in zip(df.columns, row):
             arr = value.split('|')
-            result['name'].setdefault(date, []).append(symbol_name_dict.get(arr[0], arr[0]))
+            name = gnbk_dict.get(arr[0], arr[0]) if is_gnbk else symbol_name_dict.get(arr[0], arr[0])
+            result['name'].setdefault(date, []).append(name)
             result['value'].setdefault(date, []).append(arr[2])
 
     return result
@@ -90,7 +95,7 @@ def gnbk():
 
     file_path = os.path.join(PROCESSED_PATH, f'GNBK{year}.csv')
 
-    data = read_data(file_path, rows, type_val)
+    data = read_data(file_path, rows, type_val, True)
 
     template_var = {
         'year_list': year_list,

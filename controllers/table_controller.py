@@ -9,12 +9,16 @@ from flask import render_template, request, Blueprint
 blueprint = Blueprint('table', __name__)
 
 STOCK_META_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources', 'a_stock_meta_list.csv')
+GNBK_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources', 'gnbk_list.csv')
 PROCESSED_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources', 'new_processed')
 
 YEAR = datetime.datetime.now().year
 
 stock_meta_df = pd.read_csv(STOCK_META_FILE_PATH, dtype={1: str})
 symbol_name_dict = dict(zip(stock_meta_df['symbol'], stock_meta_df['name']))
+
+gnbk_df = pd.read_csv(GNBK_FILE_PATH, dtype={0: str})
+gnbk_dict = dict(zip(gnbk_df['symbol'], gnbk_df['name']))
 
 
 def read_table_data(file_path: str, is_gnbk: bool = False) -> Dict[str, List[str]]:
@@ -25,10 +29,10 @@ def read_table_data(file_path: str, is_gnbk: bool = False) -> Dict[str, List[str
     for date, row in df.items():
         for col_index, value in enumerate(row):
             if type(value) is str:
+                symbol, *rest = value.split('|')
                 if is_gnbk:
-                    value = value.replace('概念', '')
+                    value = '|'.join([gnbk_dict.get(symbol, symbol).replace('概念', ''), symbol, *rest])
                 else:
-                    symbol, *rest = value.split('|')
                     value = '|'.join([symbol_name_dict.get(symbol, symbol), symbol, *rest])
             result.setdefault(f'-{date}-', []).append(value)
 

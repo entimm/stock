@@ -10,7 +10,7 @@ from common.utils import read_tdx_text, filter_files_by_date
 
 def sort(df, col, asc):
     top_20 = df.sort_values(by=col, ascending=asc).head(20)
-    top_20 = top_20['名称'].astype(str) + '|' + top_20['涨幅%'].astype(str) + '|' + top_20[col].astype(str)
+    top_20 = top_20['代码'].astype(str) + '|' + top_20['涨幅%'].astype(str) + '|' + top_20[col].astype(str)
 
     return top_20.values
 
