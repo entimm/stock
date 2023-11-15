@@ -3,6 +3,10 @@ import os
 import re
 import shutil
 
+import click
+
+from common.common import RAW_PATH, TDX_EXPORT_DIR
+
 
 def is_recently_created(file_path, threshold_minutes=120):
     creation_time = os.path.getctime(file_path)
@@ -13,11 +17,8 @@ def is_recently_created(file_path, threshold_minutes=120):
     return time_difference.total_seconds() <= (threshold_minutes * 60)
 
 
-TDX_EXPORT_DIR = '/Volumes/[C] Windows 11/Apps/通达信金融终端(开心果整合版)V2023.03/T0002/export'
-RESOURCES_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'resources')
-RAW_DIR = os.path.join(RESOURCES_PATH, 'raw')
-
-if __name__ == '__main__':
+@click.command()
+def mv_raw():
     contents = os.listdir(TDX_EXPORT_DIR)
     for item in contents:
         source_path = os.path.join(TDX_EXPORT_DIR, item)
@@ -31,7 +32,7 @@ if __name__ == '__main__':
         if not is_recently_created(source_path):
             continue
 
-        destination_path = os.path.join(RESOURCES_PATH, 'raw', match.group(1), item)
+        destination_path = os.path.join(RAW_PATH, match.group(1), item)
 
         if os.path.exists(destination_path):
             continue

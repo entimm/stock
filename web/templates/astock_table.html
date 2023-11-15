@@ -159,6 +159,8 @@
             thead.appendChild(headerRow);
             table.appendChild(thead);
 
+            let tbody = document.createElement('tbody');
+
             // 以最大列长度为标准，添加数据行
             let maxRows = Math.max(...Object.values(data).map(col => col.length));
             for (let i = 0; i < maxRows; i++) {
@@ -224,8 +226,9 @@
                         tooltip.style.display = 'block';
                     });
                 }
-                table.appendChild(row);
+                tbody.appendChild(row);
             }
+            table.appendChild(tbody);
         }
 
         function getRandomColor() {

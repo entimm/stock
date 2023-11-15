@@ -1,9 +1,9 @@
-import argparse
-import datetime
 import os
 
+import click
 import pandas as pd
 
+from common.common import PROCESSED_PATH, RAW_PATH, YEAR
 from common.utils import read_tdx_text, filter_files_by_date
 
 
@@ -14,20 +14,11 @@ def sort(df, col, asc):
     return top_100.values
 
 
-resources_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'resources')
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='转换处理A股')
-    current_year = datetime.datetime.now().year
-    parser.add_argument('year', type=int, nargs='?', default=current_year)
-    parser.add_argument('update_n', type=int, nargs='?', default=0)
-
-    args = parser.parse_args()
-
-    year = args.year
-    update_n = args.update_n
-
-    directory_path = os.path.join(resources_path, 'raw', '全部Ａ股')
+@click.command()
+@click.argument('year', default=YEAR, type=str)
+@click.argument('update_n', default=1, type=int)
+def convert_astock(year, update_n):
+    directory_path = os.path.join(RAW_PATH, '全部Ａ股')
     file_pattern = r'(\d{4})'
     file_pattern = f'全部Ａ股({year}{file_pattern}).txt'
 
@@ -56,7 +47,7 @@ if __name__ == '__main__':
             container[sort_col][date] = sort(df, sort_col, is_asc)
 
     for sort_col, data in container.items():
-        csv_file = os.path.join(resources_path, 'new_processed', f'{year}-{sort_col}.csv')
+        csv_file = os.path.join(PROCESSED_PATH, f'{year}-{sort_col}.csv')
         try:
             df = pd.read_csv(csv_file)
         except FileNotFoundError:

@@ -19,15 +19,25 @@
         #chart {
             height: 100%;
         }
-        .fixed-links {
+        .fixed-links1 {
             position: fixed;
             top: 0;
             right: 0;
             margin: 20px 100px;
             z-index: 9999;
         }
-        .fixed-links a {
+        .fixed-links1 a {
             margin: 0 2px;
+        }
+        .fixed-links2 {
+            position: fixed;
+            top: 50px;
+            right: 0;
+            margin: 20px 100px;
+            z-index: 9999;
+        }
+        .fixed-links2 .symbol {
+            font-size: 30px;
         }
         .highlight {
           color: #FF5733;
@@ -38,12 +48,15 @@
     </style>
 </head>
 <body>
-<div class="fixed-links">
+<div class="fixed-links1">
     {% for period_key, period_name in period_list.items() %}
         <a href="/?symbol={{symbol}}&period={{period_key}}&req_real={{req_real}}" {% if period_key == period %}class="highlight"{% endif %}>{{period_name}}</a>
     {% endfor %}
     <a href="/?symbol={{symbol}}&period={{period}}&req_real=0" {% if req_real == 0 %}class="highlight"{% endif %}>本地</a>
     <a href="/?symbol={{symbol}}&period={{period}}&req_real=1" {% if req_real == 1 %}class="highlight"{% endif %}>实时</a>
+</div>
+<div class="fixed-links2">
+    <span class="symbol">{{symbol_name}}</span>
 </div>
 <div id="chart"></div>
 <script type="text/javascript" src="/static/klinecharts.min.js"></script>
@@ -63,13 +76,13 @@
     calcParams: [5, 10, 20, 60, 240, 480, 960],
     styles: {
       lines: [
-        {style: 'solid', size: 1, color: '#930606'},
-        {style: 'solid', size: 1, color: '#ECAB07'},
-        {style: 'solid', size: 1, color: '#EF15DE'},
-        {style: 'solid', size: 2, color: '#16de45'},
-        {style: 'solid', size: 1, color: '#6e28e5'},
-        {style: 'solid', size: 1, color: '#e50b33'},
-        {style: 'solid', size: 1, color: '#16b9de'},
+        {style: 'solid', size: 0.5, color: '#930606'},
+        {style: 'solid', size: 0.5, color: '#ECAB07'},
+        {style: 'solid', size: 0.5, color: '#EF15DE'},
+        {style: 'solid', size: 1, color: '#16de45'},
+        {style: 'solid', size: 0.5, color: '#6e28e5'},
+        {style: 'solid', size: 0.5, color: '#e50b33'},
+        {style: 'solid', size: 0.5, color: '#16b9de'},
       ]
     }
   }, false, {id: 'candle_pane'})
@@ -82,13 +95,13 @@
       horizontal: {
         show: true,
         size: 1,
-        color: '#E6E6E6',
+        color: '#F0F0F0',
         style: 'solid',
       },
       vertical: {
-        show: false,
-        size: 0,
-        color: '#E6E6E6',
+        show: true,
+        size: 1,
+        color: '#F0F0F0',
         style: 'solid',
       }
     },

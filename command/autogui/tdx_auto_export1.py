@@ -1,7 +1,10 @@
 import os
 import time
 
+import click
 import pyautogui
+
+from common.common import RESOURCES_PATH, TDX_EXPORT_DIR
 
 
 def export():
@@ -14,7 +17,7 @@ def export():
     time.sleep(5)
 
 
-def auto_load_next(cur_line):
+def auto_load_next(date_list_filename, cur_line):
     global load_time
     current_timestamp = time.time()
     pyautogui.press(']')
@@ -28,7 +31,7 @@ def auto_load_next(cur_line):
     while True:
         print('>>>')
         cost_time = int(time.time() - current_timestamp)
-        if is_file_exists(directory, findfilename):
+        if is_file_exists(TDX_EXPORT_DIR, findfilename):
             print(f'{findfilename}->SUCCESS({cost_time})')
             pyautogui.press('esc')
             break
@@ -59,34 +62,34 @@ def read_nth_line(filename, n):
                 return line.strip()
 
 
-directory = '/Volumes/[C] Windows 11/Apps/通达信金融终端(开心果整合版)V2023.03/T0002/export'
-root_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-date_list_filename = os.path.join(root_path, 'resources', 'date_from_2018.txt')
+@click.command()
+def tdx_auto_export1():
+    date_list_filename = os.path.join(RESOURCES_PATH, 'date_from_2018.txt')
 
-times = 0
-load_time = 20
-cur_line = count_lines(date_list_filename)
+    times = 0
+    load_time = 20
+    cur_line = count_lines(date_list_filename)
 
-while True:
+    while True:
+        findfilename = read_nth_line(date_list_filename, cur_line)
+        findfilename = '全部Ａ股' + findfilename + '.xls'
+        if is_file_exists(TDX_EXPORT_DIR, findfilename):
+            cur_line -= 1
+        else:
+            break
+
     findfilename = read_nth_line(date_list_filename, cur_line)
-    findfilename = '全部Ａ股' + findfilename + '.xls'
-    if is_file_exists(directory, findfilename):
+    print(f'findfilename开始值为{findfilename}')
+
+    time.sleep(10)
+    print('START！！！')
+
+    while True:
+        auto_load_next(date_list_filename, cur_line)
         cur_line -= 1
-    else:
-        break
+        times += 1
+        print(f'NO.{str(times)}->OK')
 
-findfilename = read_nth_line(date_list_filename, cur_line)
-print(f'findfilename开始值为{findfilename}')
-
-time.sleep(10)
-print('START！！！')
-
-while True:
-    auto_load_next(cur_line)
-    cur_line -= 1
-    times += 1
-    print(f'NO.{str(times)}->OK')
-
-    if cur_line == 0:
-        print('END！！！')
-        exit()
+        if cur_line == 0:
+            print('END！！！')
+            exit()

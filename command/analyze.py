@@ -1,8 +1,10 @@
+import click
 import numpy as np
 from mootdx.reader import Reader
 
-tdx_dir = '/Volumes/[C] Windows 11/Apps/通达信金融终端(开心果整合版)V2023.03'
-reader = Reader.factory(market='std', tdxdir=tdx_dir)
+from common.common import TDX_DIR
+
+reader = Reader.factory(market='std', tdxdir=TDX_DIR)
 
 
 def cal_ma(df, window):
@@ -16,6 +18,8 @@ def cal_pct_change(df):
     df['pct_change'] = ((df['close'] - df['close'].shift(1)) / df['close'].shift(1)) * 100
 
 
+@click.command()
+@click.argument('symbol', type=str)
 def analyze(symbol):
     df_5i = reader.fzline(symbol=symbol)
     cal_ma(df_5i, 5)
@@ -40,7 +44,3 @@ def analyze(symbol):
     cal_pct_change(df_d)
 
     print(df_d.tail(20))
-
-
-if __name__ == '__main__':
-    analyze('300364')

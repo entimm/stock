@@ -7,9 +7,10 @@ from flask import render_template, Blueprint, request, url_for, redirect
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
 
-blueprint = Blueprint('index', __name__)
+from common.common import TDX_DIR
+from common.data import symbol_name_dict, gnbk_dict
 
-TDX_DIR = '/Volumes/[C] Windows 11/Apps/通达信金融终端(开心果整合版)V2023.03'
+blueprint = Blueprint('index', __name__)
 
 
 class PeriodEnum(Enum):
@@ -74,8 +75,11 @@ def index():
 
     kline_list = df.apply(row_to_kline, axis=1).to_list()
 
+    symbol_name = gnbk_dict[symbol] if symbol[0:2] == '88' else symbol_name_dict[symbol]
+
     template_var = {
         'symbol': symbol,
+        'symbol_name': symbol_name,
         'period': period,
         'kline_list': kline_list,
         'period_list': {

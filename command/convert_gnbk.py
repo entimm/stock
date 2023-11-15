@@ -2,9 +2,11 @@ import argparse
 import datetime
 import os
 
+import click
 import numpy as np
 import pandas as pd
 
+from common.common import PROCESSED_PATH, RAW_PATH, YEAR
 from common.utils import read_tdx_text, filter_files_by_date
 
 
@@ -15,9 +17,10 @@ def sort(df, col, asc):
     return top_20.values
 
 
-resources_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'resources')
-
-if __name__ == '__main__':
+@click.command()
+@click.argument('year', default=YEAR, type=str)
+@click.argument('update_n', default=1, type=int)
+def convert_gnbk(year, update_n):
     parser = argparse.ArgumentParser(description='转换处理概念板块')
     current_year = datetime.datetime.now().year
     parser.add_argument('year', type=int, nargs='?', default=current_year)
@@ -25,7 +28,7 @@ if __name__ == '__main__':
 
     year = args.year
 
-    directory_path = os.path.join(resources_path, 'raw', '行业概念')
+    directory_path = os.path.join(RAW_PATH, '行业概念')
     file_pattern = r'(\d{4})'
     file_pattern = f'行业概念({year}{file_pattern}).txt'
 
@@ -53,4 +56,4 @@ if __name__ == '__main__':
 
     df = pd.DataFrame(container)
     df = df.reindex(sorted(df.columns), axis=1)
-    df.to_csv(os.path.join(resources_path, 'new_processed', f'GNBK{year}.csv'), index=False)
+    df.to_csv(os.path.join(PROCESSED_PATH, f'GNBK{year}.csv'), index=False)
