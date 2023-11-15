@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 
 from controllers import index_controller, line_controller, table_controller
@@ -8,4 +10,5 @@ app.register_blueprint(line_controller.blueprint)
 app.register_blueprint(table_controller.blueprint)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8008)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
