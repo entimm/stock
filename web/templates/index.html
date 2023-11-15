@@ -153,6 +153,9 @@
     if (['Escape', 'Space'].includes(event.code)) {
       window.parent.postMessage('close_me', '*');
     }
+    if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.code)) {
+      window.parent.postMessage(`${event.code}`, '*');
+    }
   });
 </script>
 </body>

@@ -99,6 +99,9 @@
             font-weight: bolder;
             color: red;
         }
+        .select-cell {
+            border: 3px solid red;
+        }
     </style>
 </head>
 <body>
@@ -119,8 +122,8 @@
     </div>
 
     <script>
-        // 提供的数据
         let data = {{ data | safe }};
+        let selectedCell = null
 
         function renderGrid() {
             let table = document.getElementById('grid');
@@ -166,20 +169,13 @@
                         if (clickX < cellRect.width / 2) {
                             highlightCells(cell.textContent);
                         } else {
+                            setSelectedCell(cell)
                             openDialog(`/?symbol=${value[1]}&period=D`);
                         }
                     });
                     cell.addEventListener('mouseover', function() {
-                        tooltip.textContent = this.getAttribute('v');
-
-                        // 计算tooltip的位置
-                        var boundingRect = this.getBoundingClientRect();
-                        var tooltipX = boundingRect.right + window.pageXOffset -10;
-                        var tooltipY = boundingRect.bottom + window.pageYOffset -10;
-
-                        tooltip.style.display = 'block';
-                        tooltip.style.left = tooltipX + 'px';
-                        tooltip.style.top = tooltipY + 'px';
+                        show_tooltip(this)
+                        setSelectedCell(this)
                     });
                 }
                 tbody.appendChild(row);
@@ -204,6 +200,19 @@
                     cell.style.backgroundColor = cell.style.backgroundColor ? "" : color;
                 }
             }
+        }
+
+        function show_tooltip(cell) {
+            tooltip.textContent = cell.getAttribute('v');
+
+            // 计算tooltip的位置
+            var boundingRect = cell.getBoundingClientRect();
+            var tooltipX = boundingRect.right + window.pageXOffset -10;
+            var tooltipY = boundingRect.bottom + window.pageYOffset -10;
+
+            tooltip.style.display = 'block';
+            tooltip.style.left = tooltipX + 'px';
+            tooltip.style.top = tooltipY + 'px';
         }
 
         function addDotClass(element, price) {
@@ -246,9 +255,69 @@
 
         renderGrid();
 
+        function getAdjacentCell(cell, direction) {
+          var row = cell.parentNode.rowIndex;
+          var col = cell.cellIndex;
+
+          var table = document.getElementById("grid");
+          var numRows = table.rows.length;
+          var numCols = table.rows[0].cells.length;
+
+          switch (direction) {
+            case "ArrowUp":
+              return row > 0 ? table.rows[row - 1].cells[col] : null;
+            case "ArrowRight":
+              return col < numCols - 1 ? table.rows[row].cells[col + 1] : null;
+            case "ArrowDown":
+              return row < numRows - 1 ? table.rows[row + 1].cells[col] : null;
+            case "ArrowLeft":
+              return col > 0 ? table.rows[row].cells[col - 1] : null;
+            default:
+              return null;
+          }
+        }
+
+        function setSelectedCell(cell) {
+            if (selectedCell) {
+                selectedCell.classList.remove('select-cell')
+            }
+            selectedCell = cell
+            cell.classList.add('select-cell')
+        }
+
         window.addEventListener('message', function(event) {
           if (event.data === 'close_me') {
             closeDialog();
+          }
+          if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.data)) {
+            let cell = getAdjacentCell(selectedCell, event.data)
+            if (cell) {
+                let symbol = cell.getAttribute('symbol');
+                if (symbol) {
+                    var iframe = document.getElementById('iframeContent');
+                    iframe.src = iframe.contentWindow.document.URL.replace(/\d{6}/, symbol);
+                    setSelectedCell(cell);
+                }
+            }
+          }
+        });
+
+        document.addEventListener('keydown', function (e) {
+          if (e.code === 'ArrowUp' || e.code === 'ArrowDown' || e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
+            let cell = getAdjacentCell(selectedCell, e.code)
+            if (cell) {
+                setSelectedCell(cell);
+                let symbol = cell.getAttribute('symbol');
+                show_tooltip(cell);
+            }
+          }
+          if (e.code === 'Space') {
+            if (selectedCell) {
+                let symbol = selectedCell.getAttribute('symbol');
+                if (symbol) {
+                    openDialog(`/?symbol=${symbol}&period=F5`);
+                }
+            }
           }
         });
 
