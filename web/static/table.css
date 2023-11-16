@@ -1,0 +1,100 @@
+table {
+    border-collapse: collapse;
+    width: max-content;
+}
+
+td, th {
+    border: 1px solid rgba(0, 0, 0, 0.23);
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+}
+
+th {
+    background-color: black;
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+#grid-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.highlight {
+    color: #FF5733;
+    font-weight: bold;
+    font-size: 20px;
+    text-decoration: underline;
+}
+
+.fixed-links {
+    margin: 10px;
+}
+
+td {
+    position: relative;
+}
+
+.dot::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 6px;
+    height: 6px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.red-dot1::after {
+    background-color: #ffcccc;
+}
+
+.red-dot2::after {
+    background-color: #ff0000;
+}
+
+.red-dot3::after {
+    background-color: #f500ff;
+}
+
+.green-dot1::after {
+    background-color: #ccffcc;
+}
+
+.green-dot2::after {
+    background-color: #00ff00;
+}
+
+.green-dot3::after {
+    background-color: #16b9de;
+}
+
+#tooltip {;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 20px;
+}
+
+#myDialog {
+    height: 80%;
+    width: 80%;
+    border: none;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+}
+
+.close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    font-size: 30px;
+    font-weight: bolder;
+    color: red;
+}
+
+.select-cell {
+    border: 3px solid red;
+}
