@@ -1,4 +1,3 @@
-import argparse
 import datetime
 import os
 
@@ -21,13 +20,6 @@ def sort(df, col, asc):
 @click.argument('year', default=YEAR, type=str)
 @click.argument('update_n', default=1, type=int)
 def convert_gnbk(year, update_n):
-    parser = argparse.ArgumentParser(description='转换处理概念板块')
-    current_year = datetime.datetime.now().year
-    parser.add_argument('year', type=int, nargs='?', default=current_year)
-    args = parser.parse_args()
-
-    year = args.year
-
     directory_path = os.path.join(RAW_PATH, '行业概念')
     file_pattern = r'(\d{4})'
     file_pattern = f'行业概念({year}{file_pattern}).txt'
