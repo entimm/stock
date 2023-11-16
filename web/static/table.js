@@ -1,5 +1,5 @@
 let selectedCell = null;
-
+let focusMode = 'cursor';
 window.addEventListener('message', function (event) {
     if (event.data === 'close_me') {
         closeDialog();
@@ -21,6 +21,7 @@ document.addEventListener('keydown', function (event) {
     if (event.code === 'ArrowUp' || event.code === 'ArrowDown' || event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
         let cell = getAdjacentCell(selectedCell, event.code)
         if (cell) {
+            focusMode = 'key'
             setSelectedCell(cell);
             let symbol = cell.getAttribute('symbol');
             show_tooltip(cell);
@@ -85,13 +86,19 @@ function renderCell(cell, value, i) {
         if (clickX < cellRect.width / 2) {
             highlightCells(cell.textContent);
         } else {
-            setSelectedCell(cell)
-            openDialog(`/?symbol=${value[1]}&period=${KLINE_PERIOD}`);
+            if (focusMode === 'cursor') {
+                setSelectedCell(cell)
+                openDialog(`/?symbol=${value[1]}&period=${KLINE_PERIOD}`);
+            }
+            focusMode = 'cursor';
         }
     });
     cell.addEventListener('mouseover', function () {
-        show_tooltip(this)
-        setSelectedCell(this)
+        if (focusMode === 'cursor') {
+            show_tooltip(this)
+            setSelectedCell(this)
+        }
+
     });
 }
 
