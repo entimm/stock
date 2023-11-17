@@ -75,7 +75,7 @@ def index():
 
     kline_list = df.apply(row_to_kline, axis=1).to_list()
 
-    symbol_name = gnbk_dict[symbol] if symbol[0:2] == '88' else symbol_name_dict[symbol]
+    symbol_name = gnbk_dict.get(symbol, symbol) if symbol[0:2] == '88' else symbol_name_dict[symbol]
 
     template_var = {
         'symbol': symbol,
