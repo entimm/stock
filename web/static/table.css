@@ -71,11 +71,22 @@ td {
     background-color: #16b9de;
 }
 
-#tooltip {;
+#tooltip {
+    position: absolute;
     background-color: #fff;
     border: 1px solid #ccc;
     padding: 10px;
     font-size: 20px;
+}
+
+#tooltip-trend {
+    position: fixed;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 20px;
+    width: 1640px;
+    height: 340px;
 }
 
 #myDialog {

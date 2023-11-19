@@ -23,8 +23,8 @@ document.addEventListener('keydown', function (event) {
         if (cell) {
             focusMode = 'key'
             setSelectedCell(cell);
-            let symbol = cell.getAttribute('symbol');
             show_tooltip(cell);
+            show_tooltip_trend(cell);
         }
     }
     if (event.code === 'Space') {
@@ -95,6 +95,7 @@ function renderCell(cell, value, i) {
     });
     cell.addEventListener('mouseover', function () {
         if (focusMode === 'cursor') {
+            show_tooltip_trend(this);
             show_tooltip(this)
             setSelectedCell(this)
         }
@@ -170,4 +171,69 @@ function highlightCells(value) {
             cell.style.backgroundColor = cell.style.backgroundColor ? "" : color;
         }
     }
+}
+
+function getExchangeCode(symbol) {
+    let exchangeCode = symbol.slice(0, 2);
+
+    if (exchangeCode === "60" || exchangeCode === "68") {
+        return `sh${symbol}`;
+    } else if (exchangeCode === "00" || exchangeCode === "30") {
+        return `sz${symbol}`;
+    } else if (exchangeCode === "43" || exchangeCode === "83" || exchangeCode === "87") {
+        return `bj${symbol}`;
+    } else {
+        return '';
+    }
+}
+
+function show_tooltip_trend(cell) {
+    let tooltip = document.getElementById('tooltip-trend');
+    let symbol = cell.getAttribute('symbol');
+    let code = getExchangeCode(symbol);
+    tooltip.textContent = '';
+    if (!code) return
+
+    let img1 = document.createElement("img");
+    img1.src = `https://image2.sinajs.cn/newchart/min/n/${code}.gif`;
+    tooltip.appendChild(img1);
+    let img2 = document.createElement("img");
+    img2.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif`;
+    tooltip.appendChild(img2);
+    let img3 = document.createElement("img");
+    img3.src = `https://image2.sinajs.cn/newchart/weekly/n/${code}.gif`;
+    tooltip.appendChild(img3);
+
+    // 计算tooltip的位置
+
+    // 获取屏幕的宽度和高度
+    var screenWidth = window.innerWidth;
+    var screenHeight = window.innerHeight;
+
+    if (event.clientY <= screenHeight / 2) {
+        // 右下角
+        tooltip.style.left = screenWidth - tooltip.offsetWidth + 'px';
+        tooltip.style.top = screenHeight - tooltip.offsetHeight + 'px';
+    } else {
+        // 右上角
+        tooltip.style.left = screenWidth - tooltip.offsetWidth + 'px';
+        tooltip.style.top = '0px';
+
+    }
+
+    tooltip.style.display = 'block';
+}
+
+function show_tooltip(cell) {
+    let tooltip = document.getElementById('tooltip');
+    tooltip.textContent = cell.getAttribute('v');
+
+    // 计算tooltip的位置
+    var boundingRect = cell.getBoundingClientRect();
+    var tooltipX = boundingRect.right + window.pageXOffset -10;
+    var tooltipY = boundingRect.bottom + window.pageYOffset -10;
+
+    tooltip.style.display = 'block';
+    tooltip.style.left = tooltipX + 'px';
+    tooltip.style.top = tooltipY + 'px';
 }

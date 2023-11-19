@@ -32,10 +32,6 @@
         table tr:nth-child(91) {
           border-bottom: 4px solid #008000;
         }
-        .tooltip-big {;
-          width: 1640px;
-          height: 340px;
-        }
     </style>
     <link rel="stylesheet" href="static/table.css">
 </head>
@@ -59,7 +55,8 @@
 
     <div id="grid-container">
         <table id="grid"></table>
-        <div id="tooltip" class="tooltip-big" style="display:none;position: fixed;"></div>
+        <div id="tooltip" style="display:none;"></div>
+        <div id="tooltip-trend" style="display:none;"></div>
     </div>
     <script type="text/javascript" src="/static/table.js"></script>
     <script>
@@ -67,57 +64,6 @@
         const KLINE_PERIOD = 'F5';
 
         renderGrid(data);
-
-        function getExchangeCode(symbol) {
-            let exchangeCode = symbol.slice(0, 2);
-
-            if (exchangeCode === "60" || exchangeCode === "68") {
-                return `sh${symbol}`;
-            } else if (exchangeCode === "00" || exchangeCode === "30") {
-                return `sz${symbol}`;
-            } else if (exchangeCode === "43" || exchangeCode === "83" || exchangeCode === "87") {
-                return `bj${symbol}`;
-            } else {
-                return symbol;
-            }
-        }
-
-        function show_tooltip(cell) {
-          let symbol = cell.getAttribute('symbol');
-          let code = getExchangeCode(symbol)
-          tooltip.textContent = cell.getAttribute('v');
-
-          tooltip.appendChild(document.createElement('br'));
-
-          let img1 = document.createElement("img");
-          img1.src = `https://image2.sinajs.cn/newchart/min/n/${code}.gif`;
-          tooltip.appendChild(img1);
-          let img2 = document.createElement("img");
-          img2.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif`;
-          tooltip.appendChild(img2);
-          let img3 = document.createElement("img");
-          img3.src = `https://image2.sinajs.cn/newchart/weekly/n/${code}.gif`;
-          tooltip.appendChild(img3);
-
-          // 计算tooltip的位置
-
-          // 获取屏幕的宽度和高度
-          var screenWidth = window.innerWidth;
-          var screenHeight = window.innerHeight;
-
-        if (event.clientY <= screenHeight / 2) {
-          // 右下角
-          tooltip.style.left = screenWidth - tooltip.offsetWidth + 'px';
-          tooltip.style.top = screenHeight - tooltip.offsetHeight + 'px';
-        } else {
-          // 右上角
-          tooltip.style.left = screenWidth - tooltip.offsetWidth + 'px';
-          tooltip.style.top = '0px';
-
-        }
-
-          tooltip.style.display = 'block';
-        }
 
         function addDotClass(element, price) {
             const dotClasses = [
