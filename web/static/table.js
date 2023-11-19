@@ -88,7 +88,7 @@ function renderCell(cell, value, i) {
         } else {
             if (focusMode === 'cursor') {
                 setSelectedCell(cell)
-                openDialog(`/?symbol=${value[1]}&period=${KLINE_PERIOD}`);
+                openDialog(`/chart?symbol=${value[1]}&period=${KLINE_PERIOD}`);
             }
             focusMode = 'cursor';
         }
