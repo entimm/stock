@@ -75,8 +75,8 @@ function renderCell(cell, value, i) {
         cell.classList.add("table-empty" + parseInt(i / 20));
         return;
     }
-    addDotClass(cell, value[2])
-    cell.setAttribute('v', `${value[2]} # ${value[3]}`);
+    addDotClass(cell, value)
+    cell.setAttribute('v', value.slice(2).join(' # '));
     cell.setAttribute('symbol', value[1]);
     cell.addEventListener('click', function () {
         var cellRect = cell.getBoundingClientRect();
@@ -192,7 +192,10 @@ function show_tooltip_trend(cell) {
     let symbol = cell.getAttribute('symbol');
     let code = getExchangeCode(symbol);
     tooltip.textContent = '';
-    if (!code) return
+    if (!code) {
+        tooltip.style.display = 'none';
+        return
+    }
 
     let img1 = document.createElement("img");
     img1.src = `https://image2.sinajs.cn/newchart/min/n/${code}.gif`;

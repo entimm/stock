@@ -18,7 +18,7 @@
             border-color: #2fff00;
         }
     </style>
-    <link rel="stylesheet" href="static/table.css">
+    <link rel="stylesheet" href="/static/table.css">
 </head>
 <body>
     <div class="fixed-links">
@@ -45,7 +45,8 @@
 
         renderGrid(data);
 
-        function addDotClass(element, price) {
+        function addDotClass(element, value) {
+            let price = value[2]
             const dotClasses = [
                 { 'condition': price >= 6, 'className': 'red-dot3' },
                 { 'condition': price >= 3, 'className': 'red-dot2' },
