@@ -16,6 +16,7 @@ def index():
             {'name': '涨跌停表', 'url': '/limited', 'type': 'system'},
             {'name': 'ipo趋势图', 'url': '/ipo', 'type': 'system'},
             {'name': '北向资金', 'url': '/north_funds', 'type': 'system'},
+            {'name': 'A股交易额', 'url': '/turnover', 'type': 'system'},
 
             {'name': 'A股热力图', 'url': 'https://www.moomoo.com/hans/heatmap-cn/stock', 'type': 'external'},
             {'name': '选股宝', 'url': 'https://xuangubao.cn', 'type': 'external'},
