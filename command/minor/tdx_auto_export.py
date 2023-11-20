@@ -6,6 +6,26 @@ import pyautogui
 
 from common.common import RESOURCES_PATH, TDX_EXPORT_PATH
 
+
+def count_lines(file_path):
+    with open(file_path, 'r') as file:
+        return len(file.readlines())
+
+
+def is_file_exists(directory, filename):
+    return os.path.exists(os.path.join(directory, filename))
+
+
+def read_nth_line(filename, n):
+    if n == 0:
+        print('cur_line为0了')
+        exit()
+    with open(filename, 'r') as file:
+        for i, line in enumerate(file, 1):
+            if i == n:
+                return line.strip()
+
+
 class tdx_auto_export:
     def __init__(self, name, load_waiting, export_waiting):
         self.name = name
@@ -21,69 +41,45 @@ class tdx_auto_export:
         print('执行导出...')
         time.sleep(self.export_waiting)
 
-
     def auto_load_next(self, date_list_filename, cur_line):
-        global load_time
         current_timestamp = time.time()
         pyautogui.press(']')
-        print(f'按键],加载数据{load_time}...')
-        time.sleep(load_time)
+        print(f'按键],加载数据,等待{self.load_waiting}...')
+        time.sleep(self.load_waiting)
 
         self.export()
 
-        findfilename = self.read_nth_line(date_list_filename, cur_line)
+        findfilename = read_nth_line(date_list_filename, cur_line)
         findfilename = self.name + findfilename + '.txt'
         while True:
             print('>>>')
             cost_time = int(time.time() - current_timestamp)
-            if self.is_file_exists(TDX_EXPORT_PATH, findfilename):
+            if is_file_exists(TDX_EXPORT_PATH, findfilename):
                 print(f'{findfilename}->SUCCESS({cost_time})')
                 pyautogui.press('esc')
                 break
             else:
                 time.sleep(1)
-                if (cost_time >= load_time + 10):
-                    load_time += 1
+                if cost_time >= self.load_waiting + 10:
+                    self.load_waiting += 1
                     pyautogui.press('esc')
                     self.export()
-
-
-    def is_file_exists(self, directory, filename):
-        return os.path.exists(os.path.join(directory, filename))
-
-
-    def count_lines(self, filePath):
-        with open(filePath, 'r') as file:
-            return len(file.readlines())
-
-
-    def read_nth_line(self, filename, n):
-        if n == 0:
-            print('cur_line为0了')
-            exit()
-        with open(filename, 'r') as file:
-            for i, line in enumerate(file, 1):
-                if i == n:
-                    return line.strip()
-
-
 
     def tdx_auto_export(self):
         date_list_filename = os.path.join(RESOURCES_PATH, 'date_from_2018.txt')
 
         times = 0
-        load_time = self.load_waiting
-        cur_line = self.count_lines(date_list_filename)
+        cur_line = count_lines(date_list_filename)
 
         while True:
-            findfilename = self.read_nth_line(date_list_filename, cur_line)
+            findfilename = read_nth_line(date_list_filename, cur_line)
             findfilename = self.name + findfilename + '.txt'
-            if self.is_file_exists(TDX_EXPORT_PATH, findfilename):
+            if is_file_exists(TDX_EXPORT_PATH, findfilename):
                 cur_line -= 1
             else:
                 break
 
-        findfilename = self.read_nth_line(date_list_filename, cur_line)
+        findfilename = read_nth_line(date_list_filename, cur_line)
         print(f'findfilename开始值为{findfilename}')
 
         time.sleep(10)
@@ -99,10 +95,12 @@ class tdx_auto_export:
                 print('END！！！')
                 exit()
 
+
 @click.command()
 def tdx_auto_export_stock():
     export = tdx_auto_export('全部Ａ股', 20, 5)
     export.tdx_auto_export()
+
 
 @click.command()
 def tdx_auto_export_gnbk():

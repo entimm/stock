@@ -1,6 +1,6 @@
-import datetime
-import os
 import configparser
+import os
+from enum import Enum, auto
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -22,7 +22,19 @@ TDX_PATH = config.get('tdx', 'app_path')
 TDX_EXPORT_PATH = TDX_PATH + '/T0002/export'
 TDX_BLOCK_NEW_PATH = os.path.join(TDX_PATH, 'T0002', 'blocknew')
 
-YEAR = datetime.datetime.now().year
-
-
 TUSHARE_TOKEN = config.get('tushare', 'token')
+
+
+class PeriodEnum(Enum):
+    F1 = auto()
+    F5 = auto()
+    F15 = auto()
+    F30 = auto()
+    D = auto()
+
+
+TDX_FREQUENCY_MAP = {
+    PeriodEnum.F1: 8,
+    PeriodEnum.F5: 0,
+    PeriodEnum.D: 9
+}

@@ -3,7 +3,8 @@ import os
 import click
 import pandas as pd
 
-from common.common import PROCESSED_PATH, RAW_PATH, YEAR
+from common.common import PROCESSED_PATH, RAW_PATH
+from common.data import YEAR
 from common.utils import read_tdx_text, filter_files_by_date
 
 

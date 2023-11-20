@@ -1,5 +1,7 @@
 import numpy as np
 
+from common.common import PeriodEnum
+
 
 def _bars_last_count(condition):
     rt = np.zeros(len(condition) + 1, dtype=int)
@@ -34,3 +36,24 @@ def ma_trend(df, condition):
     df['ma_trend_base_price'] = _ma_trend_base_price1(df)
 
     return (df['close'] / df['ma_trend_base_price'] - 1) * 100
+
+
+def pct_change(df):
+    ((df['close'] - df['close'].shift(1)) / df['close'].shift(1)) * 100
+
+
+def resample_kline(df, period_enum: PeriodEnum):
+    resample_map = {
+        PeriodEnum.F15: '15T',
+        PeriodEnum.F30: '30T',
+    }
+    freq = resample_map[period_enum]
+    df_15min = df.resample(freq, label='right', closed='right').agg({
+        'open': 'first',
+        'high': 'max',
+        'low': 'min',
+        'close': 'last',
+        'volume': 'sum',
+    })
+
+    return df_15min[df_15min['volume'] > 0]

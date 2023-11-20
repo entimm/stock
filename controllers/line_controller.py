@@ -4,14 +4,13 @@ from typing import Dict, List
 import pandas as pd
 from flask import render_template, request, Blueprint
 
-from common.common import PROCESSED_PATH, YEAR
-from common.data import symbol_name_dict, gnbk_dict
+from common.common import PROCESSED_PATH
+from common.data import symbol_name_dict, gnbk_dict, YEAR
 
 blueprint = Blueprint('line', __name__)
 
 
-def read_data(file_path: str, row_numbers: List[int], type_val: int = 0, is_gnbk: bool = False) -> Dict[
-    str, Dict[str, List[str]]]:
+def read_data(file_path: str, row_numbers: List[int], type_val: int = 0, is_gnbk: bool = False) -> Dict[str, Dict[str, List[str]]]:
     result = {'name': {}, 'value': {}}
 
     df = pd.read_csv(file_path)

@@ -5,8 +5,8 @@ from typing import Dict, List
 import pandas as pd
 from flask import render_template, request, Blueprint
 
-from common.common import PROCESSED_PATH, YEAR
-from common.data import gnbk_dict, symbol_name_dict
+from common.common import PROCESSED_PATH
+from common.data import gnbk_dict, symbol_name_dict, YEAR
 
 blueprint = Blueprint('table', __name__)
 

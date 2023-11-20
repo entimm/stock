@@ -1,11 +1,11 @@
-import datetime
 import os
 
 import click
 import numpy as np
 import pandas as pd
 
-from common.common import PROCESSED_PATH, RAW_PATH, YEAR
+from common.common import PROCESSED_PATH, RAW_PATH
+from common.data import YEAR
 from common.utils import read_tdx_text, filter_files_by_date
 
 
@@ -18,8 +18,7 @@ def sort(df, col, asc):
 
 @click.command()
 @click.argument('year', default=YEAR, type=str)
-@click.argument('update_n', default=1, type=int)
-def convert_gnbk(year, update_n):
+def convert_gnbk(year):
     directory_path = os.path.join(RAW_PATH, '行业概念')
     file_pattern = r'(\d{4})'
     file_pattern = f'行业概念({year}{file_pattern}).txt'
@@ -35,7 +34,7 @@ def convert_gnbk(year, update_n):
     file_list = sorted(file_list, key=lambda x: x[0], reverse=False)
     for file_path, date in file_list:
         df = read_tdx_text(file_path)
-        for sort_col in sort_col_config:
+        for _ in sort_col_config:
             container[date] = np.hstack((
                 sort(df, '超短强度', False),
                 np.array(['']),

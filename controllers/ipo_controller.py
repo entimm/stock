@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pandas as pd
 from flask import Blueprint, render_template
 from pandas import Series
@@ -20,7 +18,6 @@ def ipo():
     weekly_count: Series = stock_meta_df.groupby('list_week').size()
     monthly_count: Series = stock_meta_df.groupby('list_month').size()
     yearly_count: Series = stock_meta_df.groupby('list_year').size()
-
 
     template_var = {
         'weekly_count': weekly_count.to_dict(),
