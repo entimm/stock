@@ -8,6 +8,7 @@ from command.convert_astock import convert_astock
 from command.convert_gnbk import convert_gnbk
 from command.minor.cal_trend_ptg import cal_trend_ptg
 from command.minor.convert_tdx_xls import convert_tdx_xls
+from command.minor.north_funds import north_funds
 from command.minor.stock_meta import stock_meta
 from command.mv_raw import mv_raw
 
@@ -30,6 +31,7 @@ main.add_command(mv_raw)
 main.add_command(cal_trend_ptg)
 main.add_command(convert_tdx_xls)
 main.add_command(stock_meta)
+main.add_command(north_funds)
 
 
 if __name__ == '__main__':

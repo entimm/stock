@@ -10,6 +10,7 @@ APP_PATH = os.path.dirname(os.path.dirname(__file__))
 RESOURCES_PATH = os.path.join(APP_PATH, 'resources')
 
 STOCK_META_FILE_PATH = os.path.join(RESOURCES_PATH, 'a_stock_meta_list.csv')
+NORTH_FUNDS_FILE_PATH = os.path.join(RESOURCES_PATH, 'north_funds.csv')
 GNBK_FILE_PATH = os.path.join(RESOURCES_PATH, 'gnbk_list.csv')
 ETF_FILE_PATH = os.path.join(RESOURCES_PATH, 'etf.csv')
 
