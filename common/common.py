@@ -17,8 +17,9 @@ PROCESSED_PATH = os.path.join(RESOURCES_PATH, 'new_processed')
 RAW_PATH = os.path.join(RESOURCES_PATH, 'raw')
 TOTAL_PATH = os.path.join(RESOURCES_PATH, 'total')
 
-TDX_DIR = config.get('tdx', 'app_path')
-TDX_EXPORT_DIR = TDX_DIR + '/T0002/export'
+TDX_PATH = config.get('tdx', 'app_path')
+TDX_EXPORT_PATH = TDX_PATH + '/T0002/export'
+TDX_BLOCK_NEW_PATH = os.path.join(TDX_PATH, 'T0002', 'blocknew')
 
 YEAR = datetime.datetime.now().year
 

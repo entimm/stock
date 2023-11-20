@@ -5,7 +5,7 @@ import shutil
 
 import click
 
-from common.common import RAW_PATH, TDX_EXPORT_DIR
+from common.common import RAW_PATH, TDX_EXPORT_PATH
 
 
 def is_recently_created(file_path, threshold_minutes=120):
@@ -19,9 +19,9 @@ def is_recently_created(file_path, threshold_minutes=120):
 
 @click.command()
 def mv_raw():
-    contents = os.listdir(TDX_EXPORT_DIR)
+    contents = os.listdir(TDX_EXPORT_PATH)
     for item in contents:
-        source_path = os.path.join(TDX_EXPORT_DIR, item)
+        source_path = os.path.join(TDX_EXPORT_PATH, item)
 
         file_regex = re.compile(r'(全部Ａ股|行业概念)(\d{6})')
 

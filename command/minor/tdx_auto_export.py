@@ -4,7 +4,7 @@ import time
 import click
 import pyautogui
 
-from common.common import RESOURCES_PATH, TDX_EXPORT_DIR
+from common.common import RESOURCES_PATH, TDX_EXPORT_PATH
 
 class tdx_auto_export:
     def __init__(self, name, load_waiting, export_waiting):
@@ -36,7 +36,7 @@ class tdx_auto_export:
         while True:
             print('>>>')
             cost_time = int(time.time() - current_timestamp)
-            if self.is_file_exists(TDX_EXPORT_DIR, findfilename):
+            if self.is_file_exists(TDX_EXPORT_PATH, findfilename):
                 print(f'{findfilename}->SUCCESS({cost_time})')
                 pyautogui.press('esc')
                 break
@@ -78,7 +78,7 @@ class tdx_auto_export:
         while True:
             findfilename = self.read_nth_line(date_list_filename, cur_line)
             findfilename = self.name + findfilename + '.txt'
-            if self.is_file_exists(TDX_EXPORT_DIR, findfilename):
+            if self.is_file_exists(TDX_EXPORT_PATH, findfilename):
                 cur_line -= 1
             else:
                 break

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Data Density Chart</title>
+  <script src="/static/echarts.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: sans-serif;
+    }
+
+    #chart {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    #weekChart, #monthChart, #yearChart {
+      flex: 1;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <div id="chart">
+    <div id="weekChart"></div>
+    <div id="monthChart"></div>
+    <div id="yearChart"></div>
+  </div>
+
+  <script>
+    let weekCounts = {{ weekly_count | safe }};
+    let monthCounts = {{ monthly_count | safe }};
+    let yearCounts = {{ yearly_count | safe }};
+
+    let generateChartConfig = (data) => {
+      let seriesData = [];
+      for (let key in data) {
+        seriesData.push({
+          name: key,
+          value: data[key]
+        });
+      }
+
+      return {
+        grid: {
+          top: '2%',
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: Object.keys(data)
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [{
+          type: 'line',
+          data: seriesData,
+          itemStyle: {
+            color: 'rgb(246,119,119)'
+          },
+          areaStyle: {
+            color: 'rgb(246,119,119)'
+          },
+          lineStyle: {
+            color: 'rgba(245,91,91,0.5)'
+          },
+          smooth: 0.4
+        }],
+        tooltip: {
+          trigger: 'axis',
+          position: function (pt) {
+            return [pt[0], '10%'];
+          }
+        },
+        dataZoom: [
+          {
+            type: 'inside',
+            start: 0,
+            end: 9999
+          },
+          {
+            start: 0,
+            end: 9999
+          }
+        ],
+      };
+    };
+
+    let weekChart = echarts.init(document.getElementById('weekChart'));
+    weekChart.setOption(generateChartConfig(weekCounts));
+
+    let monthChart = echarts.init(document.getElementById('monthChart'));
+    monthChart.setOption(generateChartConfig(monthCounts));
+
+    let yearChart = echarts.init(document.getElementById('yearChart'));
+    yearChart.setOption(generateChartConfig(yearCounts));
+  </script>
+</body>
+</html>

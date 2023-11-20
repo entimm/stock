@@ -5,10 +5,8 @@ from enum import Enum, auto
 import pandas as pd
 from flask import render_template, Blueprint, request, url_for, redirect
 from mootdx.quotes import Quotes
-from mootdx.reader import Reader
 
-from common.common import TDX_DIR
-from common.data import symbol_name_dict, gnbk_dict
+from common.data import symbol_name_dict, gnbk_dict, local_tdx_reader
 
 blueprint = Blueprint('chart', __name__)
 
@@ -61,12 +59,10 @@ def index():
     if not symbol or not period:
         return redirect(url_for('index.index', symbol='600519', period=PeriodEnum.F5.name, req_real=0))
 
-    reader = Reader.factory(market='std', tdxdir=TDX_DIR)
-
     period_enum = PeriodEnum[period]
     frequency = FREQUENCY_MAP.get(period_enum)
 
-    df = fetch_local_data(reader, symbol, period_enum)
+    df = fetch_local_data(local_tdx_reader, symbol, period_enum)
 
     if req_real and period_enum != PeriodEnum.D:
         client = Quotes.factory(market='std')

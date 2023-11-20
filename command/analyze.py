@@ -1,10 +1,7 @@
 import click
 import numpy as np
-from mootdx.reader import Reader
 
-from common.common import TDX_DIR
-
-reader = Reader.factory(market='std', tdxdir=TDX_DIR)
+from common.data import local_tdx_reader
 
 
 def cal_ma(df, window):
@@ -21,7 +18,7 @@ def cal_pct_change(df):
 @click.command()
 @click.argument('symbol', type=str)
 def analyze(symbol):
-    df_5i = reader.fzline(symbol=symbol)
+    df_5i = local_tdx_reader.fzline(symbol=symbol)
     cal_ma(df_5i, 5)
     cal_ma(df_5i, 10)
     cal_ma(df_5i, 20)
@@ -34,7 +31,7 @@ def analyze(symbol):
 
     print(df_5i.tail(20))
 
-    df_d = reader.daily(symbol=symbol)
+    df_d = local_tdx_reader.daily(symbol=symbol)
     cal_ma(df_d, 5)
     cal_ma(df_d, 10)
     cal_ma(df_d, 20)

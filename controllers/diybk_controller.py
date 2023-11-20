@@ -4,17 +4,16 @@ from pathlib import Path
 
 from flask import Blueprint, render_template, request
 from mootdx.quotes import Quotes
-from mootdx.reader import Reader
 
-from common.common import TDX_DIR
-from common.data import symbol_name_dict, gnbk_dict, etf_dict
 from common import price_calculate
+from common.common import TDX_BLOCK_NEW_PATH
+from common.data import symbol_name_dict, gnbk_dict, etf_dict, trade_date_list, local_tdx_reader
 
 blueprint = Blueprint('diybk', __name__)
 
 
 def read_bk(bk_key):
-    zxg_file = os.path.join(TDX_DIR, 'T0002', 'blocknew', f'{bk_key}.blk')
+    zxg_file = os.path.join(TDX_BLOCK_NEW_PATH, f'{bk_key}.blk')
 
     if not Path(zxg_file).exists():
         raise Exception("file not exists")
@@ -39,6 +38,7 @@ def custom_compare_desc(x, y):
 
     return y[1] - x[1]
 
+
 def custom_compare_asc(x, y):
     if x[1] is None or y[1] is None:
         return 1
@@ -48,9 +48,7 @@ def custom_compare_asc(x, y):
 
 @blueprint.route('/diybk')
 def diybk():
-    reader = Reader.factory(market='std', tdxdir=TDX_DIR)
-
-    df = reader.block_new(group=True)
+    df = local_tdx_reader.block_new(group=True)
 
     zxg_dict = {'自选': read_bk('zxg')}
 
@@ -105,14 +103,11 @@ def diybk_history():
     direction = request.args.get('direction', 1, type=int)
 
     bk_key = request.args.get('bk_key', 'zxg', type=str).upper()
-    reader = Reader.factory(market='std', tdxdir=TDX_DIR)
     symbols = read_bk(bk_key)
-
-    date_list = reader.daily(symbol='999999').reset_index().tail(100)['date'].to_list()
 
     stock_data = {}
     for symbol in symbols:
-        one_df = reader.daily(symbol=symbol).reset_index().tail(101)
+        one_df = local_tdx_reader.daily(symbol=symbol).reset_index().tail(101)
 
         one_df = one_df.reset_index()
 
@@ -126,7 +121,7 @@ def diybk_history():
         stock_data[symbol] = one_df
 
     result_dict = {}
-    for date in date_list:
+    for date in trade_date_list:
         temp_list = []
 
         for symbol, stock_df in stock_data.items():

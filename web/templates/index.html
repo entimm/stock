@@ -16,7 +16,7 @@
         }
 
         #title-bar {
-            background-color: #1976D2;
+            background-color: #F67777FF;
             color: #fff;
             padding: 10px;
             text-align: left;
@@ -45,11 +45,22 @@
             text-align: center;
             transition: background-color 0.3s;
             font-size: 18px;
-            border-bottom: 2px solid #1976D2;
+            border-bottom: 2px solid #f32c2c;
+        }
+
+        .card .external {
+            border-bottom: 2px solid #8c2cf3;
         }
 
         .card:hover {
-            background-color: #E3F2FD;
+            font-size: 30px;
+            color: white;
+            background-color: #ff5987;
+        }
+
+        .card a:hover {
+            font-size: 20px;
+            color: white;
         }
     </style>
     <title>韭菜收割机 - 致富神器</title>
@@ -63,7 +74,7 @@
 <div id="content">
     {% for link in links %}
     <div class="card">
-        <a href="{{link.url}}" target="_blank">{{link.name}}</a>
+        <a href="{{link.url}}" target="_blank" {% if link.type == 'external' %}class="external"{% endif %}>{{link.name}}</a>
     </div>
     {% endfor %}
 </div>

@@ -2,19 +2,15 @@ import os
 
 import pandas as pd
 from flask import Blueprint, render_template, request
-from mootdx.reader import Reader
 
-from common.common import TDX_DIR, TOTAL_PATH
-from common.data import symbol_name_dict
+from common.common import TOTAL_PATH
+from common.data import symbol_name_dict, trade_date_list
 
 blueprint = Blueprint('limit_stock', __name__)
 
 
 @blueprint.route('/limited')
 def limited():
-    reader = Reader.factory(market='std', tdxdir=TDX_DIR)
-    date_list = reader.daily(symbol='999999').reset_index().tail(100)['date'].to_list()
-
     direction_list = {
         1: {'name': '涨'},
         2: {'name': '跌'},
@@ -22,7 +18,7 @@ def limited():
     direction = request.args.get('direction', 1, type=int)
 
     result_dict = {}
-    for date in date_list:
+    for date in trade_date_list:
         date = date.strftime('%Y%m%d')
         csv_file = os.path.join(TOTAL_PATH, f'data_{date}.csv')
         df = pd.read_csv(csv_file)
@@ -41,8 +37,6 @@ def limited():
         df['show'] = df['ts_name'].astype(str) + '|' + df['ts_code'].astype(str) + '|' + df['pct_chg'].astype(str)
 
         result_dict[f'-{date}-'] = df['show'].to_list()
-
-    print(result_dict)
 
     template_var = {
         'data': dict(reversed(result_dict.items())),
