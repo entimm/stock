@@ -51,13 +51,13 @@ def cal_real_offset(period):
 
 
 @blueprint.route('/chart')
-def index():
+def chart():
     symbol = request.args.get('symbol', '', type=str)
     period = request.args.get('period', '', type=str).upper()
     req_real = request.args.get('req_real', 0, type=int)
 
     if not symbol or not period:
-        return redirect(url_for('index.index', symbol='600519', period=PeriodEnum.F5.name, req_real=0))
+        return redirect(url_for('chart.chart', symbol='999999', period=PeriodEnum.D.name, req_real=0))
 
     period_enum = PeriodEnum[period]
     frequency = FREQUENCY_MAP.get(period_enum)
