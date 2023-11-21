@@ -1,8 +1,9 @@
 body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
+    margin: 0;
+    padding: 0;
+    height: 100%;
 }
+
 table {
     border-collapse: collapse;
     width: max-content;
@@ -26,8 +27,9 @@ th {
     width: 100%;
     overflow-x: auto;
 }
+
 ::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 
 .highlight {

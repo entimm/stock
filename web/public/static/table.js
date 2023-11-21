@@ -233,8 +233,8 @@ function show_tooltip(cell) {
 
     // 计算tooltip的位置
     var boundingRect = cell.getBoundingClientRect();
-    var tooltipX = boundingRect.right + window.pageXOffset -10;
-    var tooltipY = boundingRect.bottom + window.pageYOffset -10;
+    var tooltipX = boundingRect.right + window.pageXOffset - 10;
+    var tooltipY = boundingRect.bottom + window.pageYOffset - 10;
 
     tooltip.style.display = 'block';
     tooltip.style.left = tooltipX + 'px';

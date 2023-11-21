@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -19,6 +19,7 @@
         #chart {
             height: 100%;
         }
+
         .fixed-links1 {
             position: fixed;
             top: 0;
@@ -26,9 +27,11 @@
             margin: 20px 100px;
             z-index: 9999;
         }
+
         .fixed-links1 a {
             margin: 0 2px;
         }
+
         .fixed-links2 {
             position: fixed;
             top: 50px;
@@ -36,130 +39,133 @@
             margin: 20px 100px;
             z-index: 9999;
         }
+
         .fixed-links2 .symbol-name {
             font-size: 30px;
         }
+
         .fixed-links2 .symbol {
             font-size: 20px;
         }
+
         .highlight {
-          color: #FF5733;
-          font-weight: bold;
-          font-size: 20px;
-          text-decoration: underline;
+            color: #FF5733;
+            font-weight: bold;
+            font-size: 20px;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 <div class="fixed-links1">
     {% for period_key, period_name in period_list.items() %}
-        <a href="/chart?symbol={{symbol}}&period={{period_key}}&req_real={{req_real}}" {% if period_key == period %}class="highlight"{% endif %}>{{period_name}}</a>
+        <a href="/chart?symbol={{ symbol }}&period={{ period_key }}&req_real={{ req_real }}" {% if period_key == period %}class="highlight"{% endif %}>{{ period_name }}</a>
     {% endfor %}
-    <a href="/chart?symbol={{symbol}}&period={{period}}&req_real=0" {% if req_real == 0 %}class="highlight"{% endif %}>本地</a>
-    <a href="/chart?symbol={{symbol}}&period={{period}}&req_real=1" {% if req_real == 1 %}class="highlight"{% endif %}>实时</a>
+    <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=0" {% if req_real == 0 %}class="highlight"{% endif %}>本地</a>
+    <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1" {% if req_real == 1 %}class="highlight"{% endif %}>实时</a>
 </div>
 <div class="fixed-links2">
-    <span class="symbol">{{symbol}} - </span><span class="symbol-name">{{symbol_name}}</span>
+    <span class="symbol">{{ symbol }} - </span><span class="symbol-name">{{ symbol_name }}</span>
 </div>
 <div id="chart"></div>
 <script type="text/javascript" src="/static/klinecharts.min.js"></script>
 <script>
-  var chart = klinecharts.init('chart', {
-    timezone: 'Asia/Shanghai',
-    customApi: {
-      formatDate: function (dateTimeFormat, timestamp, format, type) {
-        return timestamp
-      }
-    }
-  })
-  chart._chartStore._timeScaleStore.setBarSpaceLimitConfig(0.01, 20)
-  chart.createIndicator({
-    name: 'MA',
-    precision: 3,
-    calcParams: [5, 10, 20, 60, 240, 480, 960],
-    styles: {
-      lines: [
-        {style: 'solid', size: 0.5, color: '#930606'},
-        {style: 'solid', size: 0.5, color: '#ECAB07'},
-        {style: 'solid', size: 0.5, color: '#EF15DE'},
-        {style: 'solid', size: 1, color: '#16de45'},
-        {style: 'solid', size: 0.5, color: '#6e28e5'},
-        {style: 'solid', size: 0.5, color: '#e50b33'},
-        {style: 'solid', size: 0.5, color: '#16b9de'},
-      ]
-    }
-  }, false, {id: 'candle_pane'})
-  chart.createIndicator('VOL')
-  chart.createIndicator('MACD')
-  chart.setStyles({
-    // 网格线
-    grid: {
-      show: true,
-      horizontal: {
-        show: true,
-        size: 1,
-        color: '#F0F0F0',
-        style: 'solid',
-      },
-      vertical: {
-        show: true,
-        size: 1,
-        color: '#F0F0F0',
-        style: 'solid',
-      }
-    },
-    candle: {
-      // 蜡烛图类型 'candle_solid'|'candle_stroke'|'candle_up_stroke'|'candle_down_stroke'|'ohlc'|'area'
-      type: 'candle_solid',
-      bar: {
-        upColor: '#F21414',
-        downColor: '#08B536',
-        noChangeColor: '#888888',
-        upBorderColor: '#F21414',
-        downBorderColor: '#08B536',
-        noChangeBorderColor: '#888888',
-        upWickColor: '#F21414',
-        downWickColor: '#08B536',
-        noChangeWickColor: '#888888'
-      },
-    },
-    indicator: {
-      bars: [{
-        // 'fill' | 'stroke' | 'stroke_fill'
-        style: 'fill',
-        // 'solid' | 'dashed'
-        borderStyle: 'solid',
-        borderSize: 1,
-        borderDashedValue: [2, 2],
-        upColor: '#F21414',
-        downColor: '#08B536',
-        noChangeColor: '#888888'
-      }],
-      lastValueMark: {
-        show: true,
-      },
-    }
-  });
+    var chart = klinecharts.init('chart', {
+        timezone: 'Asia/Shanghai',
+        customApi: {
+            formatDate: function (dateTimeFormat, timestamp, format, type) {
+                return timestamp
+            }
+        }
+    })
+    chart._chartStore._timeScaleStore.setBarSpaceLimitConfig(0.01, 20)
+    chart.createIndicator({
+        name: 'MA',
+        precision: 3,
+        calcParams: [5, 10, 20, 60, 240, 480, 960],
+        styles: {
+            lines: [
+                {style: 'solid', size: 0.5, color: '#930606'},
+                {style: 'solid', size: 0.5, color: '#ECAB07'},
+                {style: 'solid', size: 0.5, color: '#EF15DE'},
+                {style: 'solid', size: 1, color: '#16de45'},
+                {style: 'solid', size: 0.5, color: '#6e28e5'},
+                {style: 'solid', size: 0.5, color: '#e50b33'},
+                {style: 'solid', size: 0.5, color: '#16b9de'},
+            ]
+        }
+    }, false, {id: 'candle_pane'})
+    chart.createIndicator('VOL')
+    chart.createIndicator('MACD')
+    chart.setStyles({
+        // 网格线
+        grid: {
+            show: true,
+            horizontal: {
+                show: true,
+                size: 1,
+                color: '#F0F0F0',
+                style: 'solid',
+            },
+            vertical: {
+                show: true,
+                size: 1,
+                color: '#F0F0F0',
+                style: 'solid',
+            }
+        },
+        candle: {
+            // 蜡烛图类型 'candle_solid'|'candle_stroke'|'candle_up_stroke'|'candle_down_stroke'|'ohlc'|'area'
+            type: 'candle_solid',
+            bar: {
+                upColor: '#F21414',
+                downColor: '#08B536',
+                noChangeColor: '#888888',
+                upBorderColor: '#F21414',
+                downBorderColor: '#08B536',
+                noChangeBorderColor: '#888888',
+                upWickColor: '#F21414',
+                downWickColor: '#08B536',
+                noChangeWickColor: '#888888'
+            },
+        },
+        indicator: {
+            bars: [{
+                // 'fill' | 'stroke' | 'stroke_fill'
+                style: 'fill',
+                // 'solid' | 'dashed'
+                borderStyle: 'solid',
+                borderSize: 1,
+                borderDashedValue: [2, 2],
+                upColor: '#F21414',
+                downColor: '#08B536',
+                noChangeColor: '#888888'
+            }],
+            lastValueMark: {
+                show: true,
+            },
+        }
+    });
 
-  chart._chartStore.getTimeScaleStore().zoom(1000)
-  chart.applyNewData({{ kline_list | tojson }})
+    chart._chartStore.getTimeScaleStore().zoom(1000)
+    chart.applyNewData({{ kline_list | tojson }})
 
 
-  function resizeChart() {
-    chart.resize()
-  }
-
-  window.addEventListener('resize', resizeChart);
-  window.addEventListener('load', resizeChart);
-
-  document.addEventListener('keydown', function() {
-    if (['Escape', 'Space'].includes(event.code)) {
-      window.parent.postMessage('close_me', '*');
+    function resizeChart() {
+        chart.resize()
     }
-    if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.code)) {
-      window.parent.postMessage(`${event.code}`, '*');
-    }
-  });
+
+    window.addEventListener('resize', resizeChart);
+    window.addEventListener('load', resizeChart);
+
+    document.addEventListener('keydown', function () {
+        if (['Escape', 'Space'].includes(event.code)) {
+            window.parent.postMessage('close_me', '*');
+        }
+        if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.code)) {
+            window.parent.postMessage(`${event.code}`, '*');
+        }
+    });
 </script>
 </body>
 </html>

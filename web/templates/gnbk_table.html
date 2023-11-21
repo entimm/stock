@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>概念板块大势榜</title>
     <style>
         .table-empty1 {
-          background-color: red;
-          border-color: red;
+            background-color: red;
+            border-color: red;
         }
+
         .table-empty2 {
             background-color: #ffb700;
             border-color: #ffb700;
         }
+
         .table-empty3 {
             background-color: #2fff00;
             border-color: #2fff00;
@@ -21,46 +23,46 @@
     <link rel="stylesheet" href="/static/table.css">
 </head>
 <body>
-    <div class="fixed-links">
-        {% for value in year_list %}
-            <a href="?year={{value}}" {% if value == year %}class="highlight"{% endif %}>{{value}}</a>
-        {% endfor %}
-    </div>
+<div class="fixed-links">
+    {% for value in year_list %}
+        <a href="?year={{ value }}" {% if value == year %}class="highlight"{% endif %}>{{ value }}</a>
+    {% endfor %}
+</div>
 
-    <dialog id="myDialog" style="overflow: hidden;">
-        <span class="close-button" onclick="closeDialog()">×</span>
-        <iframe id="iframeContent" style="width: 100%; height: 100%; border: none;"></iframe>
-    </dialog>
+<dialog id="myDialog" style="overflow: hidden;">
+    <span class="close-button" onclick="closeDialog()">×</span>
+    <iframe id="iframeContent" style="width: 100%; height: 100%; border: none;"></iframe>
+</dialog>
 
-    <div id="grid-container">
-        <table id="grid"></table>
-        <div id="tooltip" style="display:none;"></div>
-        <div id="tooltip-trend" class="tooltip-big" style="display:none;"></div>
-    </div>
+<div id="grid-container">
+    <table id="grid"></table>
+    <div id="tooltip" style="display:none;"></div>
+    <div id="tooltip-trend" class="tooltip-big" style="display:none;"></div>
+</div>
 
-    <script type="text/javascript" src="/static/table.js"></script>
-    <script>
-        let data = {{ data | safe }};
-        const KLINE_PERIOD = 'D';
+<script type="text/javascript" src="/static/table.js"></script>
+<script>
+    let data = {{ data | safe }};
+    const KLINE_PERIOD = 'D';
 
-        renderGrid(data);
+    renderGrid(data);
 
-        function addDotClass(element, value) {
-            let price = value[2]
-            const dotClasses = [
-                { 'condition': price >= 6, 'className': 'red-dot3' },
-                { 'condition': price >= 3, 'className': 'red-dot2' },
-                { 'condition': price >= 1, 'className': 'red-dot1' },
-                { 'condition': price <= -1, 'className': 'green-dot1' },
-                { 'condition': price <= -3, 'className': 'green-dot2' },
-                { 'condition': price <= -6, 'className': 'green-dot3' },
-            ];
-            dotClasses.forEach((dotClass) => {
-                if (dotClass.condition) {
-                    element.classList.add('dot', dotClass.className);
-                }
-            });
-        }
-    </script>
+    function addDotClass(element, value) {
+        let price = value[2]
+        const dotClasses = [
+            {'condition': price >= 6, 'className': 'red-dot3'},
+            {'condition': price >= 3, 'className': 'red-dot2'},
+            {'condition': price >= 1, 'className': 'red-dot1'},
+            {'condition': price <= -1, 'className': 'green-dot1'},
+            {'condition': price <= -3, 'className': 'green-dot2'},
+            {'condition': price <= -6, 'className': 'green-dot3'},
+        ];
+        dotClasses.forEach((dotClass) => {
+            if (dotClass.condition) {
+                element.classList.add('dot', dotClass.className);
+            }
+        });
+    }
+</script>
 </body>
 </html>
