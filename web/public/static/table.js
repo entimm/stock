@@ -9,7 +9,7 @@ window.addEventListener('message', function (event) {
     if (cell) {
       let symbol = cell.getAttribute('symbol');
       if (symbol) {
-        var iframe = document.getElementById('iframeContent');
+        let iframe = document.getElementById('iframeContent');
         iframe.src = iframe.contentWindow.document.URL.replace(/\d{6}/, symbol);
         setSelectedCell(cell);
       }
@@ -79,9 +79,9 @@ function renderCell(cell, value, i) {
   cell.setAttribute('v', value.slice(2).join(' # '));
   cell.setAttribute('symbol', value[1]);
   cell.addEventListener('click', function () {
-    var cellRect = cell.getBoundingClientRect();
+    let cellRect = cell.getBoundingClientRect();
 
-    var clickX = event.clientX - cellRect.left;
+    let clickX = event.clientX - cellRect.left;
 
     if (clickX < cellRect.width / 2) {
       highlightCells(cell.textContent);
@@ -104,7 +104,7 @@ function renderCell(cell, value, i) {
 }
 
 function openDialog(url) {
-  var iframe = document.getElementById('iframeContent');
+  let iframe = document.getElementById('iframeContent');
   iframe.src = url;
 
   myDialog.showModal();
@@ -125,12 +125,12 @@ function handleClickOutside(event) {
 
 function getAdjacentCell(cell, direction) {
   if (!cell) return;
-  var row = cell.parentNode.rowIndex;
-  var col = cell.cellIndex;
+  let row = cell.parentNode.rowIndex;
+  let col = cell.cellIndex;
 
-  var table = document.getElementById("grid");
-  var numRows = table.rows.length;
-  var numCols = table.rows[0].cells.length;
+  let table = document.getElementById("grid");
+  let numRows = table.rows.length;
+  let numCols = table.rows[0].cells.length;
 
   switch (direction) {
     case "ArrowUp":
@@ -155,9 +155,9 @@ function setSelectedCell(cell) {
 }
 
 function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 3; i++) {
+  let letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 3; i++) {
     color += letters[Math.floor(Math.random() * 6) + 8]; // 从8到F中选择亮色
   }
   return color;
@@ -210,8 +210,8 @@ function show_tooltip_trend(cell) {
   // 计算tooltip的位置
 
   // 获取屏幕的宽度和高度
-  var screenWidth = window.innerWidth;
-  var screenHeight = window.innerHeight;
+  let screenWidth = window.innerWidth;
+  let screenHeight = window.innerHeight;
 
   if (event.clientY <= screenHeight / 2) {
     // 右下角
@@ -232,9 +232,9 @@ function show_tooltip(cell) {
   tooltip.textContent = cell.getAttribute('v');
 
   // 计算tooltip的位置
-  var boundingRect = cell.getBoundingClientRect();
-  var tooltipX = boundingRect.right + window.pageXOffset - 10;
-  var tooltipY = boundingRect.bottom + window.pageYOffset - 10;
+  let boundingRect = cell.getBoundingClientRect();
+  let tooltipX = boundingRect.right + window.pageXOffset - 10;
+  let tooltipY = boundingRect.bottom + window.pageYOffset - 10;
 
   tooltip.style.display = 'block';
   tooltip.style.left = tooltipX + 'px';

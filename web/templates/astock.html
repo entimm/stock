@@ -75,13 +75,13 @@
 {% block footer %}
   <script src="/static/echarts.min.js"></script>
   <script>
-    var rows = {{ rows | tojson }};
+    let rows = {{ rows | tojson }};
     rows = rows.map(v => "NO." + v);
-    var dataName = {{ data['name'] | tojson }};
-    var dataValue = {{ data['value'] | tojson }};
+    let dataName = {{ data['name'] | tojson }};
+    let dataValue = {{ data['value'] | tojson }};
 
     // 创建数据密度图的配置
-    var chartConfig = {
+    let chartConfig = {
       color: [
         "#FF33EC",
         "#FF5733",
@@ -146,7 +146,7 @@
     };
 
     // 初始化图表并绘制
-    var densityChart = echarts.init(document.getElementById('densityChart'));
+    let densityChart = echarts.init(document.getElementById('densityChart'));
     // 准备 series 数据
     chartConfig.series = Object.keys(rows).map(key => ({
       name: rows[key],

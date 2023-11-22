@@ -90,7 +90,7 @@
 {% block footer %}
   <script>
     if (window.self !== window.top) {
-      var headerElement = document.querySelector('header');
+      let headerElement = document.querySelector('header');
       if (headerElement) {
         headerElement.style.display = 'none';
       }
@@ -98,7 +98,7 @@
   </script>
   <script src="/static/klinecharts.min.js"></script>
   <script>
-    var chart = klinecharts.init('chart', {
+    let chart = klinecharts.init('chart', {
       timezone: 'Asia/Shanghai',
       customApi: {
         formatDate: function (dateTimeFormat, timestamp, format, type) {
