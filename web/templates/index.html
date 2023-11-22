@@ -7,40 +7,37 @@
       margin: 50px auto;
     }
 
-    .card {
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
-
     .card a {
-      text-decoration: none;
-      color: #333;
-      padding: 20px;
       display: block;
-      text-align: center;
-      transition: background-color 0.3s;
-      font-size: 18px;
-      border-bottom: 2px solid #f32c2c;
+      padding: 20px;
+      font-size: 1.5rem;
+      border-bottom: 3px solid #f32c2c;
+      color: #000;
     }
 
     .card .external {
-      border-bottom: 2px solid #8c2cf3;
-    }
-
-    .card:hover {
-      font-size: 30px;
-      background-color: #ffe0e8;
+      border-bottom: 3px solid #8c2cf3;
     }
   </style>
   <title>韭菜收割机 - 致富神器</title>
 {% endblock %}
 {% block content %}
   <div id="content">
-    {% for menu in menus %}
-      <div class="card">
-        <a href="{{ menu.url }}" target="_blank" {% if menu.type == 'external' %}class="external"{% endif %}>{{ menu.name }}</a>
+    {% for menu_type, menus in grouped_menus.items() %}
+      <div class="row">
+        {% for menu in menus %}
+          <div class="col s12 m6 l4">
+            <div class="card hoverable">
+              <div class="card-content">
+                <span class="card-title">
+                  <a href="{{ menu.url }}" target="_blank" {% if menu.type == 'external' %}class="external"{% endif %}>
+                    {{ menu.name }}
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
       </div>
     {% endfor %}
   </div>

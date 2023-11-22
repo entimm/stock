@@ -50,4 +50,15 @@ def row_to_kline(row):
 
 @blueprint.route('/symbol_list')
 def symbol_list():
-    return symbol_all()
+    return {
+        'symbol_all_list': symbol_all(),
+        'default_show_list': [
+            '999999',
+            '399006',
+            '399001',
+            '399300',
+            '880003',
+            '880878',
+            '880879',
+        ],
+    }

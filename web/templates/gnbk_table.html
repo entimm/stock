@@ -26,13 +26,13 @@
     {% endfor %}
   </div>
 
-  <dialog id="myDialog" style="overflow: hidden;">
+  <dialog id="chartDialog" style="overflow: hidden;">
     <span class="close-button" onclick="closeDialog()">×</span>
     <iframe id="iframeContent" style="width: 100%; height: 100%; border: none;"></iframe>
   </dialog>
 
   <div id="grid-container">
-    <table id="grid" class="striped"></table>
+    <table id="grid" class="striped centered"></table>
     <div id="tooltip" style="display:none;"></div>
     <div id="tooltip-trend" class="tooltip-big" style="display:none;"></div>
   </div>

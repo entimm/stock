@@ -1,3 +1,8 @@
+#grid-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
 table {
   border-collapse: collapse;
   width: max-content;
@@ -6,7 +11,6 @@ table {
 td, th {
   padding: 0;
   white-space: nowrap;
-  text-align: center;
   min-width: 100px;
   position: relative;
   cursor: pointer;
@@ -17,11 +21,6 @@ th {
   background-color: #ff4545;
   position: sticky;
   top: 0;
-}
-
-#grid-container {
-  width: 100%;
-  overflow-x: auto;
 }
 
 ::-webkit-scrollbar {
@@ -45,13 +44,13 @@ th {
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .red-dot1::after {
-  background-color: #ffcccc;
+  background-color: #FF8800;
 }
 
 .red-dot2::after {
@@ -63,7 +62,7 @@ th {
 }
 
 .green-dot1::after {
-  background-color: #ccffcc;
+  background-color: #00f7ff;
 }
 
 .green-dot2::after {
@@ -71,7 +70,7 @@ th {
 }
 
 .green-dot3::after {
-  background-color: #16b9de;
+  background-color: #1619de;
 }
 
 #tooltip {
@@ -92,7 +91,7 @@ th {
   height: 340px;
 }
 
-#myDialog {
+#chartDialog {
   height: 80%;
   width: 80%;
   border: none;

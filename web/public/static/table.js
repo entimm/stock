@@ -107,18 +107,18 @@ function openDialog(url) {
   let iframe = document.getElementById('iframeContent');
   iframe.src = url;
 
-  myDialog.showModal();
+  chartDialog.showModal();
 
   document.addEventListener('click', handleClickOutside);
 }
 
 function closeDialog() {
-  myDialog.close();
+  chartDialog.close();
   document.removeEventListener('click', handleClickOutside);
 }
 
 function handleClickOutside(event) {
-  if (event.target === myDialog) {
+  if (event.target === chartDialog) {
     closeDialog();
   }
 }

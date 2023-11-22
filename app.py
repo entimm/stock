@@ -28,7 +28,6 @@ def inject_layout_vars():
     return {'menus': MENUS}
 
 
-# 自定义错误处理程序
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html', **{'error': error}), 404
