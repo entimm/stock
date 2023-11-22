@@ -1,35 +1,13 @@
-import os
 from functools import cmp_to_key
-from pathlib import Path
 
 from flask import Blueprint, render_template, request
 from mootdx.quotes import Quotes
 
 from common import price_calculate
-from common.common import TDX_BLOCK_NEW_PATH
-from common.data import symbol_name_dict, gnbk_dict, etf_dict, trade_date_list, local_tdx_reader
+from common.data import trade_date_list, local_tdx_reader
+from common.utils import read_bk, symbol_name
 
 blueprint = Blueprint('diybk', __name__)
-
-
-def read_bk(bk_key):
-    zxg_file = os.path.join(TDX_BLOCK_NEW_PATH, f'{bk_key}.blk')
-
-    if not Path(zxg_file).exists():
-        raise Exception("file not exists")
-
-    codes = open(zxg_file).read().splitlines()
-
-    return [c[1:] for c in codes if c != ""]
-
-
-def symbol_name(symbol):
-    if symbol[0:2] == '88':
-        return gnbk_dict.get(symbol, symbol)
-    elif symbol[0:2] in ['15', '51', '56', '58']:
-        return etf_dict.get(symbol, symbol)
-    else:
-        return symbol_name_dict[symbol].replace('概念', '')
 
 
 def custom_compare_desc(x, y):

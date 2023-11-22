@@ -1,8 +1,7 @@
 from flask import render_template, Blueprint, request, url_for, redirect
 
 from common.common import PeriodEnum
-from common.data import symbol_name_dict, gnbk_dict
-from common.utils import realtime_whole_df
+from common.utils import realtime_whole_df, symbol_name
 
 blueprint = Blueprint('chart', __name__)
 
@@ -19,11 +18,10 @@ def chart():
     period_enum = PeriodEnum[period]
     df = realtime_whole_df(symbol, period_enum)
     kline_list = df.apply(row_to_kline, axis=1).to_list()
-    symbol_name = gnbk_dict.get(symbol, symbol) if symbol[0:2] == '88' else symbol_name_dict.get(symbol, symbol)
 
     template_var = {
         'symbol': symbol,
-        'symbol_name': symbol_name,
+        'symbol_name': symbol_name(symbol),
         'period': period,
         'kline_list': kline_list,
         'period_list': {

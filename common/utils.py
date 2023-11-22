@@ -2,12 +2,13 @@ import math
 import os
 import re
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
 from mootdx.quotes import Quotes
 
-from common.common import PeriodEnum, TDX_FREQUENCY_MAP
-from common.data import local_tdx_reader
+from common.common import PeriodEnum, TDX_FREQUENCY_MAP, TDX_BLOCK_NEW_PATH
+from common.data import local_tdx_reader, gnbk_dict, etf_dict, symbol_name_dict, index_dict
 from common.price_calculate import resample_kline
 
 
@@ -73,12 +74,53 @@ def realtime_whole_df(symbol, period_enum):
             offset = minutes
         else:
             offset = minutes / 5
-        client = Quotes.factory(market='std')
-        real_time_df = client.bars(symbol=symbol, frequency=frequency, offset=offset)
+
+        tp = symbol_type(symbol)
+        if tp in ['INDEX', 'GNBK']:
+            client = Quotes.factory(market='std')
+            real_time_df = client.index(symbol=symbol, frequency=frequency, offset=offset)
+        else:
+            client = Quotes.factory(market='std')
+            real_time_df = client.bars(symbol=symbol, frequency=frequency, offset=offset)
         df = pd.concat([df, pd.DataFrame(real_time_df[['open', 'high', 'low', 'close', 'amount', 'volume']])], axis=0)
 
     if period_enum in [PeriodEnum.F15, PeriodEnum.F30]:
         df = resample_kline(df, period_enum)
 
     return df
+
+
+def read_bk(bk_key):
+    zxg_file = os.path.join(TDX_BLOCK_NEW_PATH, f'{bk_key}.blk')
+
+    if not Path(zxg_file).exists():
+        raise Exception("file not exists")
+
+    codes = open(zxg_file).read().splitlines()
+
+    return [c[1:] for c in codes if c != ""]
+
+
+def symbol_type(symbol):
+    if symbol[0:2] == '88':
+        return 'GNBK'
+    elif symbol[0:2] in ['15', '51', '56', '58']:
+        return 'ETF'
+    elif symbol in ['999999'] or symbol[0:3] == '399':
+        return 'INDEX'
+    else:
+        return 'STOCK'
+
+
+def symbol_name(symbol):
+    tp = symbol_type(symbol)
+    if tp == 'GNBK':
+        return gnbk_dict.get(symbol, symbol).replace('概念', '')
+    elif tp == 'ETF':
+        return etf_dict.get(symbol, symbol)
+    elif tp == 'INDEX':
+        return index_dict.get(symbol, symbol)
+    else:
+        return symbol_name_dict[symbol]
+
 
