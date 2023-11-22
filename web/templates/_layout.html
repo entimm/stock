@@ -10,7 +10,14 @@
 <body>
 <header>
     <div id="nav-bar">
-        <h1>韭菜收割机 - 致富神器</h1>
+      <h1 class="logo">韭菜收割机 - 致富神器</h1>
+      <ul class="horizontal-menu">
+        {% for menu in menus %}
+          <li>
+            <a href="{{ menu.url }}" {% if menu.type == 'external' %}target="_blank"{% endif %}>{{ menu.name }}</a>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
 </header>
 <main>

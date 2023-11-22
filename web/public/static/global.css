@@ -24,12 +24,40 @@ main {
 #nav-bar {
     background-color: #F67777FF;
     color: #fff;
-    padding: 2px;
+    padding: 2px 0;
     text-align: left;
     width: 100%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 20px 20px rgb(0 0 0 / 10%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 #nav-bar h1 {
-    margin: 0 50px
+    margin-left: 50px;
+}
+
+.logo {
+  margin: 0;
+}
+
+.horizontal-menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  margin-right: 50px;
+}
+
+.horizontal-menu li {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.horizontal-menu li:first-child {
+  margin-left: 0;
+}
+
+.horizontal-menu a {
+  color: white;
+  text-decoration: none;
 }

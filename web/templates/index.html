@@ -38,9 +38,9 @@
 {% endblock %}
 {% block content %}
 <div id="content">
-    {% for link in links %}
+    {% for menu in menus %}
         <div class="card">
-            <a href="{{ link.url }}" target="_blank" {% if link.type == 'external' %}class="external"{% endif %}>{{ link.name }}</a>
+            <a href="{{ menu.url }}" target="_blank" {% if menu.type == 'external' %}class="external"{% endif %}>{{ menu.name }}</a>
         </div>
     {% endfor %}
 </div>
