@@ -1,44 +1,48 @@
 body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
+
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #fafafa;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
+  font-family: 'Roboto', sans-serif;
+  background-color: #fafafa;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
 }
+
 header {
-    width: 100%;
+  width: 100%;
 }
+
 main {
-    width: 100%;
-    height: 100%;
-    position: relative;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
+
 #nav-bar {
-    background-color: #F67777FF;
-    color: #fff;
-    padding: 2px 0;
-    text-align: left;
-    width: 100%;
-    box-shadow: 0 10px 20px 20px rgb(0 0 0 / 10%);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background-color: #F67777FF;
+  color: #fff;
+  padding: 2px 0;
+  text-align: left;
+  width: 100%;
+  box-shadow: 0 10px 20px 20px rgb(0 0 0 / 10%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #nav-bar .logo {
-    margin-left: 50px;
-    font-size: 25px;
-    font-weight: bolder;
-    margin-top: 3px;
-    margin-bottom: 3px;
+  margin-left: 50px;
+  font-size: 25px;
+  font-weight: bolder;
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
 
 .logo a {
@@ -67,6 +71,7 @@ main {
   color: #FFF;
   text-decoration: none;
 }
+
 .horizontal-menu .active a {
   color: #F9FFD5FF;
   text-decoration: underline;
@@ -74,14 +79,16 @@ main {
 }
 
 nav {
-    height: 32px;
-    line-height: 32px;
-    box-shadow: 0 10px 20px 20px rgb(0 0 0 / 10%);
+  height: 32px;
+  line-height: 32px;
+  box-shadow: 0 10px 20px 20px rgb(0 0 0 / 10%);
 }
+
 nav .brand-logo {
-    font-size: 1.8rem;
+  font-size: 1.8rem;
 }
+
 nav .nav-wrapper {
-    padding-left: 50px;
-    padding-right: 50px;
+  padding-left: 50px;
+  padding-right: 50px;
 }

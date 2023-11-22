@@ -1,49 +1,49 @@
 {% extends '_layout.html' %}
 {% block head %}
-<style>
+  <style>
     #content {
-        width: 80%;
-        max-width: 1500px;
-        margin: 50px auto;
+      width: 80%;
+      max-width: 1500px;
+      margin: 50px auto;
     }
 
     .card {
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
 
     .card a {
-        text-decoration: none;
-        color: #333;
-        padding: 20px;
-        display: block;
-        text-align: center;
-        transition: background-color 0.3s;
-        font-size: 18px;
-        border-bottom: 2px solid #f32c2c;
+      text-decoration: none;
+      color: #333;
+      padding: 20px;
+      display: block;
+      text-align: center;
+      transition: background-color 0.3s;
+      font-size: 18px;
+      border-bottom: 2px solid #f32c2c;
     }
 
     .card .external {
-        border-bottom: 2px solid #8c2cf3;
+      border-bottom: 2px solid #8c2cf3;
     }
 
     .card:hover {
-        font-size: 30px;
-        background-color: #ffe0e8;
+      font-size: 30px;
+      background-color: #ffe0e8;
     }
-</style>
-<title>韭菜收割机 - 致富神器</title>
+  </style>
+  <title>韭菜收割机 - 致富神器</title>
 {% endblock %}
 {% block content %}
-<div id="content">
+  <div id="content">
     {% for menu in menus %}
-        <div class="card">
-            <a href="{{ menu.url }}" target="_blank" {% if menu.type == 'external' %}class="external"{% endif %}>{{ menu.name }}</a>
-        </div>
+      <div class="card">
+        <a href="{{ menu.url }}" target="_blank" {% if menu.type == 'external' %}class="external"{% endif %}>{{ menu.name }}</a>
+      </div>
     {% endfor %}
-</div>
+  </div>
 {% endblock %}
 {% block footer %}
 {% endblock %}

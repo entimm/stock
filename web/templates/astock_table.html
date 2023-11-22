@@ -1,92 +1,92 @@
 {% extends '_layout.html' %}
 {% block head %}
-<title>个股趋势涨幅榜</title>
-<style>
+  <title>个股趋势涨幅榜</title>
+  <style>
     table tr:nth-child(11) {
-        border-bottom: 4px solid #FF0000;
+      border-bottom: 4px solid #FF0000;
     }
 
     table tr:nth-child(21) {
-        border-bottom: 4px solid #FF4500;
+      border-bottom: 4px solid #FF4500;
     }
 
     table tr:nth-child(31) {
-        border-bottom: 4px solid #FFA500;
+      border-bottom: 4px solid #FFA500;
     }
 
     table tr:nth-child(41) {
-        border-bottom: 4px solid #FFD700;
+      border-bottom: 4px solid #FFD700;
     }
 
     table tr:nth-child(51) {
-        border-bottom: 4px solid #FFFF00;
+      border-bottom: 4px solid #FFFF00;
     }
 
     table tr:nth-child(61) {
-        border-bottom: 4px solid #ADFF2F;
+      border-bottom: 4px solid #ADFF2F;
     }
 
     table tr:nth-child(71) {
-        border-bottom: 4px solid #7FFF00;
+      border-bottom: 4px solid #7FFF00;
     }
 
     table tr:nth-child(81) {
-        border-bottom: 4px solid #00FF00;
+      border-bottom: 4px solid #00FF00;
     }
 
     table tr:nth-child(91) {
-        border-bottom: 4px solid #008000;
+      border-bottom: 4px solid #008000;
     }
-</style>
-<link rel="stylesheet" href="/static/table.css">
+  </style>
+  <link rel="stylesheet" href="/static/table.css">
 {% endblock %}
 {% block content %}
-<div class="fixed-links">
+  <div class="fixed-links">
     {% for value in ma_list %}
-        <a href="?ma={{ value }}&year={{ year }}&direction={{ direction }}" {% if value == ma %}class="highlight"{% endif %}>{{ value }}</a>
+      <a href="?ma={{ value }}&year={{ year }}&direction={{ direction }}" {% if value == ma %}class="highlight"{% endif %}>{{ value }}</a>
     {% endfor %}
     {% for value in year_list %}
-        <a href="?ma={{ ma }}&year={{ value }}&direction={{ direction }}" {% if value == year %}class="highlight"{% endif %}>{{ value }}</a>
+      <a href="?ma={{ ma }}&year={{ value }}&direction={{ direction }}" {% if value == year %}class="highlight"{% endif %}>{{ value }}</a>
     {% endfor %}
     {% for key, value in direction_list.items() %}
-        <a href="?ma={{ ma }}&year={{ year }}&direction={{ key }}" {% if direction == key %}class="highlight"{% endif %}>{{ value['name'] }}</a>
+      <a href="?ma={{ ma }}&year={{ year }}&direction={{ key }}" {% if direction == key %}class="highlight"{% endif %}>{{ value['name'] }}</a>
     {% endfor %}
-</div>
+  </div>
 
-<dialog id="myDialog" style="overflow: hidden;">
+  <dialog id="myDialog" style="overflow: hidden;">
     <span class="close-button" onclick="closeDialog()">×</span>
     <iframe id="iframeContent" style="width: 100%; height: 100%; border: none;"></iframe>
-</dialog>
+  </dialog>
 
-<div id="grid-container">
+  <div id="grid-container">
     <table id="grid" class="striped"></table>
     <div id="tooltip" style="display:none;"></div>
     <div id="tooltip-trend" style="display:none;"></div>
-</div>
+  </div>
 {% endblock %}
 {% block footer %}
-<script src="/static/table.js"></script>
-<script>
+  <script src="/static/table.js"></script>
+  <script>
     let data = {{ data | safe }};
     const KLINE_PERIOD = 'F5';
 
     renderGrid(data);
 
     function addDotClass(element, value) {
-        let price = value[2]
-        const dotClasses = [
-            {'condition': price >= 15, 'className': 'red-dot3'},
-            {'condition': price >= 9.6, 'className': 'red-dot2'},
-            {'condition': price >= 5, 'className': 'red-dot1'},
-            {'condition': price <= -5, 'className': 'green-dot1'},
-            {'condition': price <= -9, 'className': 'green-dot2'},
-            {'condition': price <= -15, 'className': 'green-dot3'},
-        ];
-        dotClasses.forEach((dotClass) => {
-            if (dotClass.condition) {
-                element.classList.add('dot', dotClass.className);
-            }
-        });
+      let price = value[2]
+      const dotClasses = [
+        {'condition': price >= 15, 'className': 'red-dot3'},
+        {'condition': price >= 9.6, 'className': 'red-dot2'},
+        {'condition': price >= 5, 'className': 'red-dot1'},
+        {'condition': price <= -5, 'className': 'green-dot1'},
+        {'condition': price <= -9, 'className': 'green-dot2'},
+        {'condition': price <= -15, 'className': 'green-dot3'},
+      ];
+      dotClasses.forEach((dotClass) => {
+        if (dotClass.condition) {
+          element.classList.add('dot', dotClass.className);
+        }
+      });
     }
-</script>
+  </script>
 {% endblock %}

@@ -1,55 +1,55 @@
 {% extends '_layout.html' %}
 {% block head %}
-<title>自定义板块</title>
-<style>
+  <title>自定义板块</title>
+  <style>
     .tooltip-big {;
-        width: 1640px;
-        height: 340px;
+      width: 1640px;
+      height: 340px;
     }
-</style>
-<link rel="stylesheet" href="/static/table.css">
+  </style>
+  <link rel="stylesheet" href="/static/table.css">
 {% endblock %}
 {% block content %}
-<div class="fixed-links">
+  <div class="fixed-links">
     {% for key, value in direction_list.items() %}
-        <a href="?direction={{ key }}" {% if direction == key %}class="highlight"{% endif %}>{{ value['name'] }}</a>
+      <a href="?direction={{ key }}" {% if direction == key %}class="highlight"{% endif %}>{{ value['name'] }}</a>
     {% endfor %}
-</div>
+  </div>
 
-<div id="grid-container">
+  <div id="grid-container">
     <table id="grid" class="striped"></table>
     <div id="tooltip" style="display:none;"></div>
     <div id="tooltip-trend" class="tooltip-big" style="display:none;"></div>
-</div>
+  </div>
 
-<dialog id="myDialog" style="overflow: hidden;">
+  <dialog id="myDialog" style="overflow: hidden;">
     <span class="close-button" onclick="closeDialog()">×</span>
     <iframe id="iframeContent" style="width: 100%; height: 100%; border: none;"></iframe>
-</dialog>
+  </dialog>
 {% endblock %}
 {% block footer %}
-<script src="/static/table.js"></script>
-<script>
+  <script src="/static/table.js"></script>
+  <script>
     let data = {{ data | safe }};
     const KLINE_PERIOD = 'D';
 
     renderGrid(data);
 
     function addDotClass(element, value) {
-        let price = value[2]
-        const dotClasses = [
-            {'condition': price >= 15, 'className': 'red-dot3'},
-            {'condition': price >= 9.6, 'className': 'red-dot2'},
-            {'condition': price >= 5, 'className': 'red-dot1'},
-            {'condition': price <= -5, 'className': 'green-dot1'},
-            {'condition': price <= -9, 'className': 'green-dot2'},
-            {'condition': price <= -15, 'className': 'green-dot3'},
-        ];
-        dotClasses.forEach((dotClass) => {
-            if (dotClass.condition) {
-                element.classList.add('dot', dotClass.className);
-            }
-        });
+      let price = value[2]
+      const dotClasses = [
+        {'condition': price >= 15, 'className': 'red-dot3'},
+        {'condition': price >= 9.6, 'className': 'red-dot2'},
+        {'condition': price >= 5, 'className': 'red-dot1'},
+        {'condition': price <= -5, 'className': 'green-dot1'},
+        {'condition': price <= -9, 'className': 'green-dot2'},
+        {'condition': price <= -15, 'className': 'green-dot3'},
+      ];
+      dotClasses.forEach((dotClass) => {
+        if (dotClass.condition) {
+          element.classList.add('dot', dotClass.className);
+        }
+      });
     }
-</script>
+  </script>
 {% endblock %}

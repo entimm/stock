@@ -1,119 +1,121 @@
 body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
 table {
-    border-collapse: collapse;
-    width: max-content;
+  border-collapse: collapse;
+  width: max-content;
 }
+
 td, th {
-    padding: 0;
-    white-space: nowrap;
-    text-align: center;
-    min-width: 100px;
-    position: relative;
-    cursor: pointer;
+  padding: 0;
+  white-space: nowrap;
+  text-align: center;
+  min-width: 100px;
+  position: relative;
+  cursor: pointer;
 }
+
 th {
-    color: white;
-    background-color: #936161;
-    position: sticky;
-    top: 0;
+  color: white;
+  background-color: #936161;
+  position: sticky;
+  top: 0;
 }
 
 #grid-container {
-    width: 100%;
-    overflow-x: auto;
+  width: 100%;
+  overflow-x: auto;
 }
 
 ::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .highlight {
-    color: #FF5733;
-    font-weight: bold;
-    font-size: 20px;
-    text-decoration: underline;
+  color: #FF5733;
+  font-weight: bold;
+  font-size: 20px;
+  text-decoration: underline;
 }
 
 .fixed-links {
-    margin: 10px;
+  margin: 10px;
 }
 
 
 .dot::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 6px;
-    height: 6px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 6px;
+  height: 6px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .red-dot1::after {
-    background-color: #ffcccc;
+  background-color: #ffcccc;
 }
 
 .red-dot2::after {
-    background-color: #ff0000;
+  background-color: #ff0000;
 }
 
 .red-dot3::after {
-    background-color: #f500ff;
+  background-color: #f500ff;
 }
 
 .green-dot1::after {
-    background-color: #ccffcc;
+  background-color: #ccffcc;
 }
 
 .green-dot2::after {
-    background-color: #00ff00;
+  background-color: #00ff00;
 }
 
 .green-dot3::after {
-    background-color: #16b9de;
+  background-color: #16b9de;
 }
 
 #tooltip {
-    position: absolute;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    font-size: 20px;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 20px;
 }
 
 #tooltip-trend {
-    position: fixed;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    font-size: 20px;
-    width: 1660px;
-    height: 340px;
+  position: fixed;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 20px;
+  width: 1660px;
+  height: 340px;
 }
 
 #myDialog {
-    height: 80%;
-    width: 80%;
-    border: none;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
-    padding: 0;
+  height: 80%;
+  width: 80%;
+  border: none;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+  padding: 0;
 }
 
 .close-button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    cursor: pointer;
-    font-size: 30px;
-    font-weight: bolder;
-    color: red;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  font-size: 30px;
+  font-weight: bolder;
+  color: red;
 }
 
 .select-cell {
-    border: 3px solid red;
+  border: 3px solid red;
 }
