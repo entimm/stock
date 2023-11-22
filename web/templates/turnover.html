@@ -1,33 +1,33 @@
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-    <title>交易额</title>
-    <script src="/static/echarts.min.js"></script>
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: sans-serif;
-        }
+{% extends '_layout.html' %}
+{% block head %}
+<title>交易额</title>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: sans-serif;
+    }
 
-        #chart {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
+    #chart {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
 
-        #turnoverChart {
-            flex: 1;
-            box-sizing: border-box;
-        }
-    </style>
-</head>
-<body>
+    #turnoverChart {
+        flex: 1;
+        box-sizing: border-box;
+    }
+</style>
+{% endblock %}
+{% block content %}
 <div id="chart">
     <div id="turnoverChart"></div>
 </div>
-
+{% endblock %}
+{% block footer %}
+<script src="/static/echarts.min.js"></script>
 <script>
     let data = {{ data | safe }};
 
@@ -111,5 +111,4 @@
     let turnoverChart = echarts.init(document.getElementById('turnoverChart'));
     turnoverChart.setOption(generateChartConfig(data));
 </script>
-</body>
-</html>
+{% endblock %}

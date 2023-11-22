@@ -1,18 +1,15 @@
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自定义板块</title>
-    <style>
-        .tooltip-big {;
-            width: 1640px;
-            height: 340px;
-        }
-    </style>
-    <link rel="stylesheet" href="/static/table.css">
-</head>
-<body>
+{% extends '_layout.html' %}
+{% block head %}
+<title>自定义板块</title>
+<style>
+    .tooltip-big {;
+        width: 1640px;
+        height: 340px;
+    }
+</style>
+<link rel="stylesheet" href="/static/table.css">
+{% endblock %}
+{% block content %}
 <div class="fixed-links">
     {% for key, value in direction_list.items() %}
         <a href="?direction={{ key }}" {% if direction == key %}class="highlight"{% endif %}>{{ value['name'] }}</a>
@@ -29,6 +26,8 @@
     <span class="close-button" onclick="closeDialog()">×</span>
     <iframe id="iframeContent" style="width: 100%; height: 100%; border: none;"></iframe>
 </dialog>
+{% endblock %}
+{% block footer %}
 <script type="text/javascript" src="/static/table.js"></script>
 <script>
     let data = {{ data | safe }};
@@ -53,5 +52,4 @@
         });
     }
 </script>
-</body>
-</html>
+{% endblock %}

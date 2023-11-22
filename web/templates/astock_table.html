@@ -1,49 +1,46 @@
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个股趋势涨幅榜</title>
-    <style>
-        table tr:nth-child(11) {
-            border-bottom: 4px solid #FF0000;
-        }
+{% extends '_layout.html' %}
+{% block head %}
+<title>个股趋势涨幅榜</title>
+<style>
+    table tr:nth-child(11) {
+        border-bottom: 4px solid #FF0000;
+    }
 
-        table tr:nth-child(21) {
-            border-bottom: 4px solid #FF4500;
-        }
+    table tr:nth-child(21) {
+        border-bottom: 4px solid #FF4500;
+    }
 
-        table tr:nth-child(31) {
-            border-bottom: 4px solid #FFA500;
-        }
+    table tr:nth-child(31) {
+        border-bottom: 4px solid #FFA500;
+    }
 
-        table tr:nth-child(41) {
-            border-bottom: 4px solid #FFD700;
-        }
+    table tr:nth-child(41) {
+        border-bottom: 4px solid #FFD700;
+    }
 
-        table tr:nth-child(51) {
-            border-bottom: 4px solid #FFFF00;
-        }
+    table tr:nth-child(51) {
+        border-bottom: 4px solid #FFFF00;
+    }
 
-        table tr:nth-child(61) {
-            border-bottom: 4px solid #ADFF2F;
-        }
+    table tr:nth-child(61) {
+        border-bottom: 4px solid #ADFF2F;
+    }
 
-        table tr:nth-child(71) {
-            border-bottom: 4px solid #7FFF00;
-        }
+    table tr:nth-child(71) {
+        border-bottom: 4px solid #7FFF00;
+    }
 
-        table tr:nth-child(81) {
-            border-bottom: 4px solid #00FF00;
-        }
+    table tr:nth-child(81) {
+        border-bottom: 4px solid #00FF00;
+    }
 
-        table tr:nth-child(91) {
-            border-bottom: 4px solid #008000;
-        }
-    </style>
-    <link rel="stylesheet" href="/static/table.css">
-</head>
-<body>
+    table tr:nth-child(91) {
+        border-bottom: 4px solid #008000;
+    }
+</style>
+<link rel="stylesheet" href="/static/table.css">
+{% endblock %}
+{% block content %}
 <div class="fixed-links">
     {% for value in ma_list %}
         <a href="?ma={{ value }}&year={{ year }}&direction={{ direction }}" {% if value == ma %}class="highlight"{% endif %}>{{ value }}</a>
@@ -66,6 +63,8 @@
     <div id="tooltip" style="display:none;"></div>
     <div id="tooltip-trend" style="display:none;"></div>
 </div>
+{% endblock %}
+{% block footer %}
 <script type="text/javascript" src="/static/table.js"></script>
 <script>
     let data = {{ data | safe }};
@@ -90,5 +89,4 @@
         });
     }
 </script>
-</body>
-</html>
+{% endblock %}

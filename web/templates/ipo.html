@@ -1,35 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>IPO</title>
-    <script src="/static/echarts.min.js"></script>
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: sans-serif;
-        }
+{% extends '_layout.html' %}
+{% block head %}
+<title>IPO</title>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: sans-serif;
+    }
 
-        #chart {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
+    #chart {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
 
-        #weekChart, #monthChart, #yearChart {
-            flex: 1;
-            box-sizing: border-box;
-        }
-    </style>
-</head>
-<body>
+    #weekChart, #monthChart, #yearChart {
+        flex: 1;
+        box-sizing: border-box;
+    }
+</style>
+{% endblock %}
+{% block content %}
 <div id="chart">
     <div id="weekChart"></div>
     <div id="monthChart"></div>
     <div id="yearChart"></div>
 </div>
-
+{% endblock %}
+{% block footer %}
+<script src="/static/echarts.min.js"></script>
 <script>
     let weekCounts = {{ weekly_count | safe }};
     let monthCounts = {{ monthly_count | safe }};
@@ -102,5 +102,4 @@
     let yearChart = echarts.init(document.getElementById('yearChart'));
     yearChart.setOption(generateChartConfig(yearCounts));
 </script>
-</body>
-</html>
+{% endblock %}

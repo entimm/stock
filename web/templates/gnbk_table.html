@@ -1,28 +1,25 @@
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>概念板块大势榜</title>
-    <style>
-        .table-empty1 {
-            background-color: red;
-            border-color: red;
-        }
+{% extends '_layout.html' %}
+{% block head %}
+<title>概念板块大势榜</title>
+<style>
+    .table-empty1 {
+        background-color: red;
+        border-color: red;
+    }
 
-        .table-empty2 {
-            background-color: #ffb700;
-            border-color: #ffb700;
-        }
+    .table-empty2 {
+        background-color: #ffb700;
+        border-color: #ffb700;
+    }
 
-        .table-empty3 {
-            background-color: #2fff00;
-            border-color: #2fff00;
-        }
-    </style>
-    <link rel="stylesheet" href="/static/table.css">
-</head>
-<body>
+    .table-empty3 {
+        background-color: #2fff00;
+        border-color: #2fff00;
+    }
+</style>
+<link rel="stylesheet" href="/static/table.css">
+{% endblock %}
+{% block content %}
 <div class="fixed-links">
     {% for value in year_list %}
         <a href="?year={{ value }}" {% if value == year %}class="highlight"{% endif %}>{{ value }}</a>
@@ -39,7 +36,8 @@
     <div id="tooltip" style="display:none;"></div>
     <div id="tooltip-trend" class="tooltip-big" style="display:none;"></div>
 </div>
-
+{% endblock %}
+{% block footer %}
 <script type="text/javascript" src="/static/table.js"></script>
 <script>
     let data = {{ data | safe }};
@@ -64,5 +62,4 @@
         });
     }
 </script>
-</body>
-</html>
+{% endblock %}

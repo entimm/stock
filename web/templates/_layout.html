@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block head %}
+    {% endblock %}
+    <link rel="stylesheet" href="/static/global.css">
+</head>
+<body>
+<header>
+    <div id="nav-bar">
+        <h1>韭菜收割机 - 致富神器</h1>
+    </div>
+</header>
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+{% block footer %}
+{% endblock %}
+</body>
+</html>

@@ -1,62 +1,58 @@
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <meta name="description" content="KLineChart example"/>
-    <title>K线图</title>
-    <style>
-        html {
-            background: #FFFFFF;
-            height: 100%;
-        }
+{% extends '_layout.html' %}
+{% block head %}
+<title>K线图</title>
+<style>
+    html {
+        background: #FFFFFF;
+        height: 100%;
+    }
 
-        body {
-            margin: 0;
-            height: 100%;
-        }
+    body {
+        margin: 0;
+        height: 100%;
+    }
 
-        #chart {
-            height: 100%;
-        }
+    #chart {
+        height: 100%;
+    }
 
-        .fixed-links1 {
-            position: fixed;
-            top: 0;
-            right: 0;
-            margin: 20px 100px;
-            z-index: 9999;
-        }
+    .fixed-links1 {
+        position: fixed;
+        top: 0;
+        right: 0;
+        margin: 20px 100px;
+        z-index: 9999;
+    }
 
-        .fixed-links1 a {
-            margin: 0 2px;
-        }
+    .fixed-links1 a {
+        margin: 0 2px;
+    }
 
-        .fixed-links2 {
-            position: fixed;
-            top: 50px;
-            right: 0;
-            margin: 20px 100px;
-            z-index: 9999;
-        }
+    .fixed-links2 {
+        position: fixed;
+        top: 50px;
+        right: 0;
+        margin: 20px 100px;
+        z-index: 9999;
+    }
 
-        .fixed-links2 .symbol-name {
-            font-size: 30px;
-        }
+    .fixed-links2 .symbol-name {
+        font-size: 30px;
+    }
 
-        .fixed-links2 .symbol {
-            font-size: 20px;
-        }
+    .fixed-links2 .symbol {
+        font-size: 20px;
+    }
 
-        .highlight {
-            color: #FF5733;
-            font-weight: bold;
-            font-size: 20px;
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
+    .highlight {
+        color: #FF5733;
+        font-weight: bold;
+        font-size: 20px;
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+{% block content %}
 <div class="fixed-links1">
     {% for period_key, period_name in period_list.items() %}
         <a href="/chart?symbol={{ symbol }}&period={{ period_key }}&req_real={{ req_real }}" {% if period_key == period %}class="highlight"{% endif %}>{{ period_name }}</a>
@@ -68,6 +64,8 @@
     <span class="symbol">{{ symbol }} - </span><span class="symbol-name">{{ symbol_name }}</span>
 </div>
 <div id="chart"></div>
+{% endblock %}
+{% block footer %}
 <script type="text/javascript" src="/static/klinecharts.min.js"></script>
 <script>
     var chart = klinecharts.init('chart', {
@@ -167,5 +165,4 @@
         }
     });
 </script>
-</body>
-</html>
+{% endblock %}

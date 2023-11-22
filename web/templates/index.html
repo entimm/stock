@@ -1,74 +1,42 @@
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #fafafa;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-        }
+{% extends '_layout.html' %}
+{% block head %}
+<style>
+    #content {
+        width: 80%;
+        max-width: 1500px;
+        margin: 50px auto;
+    }
 
-        #nav-bar {
-            background-color: #F67777FF;
-            color: #fff;
-            padding: 2px;
-            text-align: left;
-            width: 100%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
+    .card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
 
-        #nav-bar h1 {
-            margin: 0 50px
-        }
+    .card a {
+        text-decoration: none;
+        color: #333;
+        padding: 20px;
+        display: block;
+        text-align: center;
+        transition: background-color 0.3s;
+        font-size: 18px;
+        border-bottom: 2px solid #f32c2c;
+    }
 
-        #content {
-            width: 80%;
-            max-width: 1500px;
-            margin: 50px auto;
-        }
+    .card .external {
+        border-bottom: 2px solid #8c2cf3;
+    }
 
-        .card {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .card a {
-            text-decoration: none;
-            color: #333;
-            padding: 20px;
-            display: block;
-            text-align: center;
-            transition: background-color 0.3s;
-            font-size: 18px;
-            border-bottom: 2px solid #f32c2c;
-        }
-
-        .card .external {
-            border-bottom: 2px solid #8c2cf3;
-        }
-
-        .card:hover {
-            font-size: 30px;
-            background-color: #ffe0e8;
-        }
-    </style>
-    <title>韭菜收割机 - 致富神器</title>
-</head>
-<body>
-
-<div id="nav-bar">
-    <h1>韭菜收割机 - 致富神器</h1>
-</div>
-
+    .card:hover {
+        font-size: 30px;
+        background-color: #ffe0e8;
+    }
+</style>
+<title>韭菜收割机 - 致富神器</title>
+{% endblock %}
+{% block content %}
 <div id="content">
     {% for link in links %}
         <div class="card">
@@ -76,6 +44,6 @@
         </div>
     {% endfor %}
 </div>
-
-</body>
-</html>
+{% endblock %}
+{% block footer %}
+{% endblock %}
