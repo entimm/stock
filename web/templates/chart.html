@@ -2,16 +2,6 @@
 {% block head %}
   <title>K线图</title>
   <style>
-    html {
-      background: #FFFFFF;
-      height: 100%;
-    }
-
-    body {
-      margin: 0;
-      height: 100%;
-    }
-
     #chart {
       height: 100%;
     }
@@ -96,7 +86,7 @@
       }
     }
   </script>
-  <script src="/static/klinecharts.min.js"></script>
+  <script src="/static/third/klinecharts.min.js"></script>
   <script>
     let chart = klinecharts.init('chart', {
       timezone: 'Asia/Shanghai',
@@ -188,8 +178,8 @@
 
 
   </script>
-  <script src="/static/jquery-3.7.1.min.js"></script>
-  <script src="/static/materialize.min.js"></script>
+  <script src="/static/third/jquery-3.7.1.min.js"></script>
+  <script src="/static/third/materialize.min.js"></script>
   <script>
     let select_list = [];
 

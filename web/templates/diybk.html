@@ -22,7 +22,7 @@
   </dialog>
 {% endblock %}
 {% block footer %}
-  <script src="/static/jquery-3.7.1.min.js"></script>
+  <script src="/static/third/jquery-3.7.1.min.js"></script>
   <script src="/static/table.js"></script>
   <script>
     let data = {{ data | safe }};
@@ -37,9 +37,9 @@
         {'condition': price >= 15, 'className': 'red-dot3'},
         {'condition': price >= 9.6, 'className': 'red-dot2'},
         {'condition': price >= 5, 'className': 'red-dot1'},
-        {'condition': price <= -5, 'className': 'green-dot1'},
-        {'condition': price <= -9, 'className': 'green-dot2'},
         {'condition': price <= -15, 'className': 'green-dot3'},
+        {'condition': price <= -9.6, 'className': 'green-dot2'},
+        {'condition': price <= -5, 'className': 'green-dot1'},
       ];
       dotClasses.forEach((dotClass) => {
         if (dotClass.condition) {

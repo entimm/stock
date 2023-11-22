@@ -2,14 +2,7 @@
 {% block head %}
   <title>交易额</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: sans-serif;
-    }
-
-    #chart {
+    #chart-container {
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -22,12 +15,12 @@
   </style>
 {% endblock %}
 {% block content %}
-  <div id="chart">
+  <div id="chart-container">
     <div id="turnoverChart"></div>
   </div>
 {% endblock %}
 {% block footer %}
-  <script src="/static/echarts.min.js"></script>
+  <script src="/static/third/echarts.min.js"></script>
   <script>
     let data = {{ data | safe }};
 

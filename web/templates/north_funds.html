@@ -2,14 +2,7 @@
 {% block head %}
   <title>北向资金</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: sans-serif;
-    }
-
-    #chart {
+    #chart-container {
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -22,7 +15,7 @@
   </style>
 {% endblock %}
 {% block content %}
-  <div id="chart">
+  <div id="chart-container">
     <div id="dayChart"></div>
     <div id="weekChart"></div>
     <div id="monthChart"></div>
@@ -30,7 +23,7 @@
   </div>
 {% endblock %}
 {% block footer %}
-  <script src="/static/echarts.min.js"></script>
+  <script src="/static/third/echarts.min.js"></script>
   <script>
     let dayCounts = {{ daily_count | safe }};
     let weekCounts = {{ weekly_count | safe }};

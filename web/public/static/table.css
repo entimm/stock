@@ -1,9 +1,3 @@
-body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
 table {
   border-collapse: collapse;
   width: max-content;
@@ -20,7 +14,7 @@ td, th {
 
 th {
   color: white;
-  background-color: #936161;
+  background-color: #ff4545;
   position: sticky;
   top: 0;
 }

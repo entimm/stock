@@ -51,9 +51,10 @@
         {'condition': price >= 6, 'className': 'red-dot3'},
         {'condition': price >= 3, 'className': 'red-dot2'},
         {'condition': price >= 1, 'className': 'red-dot1'},
-        {'condition': price <= -1, 'className': 'green-dot1'},
-        {'condition': price <= -3, 'className': 'green-dot2'},
         {'condition': price <= -6, 'className': 'green-dot3'},
+        {'condition': price <= -3, 'className': 'green-dot2'},
+        {'condition': price <= -1, 'className': 'green-dot1'},
+
       ];
       dotClasses.forEach((dotClass) => {
         if (dotClass.condition) {
