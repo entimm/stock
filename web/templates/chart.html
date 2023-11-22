@@ -17,7 +17,7 @@
     }
 
     .fixed-links1 {
-        position: fixed;
+        position: absolute;
         top: 0;
         right: 0;
         margin: 20px 100px;
@@ -29,7 +29,7 @@
     }
 
     .fixed-links2 {
-        position: fixed;
+        position: absolute;
         top: 50px;
         right: 0;
         margin: 20px 100px;
@@ -66,7 +66,15 @@
 <div id="chart"></div>
 {% endblock %}
 {% block footer %}
-<script type="text/javascript" src="/static/klinecharts.min.js"></script>
+<script>
+    if (window.self !== window.top) {
+        var headerElement = document.querySelector('header');
+        if (headerElement) {
+            headerElement.style.display = 'none';
+        }
+    }
+</script>
+<script src="/static/klinecharts.min.js"></script>
 <script>
     var chart = klinecharts.init('chart', {
         timezone: 'Asia/Shanghai',

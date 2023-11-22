@@ -33,12 +33,18 @@ main {
     align-items: center;
 }
 
-#nav-bar h1 {
+#nav-bar .logo {
     margin-left: 50px;
+    font-size: 25px;
+    font-weight: bolder;
+    margin-top: 3px;
+    margin-bottom: 3px;
 }
 
-.logo {
-  margin: 0;
+.logo a {
+  color: white;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .horizontal-menu {
@@ -58,6 +64,11 @@ main {
 }
 
 .horizontal-menu a {
-  color: white;
+  color: #FFF;
   text-decoration: none;
+}
+.horizontal-menu .active a {
+  color: #F9FFD5FF;
+  text-decoration: underline;
+  font-style: italic;
 }

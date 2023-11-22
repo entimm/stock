@@ -41,6 +41,7 @@ TDX_FREQUENCY_MAP = {
 }
 
 MENUS = [
+    {'name': '行情', 'url': '/chart', 'type': 'system'},
     {'name': '个股趋势图', 'url': '/astock', 'type': 'system'},
     {'name': '个股趋势表', 'url': '/astock_table', 'type': 'system'},
     {'name': '概念板块趋势图', 'url': '/gnbk', 'type': 'system'},
