@@ -124,3 +124,6 @@ def symbol_name(symbol):
         return symbol_name_dict[symbol]
 
 
+def symbol_all():
+    symbol_dict = {**gnbk_dict, **etf_dict, **index_dict, **symbol_name_dict}
+    return [{'key': k, 'value': v} for k, v in symbol_dict.items()]

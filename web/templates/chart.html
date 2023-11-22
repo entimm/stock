@@ -64,6 +64,28 @@
     <span class="symbol">{{ symbol }} - </span><span class="symbol-name">{{ symbol_name }}</span>
 </div>
 <div id="chart"></div>
+
+<!-- FAB Search Button -->
+<div class="fixed-action-btn" style="bottom: 24px; left: 24px;">
+    <a class="btn-floating btn-large waves-effect waves-light teal" onclick="openSearchDialog()">
+        搜索
+    </a>
+</div>
+
+<!-- Modal Structure -->
+<div id="search-dialog" class="modal">
+    <div class="modal-content">
+        <h4>Search</h4>
+        <div class="input-field">
+            <input type="text" id="search-input" placeholder="Search...">
+            <label for="search-input">Type your search here</label>
+        </div>
+        <div id="search-results" class="collection"></div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="closeSearchDialog()">Close</a>
+    </div>
+</div>
 {% endblock %}
 {% block footer %}
 <script>
@@ -164,7 +186,112 @@
     window.addEventListener('resize', resizeChart);
     window.addEventListener('load', resizeChart);
 
+
+</script>
+<script src="/static/jquery-3.7.1.min.js"></script>
+<script src="/static/materialize.min.js"></script>
+<script>
+    let select_list = [];
+
+    $(document).ready(function(){
+        fetch(`/symbol_list`).then(response => response.json())
+        .then(data => {
+            select_list = data;
+        })
+        $('.modal').modal();
+    });
+
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    let selectedIndex = -1;
+
+    function openSearchDialog() {
+        $('#search-dialog').modal('open');
+        searchInput.focus();
+        selectedIndex = -1;
+        updateSelectedResult();
+    }
+
+    function closeSearchDialog() {
+        $('#search-dialog').modal('close');
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        selectedIndex = -1;
+    }
+
+    searchInput.addEventListener('input', function () {
+        const query = searchInput.value.toLowerCase();
+        const filteredResults = select_list.filter(item =>
+            item.key.toLowerCase().includes(query) || item.value.toLowerCase().includes(query)
+        );
+        displayResults(filteredResults);
+    });
+
+    function displayResults(results) {
+        searchResults.innerHTML = '';
+
+        if (results.length > 0) {
+            results.forEach((result, index) => {
+                const listItem = document.createElement('a');
+                listItem.href = '#!';
+                listItem.classList.add('collection-item');
+                listItem.innerText = `${result.key} - ${result.value}`;
+                listItem.addEventListener('click', function () {
+                    searchInput.value = result.key;
+                    window.location.href = document.URL.replace(/\d{6}/, searchInput.value)
+                    closeSearchDialog();
+                });
+
+                listItem.addEventListener('mouseover', function () {
+                    selectedIndex = index;
+                    updateSelectedResult();
+                });
+
+                searchResults.appendChild(listItem);
+            });
+        } else {
+            const noResultsItem = document.createElement('div');
+            noResultsItem.classList.add('collection-item');
+            noResultsItem.innerText = 'No results found';
+            searchResults.appendChild(noResultsItem);
+        }
+
+        updateSelectedResult();
+    }
+
+    function updateSelectedResult() {
+        const results = searchResults.getElementsByClassName('collection-item');
+        for (let i = 0; i < results.length; i++) {
+            results[i].classList.remove('active');
+        }
+
+        if (selectedIndex >= 0 && selectedIndex < results.length) {
+            results[selectedIndex].classList.add('active');
+        }
+    }
+</script>
+
+<script>
     document.addEventListener('keydown', function () {
+        if ($('#search-dialog').hasClass('open')) {
+            const results = searchResults.getElementsByClassName('collection-item');
+
+            if (event.key === 'ArrowUp') {
+                selectedIndex = Math.max(selectedIndex - 1, 0);
+            } else if (event.key === 'ArrowDown') {
+                selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+            } else if (event.key === 'Enter') {
+                if (selectedIndex >= 0 && selectedIndex < results.length) {
+                    searchInput.value = results[selectedIndex].innerText.split(' - ')[0];
+                    window.location.href = document.URL.replace(/\d{6}/, searchInput.value)
+                    closeSearchDialog();
+                }
+            }
+            console.log(selectedIndex)
+            updateSelectedResult();
+            return;
+        }
+
         if (['Escape', 'Space'].includes(event.code)) {
             window.parent.postMessage('close_me', '*');
         }
