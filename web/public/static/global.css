@@ -72,3 +72,15 @@ main {
   text-decoration: underline;
   font-style: italic;
 }
+
+nav {
+    height: 32px;
+    line-height: 32px;
+}
+nav .brand-logo {
+    font-size: 1.8rem;
+}
+nav .nav-wrapper {
+    padding-left: 50px;
+    padding-right: 50px;
+}

@@ -8,17 +8,17 @@ table {
     border-collapse: collapse;
     width: max-content;
 }
-
 td, th {
-    border: 1px solid rgba(0, 0, 0, 0.23);
-    width: 100px;
+    padding: 0;
+    white-space: nowrap;
     text-align: center;
+    min-width: 100px;
+    position: relative;
     cursor: pointer;
 }
-
 th {
-    background-color: black;
     color: white;
+    background-color: #936161;
     position: sticky;
     top: 0;
 }
@@ -43,9 +43,6 @@ th {
     margin: 10px;
 }
 
-td {
-    position: relative;
-}
 
 .dot::after {
     content: "";
@@ -95,7 +92,7 @@ td {
     border: 1px solid #ccc;
     padding: 10px;
     font-size: 20px;
-    width: 1640px;
+    width: 1660px;
     height: 340px;
 }
 
