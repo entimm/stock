@@ -11,6 +11,7 @@ def chart():
     symbol = request.args.get('symbol', '', type=str)
     period = request.args.get('period', '', type=str).upper()
     req_real = request.args.get('req_real', 0, type=int)
+    chart_engine = request.args.get('chart', 0, type=int)
 
     if not symbol or not period:
         return redirect(url_for('chart.chart', symbol='999999', period=PeriodEnum.D.name, req_real=0))
@@ -32,6 +33,7 @@ def chart():
             PeriodEnum.D.name: '天',
         },
         'req_real': req_real,
+        'chart_engine': chart_engine,
     }
 
     return render_template('chart.html', **template_var)

@@ -125,4 +125,10 @@
       updateSelectedResult();
     }
   });
+
+  let searchBtn = document.createElement('a');
+  searchBtn.classList.add('btn-floating', 'btn-large', 'waves-effect', 'waves-light', 'teal');
+  searchBtn.innerText = '🔍';
+  searchBtn.onclick = openSearchDialog;
+  document.getElementById('fixed-links1').prepend(searchBtn);
 </script>

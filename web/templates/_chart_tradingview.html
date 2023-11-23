@@ -1,0 +1,149 @@
+<script src="/static/third/lightweight-charts.standalone.production.js"></script>
+<script src="/static/calculate.js"></script>
+<script>
+  let klineList = {{ kline_list | tojson }}
+    klineList = klineList.map(item => ({
+      time: new Date(item.timestamp).getTime() / 1000 + 3600 * 8,
+      open: item.open,
+      high: item.high,
+      low: item.low,
+      close: item.close,
+      volume: item.volume,
+    }));
+  const chart = LightweightCharts.createChart(document.getElementById('chart'), {
+    grid: {
+      vertLines: {
+        color: '#F2F3F3',
+      },
+      horzLines: {
+        color: '#F2F3F3',
+      },
+    },
+    rightPriceScale: {
+      borderColor: '#FFF',
+      scaleMargins: {
+        top: 0.01,
+        bottom: 0.2,
+      },
+    },
+    timeScale: {
+      borderVisible: false,
+      timeVisible: true,
+      timeFormat: '%Y-%m-%d %H:%M',
+    },
+    localization: {
+      dateFormat: 'yyyy-MM-dd',
+    },
+    crosshair: {
+      mode: 0,
+    }
+  });
+
+  chart.addCandlestickSeries({
+    upColor: '#F23644',
+    downColor: '#0A9981',
+    borderUpColor: '#F23644',
+    borderDownColor: '#0A9981',
+    wickUpColor: '#F23644',
+    wickDownColor: '#0A9981',
+  }).setData(klineList);
+
+  chart.addHistogramSeries({
+    color: '#333',
+    lineWidth: 2,
+    priceFormat: {
+      type: 'volume',
+    },
+    priceScaleId: 'volume',
+  }).setData(klineList.map(item => ({
+    time: item.time,
+    value: item.volume,
+    color: item.open > item.close ? '#92D2CC' : '#F7A9A7'
+  })));
+  chart.priceScale('volume').applyOptions({
+    scaleMargins: {
+      top: 0.8,
+      bottom: 0.1,
+    },
+  });
+
+  const ma_config_list = [
+    {period: 5, color: '#930606'},
+    {period: 10, color: '#ECAB07'},
+    {period: 20, color: '#EF15DE'},
+    {period: 60, color: '#16DE45'},
+    {period: 240, color: '#6E28E5'},
+    {period: 480, color: '#E50B33'},
+    {period: 960, color: '#16B9DE'},
+  ];
+  ma_config_list.forEach(function (ma_config) {
+    chart.addLineSeries({
+      color: ma_config.color,
+      lineWidth: 1,
+      priceLineVisible: false,
+    }).setData(calMaWithTime(klineList, ma_config.period).map(item => ({
+      time: item.time,
+      value: item.value
+    })));
+  });
+
+  const shortPeriod = 12;
+  const longPeriod = 26;
+  const signalPeriod = 9;
+
+  const {macdLine, signalLine, histogram} = calMacdWithTime(
+    klineList,
+    shortPeriod,
+    longPeriod,
+    signalPeriod
+  );
+
+  chart.addLineSeries({
+    priceScaleId: 'macd',
+    color: '#2A62FF',
+    lineWidth: 1,
+    priceLineVisible: false,
+  }).setData(macdLine.map(item => ({
+    time: item.time,
+    value: item.value
+  })));
+  chart.addLineSeries({
+    priceScaleId: 'macd',
+    color: '#FF6D00',
+    lineWidth: 1,
+    priceLineVisible: false,
+  }).setData(signalLine.map(item => ({
+    time: item.time,
+    value: item.value
+  })));
+  chart.addHistogramSeries({
+    priceScaleId: 'macd',
+    color: '#333',
+    priceFormat: {
+      type: 'volume',
+      precision: 2
+    },
+    priceLineVisible: false,
+    lastValueVisible: true,
+  }).setData(histogram.map(item => ({
+    time: item.time,
+    value: item.value,
+    color: item.value >= 0 ? '#FF5252' : '#26A69A'
+  })));
+
+
+  chart.priceScale('macd').applyOptions({
+    scaleMargins: {
+      top: 0.9,
+      bottom: 0,
+    },
+  });
+
+  window.addEventListener('resize', function () {
+    let parentContainer = $('main')
+    chart.applyOptions({
+      width: parentContainer.outerWidth(),
+      height: parentContainer.outerHeight()
+    });
+  });
+</script>

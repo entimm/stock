@@ -45,21 +45,15 @@
 {% block content %}
   <div id="fixed-links1">
     {% for period_key, period_name in period_list.items() %}
-      <a href="/chart?symbol={{ symbol }}&period={{ period_key }}&req_real={{ req_real }}" {% if period_key == period %}class="highlight"{% endif %}>{{ period_name }}</a>
+      <a href="/chart?symbol={{ symbol }}&period={{ period_key }}&req_real={{ req_real }}&chart={{ chart_engine }}" {% if period_key == period %}class="highlight"{% endif %}>{{ period_name }}</a>
     {% endfor %}
-    <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=0" {% if req_real == 0 %}class="highlight"{% endif %}>本地</a>
-    <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1" {% if req_real == 1 %}class="highlight"{% endif %}>实时</a>
+    <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=0&chart={{ chart_engine }}" {% if req_real == 0 %}class="highlight"{% endif %}>本地</a>
+    <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1&chart={{ chart_engine }}" {% if req_real == 1 %}class="highlight"{% endif %}>实时</a>
+    <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1&chart={{ (not chart_engine) | int }}">切换</a>
   </div>
   <div id="fixed-links2">
     <span class="symbol">{{ symbol }} - </span><span class="symbol-name">{{ symbol_name }}</span>
   </div>
-  <div id="chart"></div>
-
-{% include "_chart_kline.html" %}
-{% include "_search_dialog.html" %}
-
-{% endblock %}
-{% block footer %}
   <script>
     if (window.self !== window.top) {
       let headerElement = document.querySelector('header');
@@ -68,6 +62,20 @@
       }
     }
   </script>
+  <div id="chart"></div>
+
+
+  {% if chart_engine == 0 %}
+    {% include "_chart_tradingview.html" %}
+  {% else %}
+    {% include "_chart_kline.html" %}
+  {% endif %}
+
+
+  {% include "_search_dialog.html" %}
+
+{% endblock %}
+{% block footer %}
   <script>
     document.addEventListener('keydown', function () {
       if (!$('#search-dialog').hasClass('open')) {
