@@ -55,27 +55,9 @@
   </div>
   <div id="chart"></div>
 
-  <!-- FAB Search Button -->
-  <div class="fixed-action-btn" style="top: 24px; right: 24px;">
-    <a class="btn-floating btn-large waves-effect waves-light teal" onclick="openSearchDialog()">
-      🔍
-    </a>
-  </div>
+{% include "_chart_kline.html" %}
+{% include "_search_dialog.html" %}
 
-  <!-- Modal Structure -->
-  <div id="search-dialog" class="modal">
-    <div class="modal-content">
-      <h4>搜索</h4>
-      <div class="input-field">
-        <input type="text" id="search-input" placeholder="Search...">
-        <label for="search-input">输入代码或名称</label>
-      </div>
-      <div id="search-results" class="collection"></div>
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="closeSearchDialog()">关闭</a>
-    </div>
-  </div>
 {% endblock %}
 {% block footer %}
   <script>
@@ -86,218 +68,15 @@
       }
     }
   </script>
-  <script src="/static/third/klinecharts.min.js"></script>
-  <script>
-    let chart = klinecharts.init('chart', {
-      timezone: 'Asia/Shanghai',
-      customApi: {
-        formatDate: function (dateTimeFormat, timestamp, format, type) {
-          return timestamp
-        }
-      }
-    })
-    chart._chartStore._timeScaleStore.setBarSpaceLimitConfig(0.01, 20)
-    chart.createIndicator({
-      name: 'MA',
-      precision: 3,
-      calcParams: [5, 10, 20, 60, 240, 480, 960],
-      styles: {
-        lines: [
-          {style: 'solid', size: 0.5, color: '#930606'},
-          {style: 'solid', size: 0.5, color: '#ECAB07'},
-          {style: 'solid', size: 0.5, color: '#EF15DE'},
-          {style: 'solid', size: 1, color: '#16de45'},
-          {style: 'solid', size: 0.5, color: '#6e28e5'},
-          {style: 'solid', size: 0.5, color: '#e50b33'},
-          {style: 'solid', size: 0.5, color: '#16b9de'},
-        ]
-      }
-    }, false, {id: 'candle_pane'})
-    chart.createIndicator('VOL')
-    chart.createIndicator('MACD')
-    chart.setStyles({
-      // 网格线
-      grid: {
-        show: true,
-        horizontal: {
-          show: true,
-          size: 1,
-          color: '#F0F0F0',
-          style: 'solid',
-        },
-        vertical: {
-          show: true,
-          size: 1,
-          color: '#F0F0F0',
-          style: 'solid',
-        }
-      },
-      candle: {
-        // 蜡烛图类型 'candle_solid'|'candle_stroke'|'candle_up_stroke'|'candle_down_stroke'|'ohlc'|'area'
-        type: 'candle_solid',
-        bar: {
-          upColor: '#F21414',
-          downColor: '#08B536',
-          noChangeColor: '#888888',
-          upBorderColor: '#F21414',
-          downBorderColor: '#08B536',
-          noChangeBorderColor: '#888888',
-          upWickColor: '#F21414',
-          downWickColor: '#08B536',
-          noChangeWickColor: '#888888'
-        },
-      },
-      indicator: {
-        bars: [{
-          // 'fill' | 'stroke' | 'stroke_fill'
-          style: 'fill',
-          // 'solid' | 'dashed'
-          borderStyle: 'solid',
-          borderSize: 1,
-          borderDashedValue: [2, 2],
-          upColor: '#F21414',
-          downColor: '#08B536',
-          noChangeColor: '#888888'
-        }],
-        lastValueMark: {
-          show: true,
-        },
-      }
-    });
-
-    chart._chartStore.getTimeScaleStore().zoom(1000)
-    chart.applyNewData({{ kline_list | tojson }})
-
-
-    function resizeChart() {
-      chart.resize()
-    }
-
-    window.addEventListener('resize', resizeChart);
-    window.addEventListener('load', resizeChart);
-
-
-  </script>
-  <script src="/static/third/jquery-3.7.1.min.js"></script>
-  <script src="/static/third/materialize.min.js"></script>
-  <script>
-    let option_list = [];
-    let default_show_items = [];
-
-    const searchInput = document.getElementById('search-input');
-    const searchResults = document.getElementById('search-results');
-    let selectedIndex = -1;
-
-    $(document).ready(function () {
-      fetch(`/symbol_list`).then(response => response.json())
-        .then(data => {
-          option_list = data.symbol_all_list;
-          default_show_items = option_list.filter(item => data.default_show_list.includes(item.key));
-        });
-      $('.modal').modal();
-    });
-
-
-    function openSearchDialog() {
-      $('#search-dialog').modal('open');
-      searchInput.focus();
-      selectedIndex = -1;
-      updateSelectedResult();
-
-      if (searchResults.innerHTML === '') {
-        displayResults(default_show_items)
-      }
-    }
-
-    function closeSearchDialog() {
-      $('#search-dialog').modal('close');
-      searchInput.value = '';
-      searchResults.innerHTML = '';
-      selectedIndex = -1;
-    }
-
-    searchInput.addEventListener('input', function () {
-      const query = searchInput.value.toLowerCase();
-      if (query === '') {
-        displayResults(default_show_items);
-        return;
-      }
-      const filteredResults = option_list.filter(item =>
-        item.key.toLowerCase().includes(query) || item.value.toLowerCase().includes(query)
-      );
-      displayResults(filteredResults);
-    });
-
-    function displayResults(results) {
-      searchResults.innerHTML = '';
-
-      if (results.length > 0) {
-        results = results.slice(0, 20)
-        results.forEach((result, index) => {
-          const listItem = document.createElement('a');
-          listItem.href = '#!';
-          listItem.classList.add('collection-item');
-          listItem.innerText = `${result.key} - ${result.value}`;
-          listItem.addEventListener('click', function () {
-            searchInput.value = result.key;
-            window.location.href = document.URL.replace(/\d{6}/, searchInput.value);
-            closeSearchDialog();
-          });
-
-          listItem.addEventListener('mouseover', function () {
-            selectedIndex = index;
-            updateSelectedResult();
-          });
-
-          searchResults.appendChild(listItem);
-        });
-      } else {
-        const noResultsItem = document.createElement('div');
-        noResultsItem.classList.add('collection-item');
-        noResultsItem.innerText = '没有找到相关结果';
-        searchResults.appendChild(noResultsItem);
-      }
-
-      updateSelectedResult();
-    }
-
-    function updateSelectedResult() {
-      const results = searchResults.getElementsByClassName('collection-item');
-      for (let i = 0; i < results.length; i++) {
-        results[i].classList.remove('active');
-      }
-
-      if (selectedIndex >= 0 && selectedIndex < results.length) {
-        results[selectedIndex].classList.add('active');
-      }
-    }
-  </script>
-
   <script>
     document.addEventListener('keydown', function () {
-      if ($('#search-dialog').hasClass('open')) {
-        const results = searchResults.getElementsByClassName('collection-item');
-
-        if (event.key === 'ArrowUp') {
-          selectedIndex = Math.max(selectedIndex - 1, 0);
-        } else if (event.key === 'ArrowDown') {
-          selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
-        } else if (event.key === 'Enter') {
-          if (selectedIndex >= 0 && selectedIndex < results.length) {
-            searchInput.value = results[selectedIndex].innerText.split(' - ')[0];
-            window.location.href = document.URL.replace(/\d{6}/, searchInput.value);
-            closeSearchDialog();
-          }
+      if (!$('#search-dialog').hasClass('open')) {
+        if (['Escape', 'Space'].includes(event.code)) {
+          window.parent.postMessage('close_me', '*');
         }
-        updateSelectedResult();
-        return;
-      }
-
-      if (['Escape', 'Space'].includes(event.code)) {
-        window.parent.postMessage('close_me', '*');
-      }
-      if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.code)) {
-        window.parent.postMessage(`${event.code}`, '*');
+        if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.code)) {
+          window.parent.postMessage(`${event.code}`, '*');
+        }
       }
     });
   </script>

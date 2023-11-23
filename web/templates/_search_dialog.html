@@ -1,0 +1,133 @@
+<div id="search-dialog" class="modal">
+  <div class="modal-content">
+    <h4>搜索</h4>
+    <div class="input-field">
+      <input type="text" id="search-input" placeholder="Search...">
+      <label for="search-input">输入代码或名称</label>
+    </div>
+    <div id="search-results" class="collection"></div>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="closeSearchDialog()">关闭</a>
+  </div>
+</div>
+
+  <div class="fixed-action-btn" style="top: 24px; right: 24px;">
+    <a class="btn-floating btn-large waves-effect waves-light teal" onclick="openSearchDialog()">
+      🔍
+    </a>
+  </div>
+
+<script src="/static/third/jquery-3.7.1.min.js"></script>
+<script src="/static/third/materialize.min.js"></script>
+<script>
+  let option_list = [];
+  let default_show_items = [];
+
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+  let selectedIndex = -1;
+
+  $(document).ready(function () {
+    fetch(`/symbol_list`).then(response => response.json())
+      .then(data => {
+        option_list = data.symbol_all_list;
+        default_show_items = option_list.filter(item => data.default_show_list.includes(item.key));
+      });
+    $('.modal').modal();
+  });
+
+
+  function openSearchDialog() {
+    $('#search-dialog').modal('open');
+    searchInput.focus();
+    selectedIndex = -1;
+    updateSelectedResult();
+
+    if (searchResults.innerHTML === '') {
+      displayResults(default_show_items)
+    }
+  }
+
+  function closeSearchDialog() {
+    $('#search-dialog').modal('close');
+    searchInput.value = '';
+    searchResults.innerHTML = '';
+    selectedIndex = -1;
+  }
+
+  searchInput.addEventListener('input', function () {
+    const query = searchInput.value.toLowerCase();
+    if (query === '') {
+      displayResults(default_show_items);
+      return;
+    }
+    const filteredResults = option_list.filter(item =>
+      item.key.toLowerCase().includes(query) || item.value.toLowerCase().includes(query)
+    );
+    displayResults(filteredResults);
+  });
+
+  function displayResults(results) {
+    searchResults.innerHTML = '';
+
+    if (results.length > 0) {
+      results = results.slice(0, 20)
+      results.forEach((result, index) => {
+        const listItem = document.createElement('a');
+        listItem.href = '#!';
+        listItem.classList.add('collection-item');
+        listItem.innerText = `${result.key} - ${result.value}`;
+        listItem.addEventListener('click', function () {
+          searchInput.value = result.key;
+          window.location.href = document.URL.replace(/\d{6}/, searchInput.value);
+          closeSearchDialog();
+        });
+
+        listItem.addEventListener('mouseover', function () {
+          selectedIndex = index;
+          updateSelectedResult();
+        });
+
+        searchResults.appendChild(listItem);
+      });
+    } else {
+      const noResultsItem = document.createElement('div');
+      noResultsItem.classList.add('collection-item');
+      noResultsItem.innerText = '没有找到相关结果';
+      searchResults.appendChild(noResultsItem);
+    }
+
+    updateSelectedResult();
+  }
+
+  function updateSelectedResult() {
+    const results = searchResults.getElementsByClassName('collection-item');
+    for (let i = 0; i < results.length; i++) {
+      results[i].classList.remove('active');
+    }
+
+    if (selectedIndex >= 0 && selectedIndex < results.length) {
+      results[selectedIndex].classList.add('active');
+    }
+  }
+
+  document.addEventListener('keydown', function () {
+    if ($('#search-dialog').hasClass('open')) {
+      const results = searchResults.getElementsByClassName('collection-item');
+
+      if (event.key === 'ArrowUp') {
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+      } else if (event.key === 'ArrowDown') {
+        selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+      } else if (event.key === 'Enter') {
+        if (selectedIndex >= 0 && selectedIndex < results.length) {
+          searchInput.value = results[selectedIndex].innerText.split(' - ')[0];
+          window.location.href = document.URL.replace(/\d{6}/, searchInput.value);
+          closeSearchDialog();
+        }
+      }
+      updateSelectedResult();
+    }
+  });
+</script>
