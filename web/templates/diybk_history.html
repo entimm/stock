@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/static/table.css">
 {% endblock %}
 {% block content %}
-  <div class="fixed-links">
+  <div id="fixed-links">
     {% for value in ma_list %}
       <a href="?bk_key={{ bk_key }}&ma={{ value }}&direction={{ direction }}" {% if value == ma %}class="highlight"{% endif %}>{{ value }}</a>
     {% endfor %}

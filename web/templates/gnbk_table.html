@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="/static/table.css">
 {% endblock %}
 {% block content %}
-  <div class="fixed-links">
+  <div id="fixed-links">
     {% for value in year_list %}
       <a href="?year={{ value }}" {% if value == year %}class="highlight"{% endif %}>{{ value }}</a>
     {% endfor %}
