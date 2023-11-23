@@ -60,11 +60,13 @@ def fetch_local_data(reader, symbol, period):
         return reader.daily(symbol=symbol)
 
 
-def realtime_whole_df(symbol, period_enum):
+def realtime_whole_df(symbol, period_enum, req_real=1):
     base_period_enum = PeriodEnum.F1 if period_enum in [PeriodEnum.F15, PeriodEnum.F30] else period_enum
 
     frequency = TDX_FREQUENCY_MAP.get(base_period_enum)
     df = fetch_local_data(local_tdx_reader, symbol, base_period_enum)
+    if not req_real:
+        return df
 
     minutes = minutes_since_open()
     if minutes:
@@ -82,7 +84,11 @@ def realtime_whole_df(symbol, period_enum):
         else:
             client = Quotes.factory(market='std')
             real_time_df = client.bars(symbol=symbol, frequency=frequency, offset=offset)
-        df = pd.concat([df, pd.DataFrame(real_time_df[['open', 'high', 'low', 'close', 'amount', 'volume']])], axis=0)
+        if period_enum == PeriodEnum.D:
+            real_time_df = real_time_df[real_time_df.index.date > df.index[-1].date()]
+        else:
+            real_time_df = real_time_df[real_time_df.index > df.index[-1]]
+        df = pd.concat([df, real_time_df[['open', 'high', 'low', 'close', 'amount', 'volume']]], axis=0).drop_duplicates()
 
     if period_enum in [PeriodEnum.F15, PeriodEnum.F30]:
         df = resample_kline(df, period_enum)
@@ -127,3 +133,14 @@ def symbol_name(symbol):
 def symbol_all():
     symbol_dict = {**symbol_name_dict, **index_dict, **gnbk_dict, **etf_dict}
     return [{'key': k, 'value': v} for k, v in symbol_dict.items()]
+
+
+def row_to_kline(row):
+    return {
+        'timestamp': row.name.strftime("%Y-%m-%d %H:%M:%S"),
+        'open': row['open'],
+        'high': row['high'],
+        'low': row['low'],
+        'close': row['close'],
+        'volume': row['volume'],
+    }

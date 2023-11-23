@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint, request, url_for, redirect
 
 from common.common import PeriodEnum
-from common.utils import realtime_whole_df, symbol_name, symbol_all
+from common.utils import realtime_whole_df, symbol_name, symbol_all, row_to_kline
 
 blueprint = Blueprint('chart', __name__)
 
@@ -17,7 +17,7 @@ def chart():
         return redirect(url_for('chart.chart', symbol='999999', period=PeriodEnum.D.name, req_real=0))
 
     period_enum = PeriodEnum[period]
-    df = realtime_whole_df(symbol, period_enum)
+    df = realtime_whole_df(symbol, period_enum, req_real)
     kline_list = df.apply(row_to_kline, axis=1).to_list()
 
     template_var = {
@@ -37,17 +37,6 @@ def chart():
     }
 
     return render_template('chart.html', **template_var)
-
-
-def row_to_kline(row):
-    return {
-        'timestamp': row.name.strftime("%Y-%m-%d %H:%M:%S"),
-        'open': row['open'],
-        'high': row['high'],
-        'low': row['low'],
-        'close': row['close'],
-        'volume': row['volume'],
-    }
 
 
 @blueprint.route('/symbol_list')
