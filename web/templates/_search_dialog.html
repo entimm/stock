@@ -12,6 +12,12 @@
   </div>
 </div>
 
+  <!-- FAB Search Button -->
+  <div class="fixed-action-btn" style="top: 24px; right: 12px;">
+    <a class="btn-floating btn waves-effect waves-light teal" onclick="openSearchDialog()">
+      🔍
+    </a>
+  </div>
 
 <script src="/static/third/jquery-3.7.1.min.js"></script>
 <script src="/static/third/materialize.min.js"></script>
@@ -125,11 +131,4 @@
       updateSelectedResult();
     }
   });
-
-  let searchBtn = document.createElement('a');
-  searchBtn.classList.add('btn-floating', 'btn-large', 'waves-effect', 'waves-light', 'teal');
-  searchBtn.innerText = '🔍';
-  searchBtn.style = 'font-size:30px';
-  searchBtn.onclick = openSearchDialog;
-  document.querySelector('.fixed-links').prepend(searchBtn);
 </script>
