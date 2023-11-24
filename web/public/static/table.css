@@ -27,17 +27,12 @@ th {
   display: none;
 }
 
-.highlight {
+td .highlight {
   color: #FF5733;
   font-weight: bold;
   font-size: 20px;
   text-decoration: underline;
 }
-
-#fixed-links {
-  margin: 10px;
-}
-
 
 .dot::after {
   content: "";
@@ -89,6 +84,8 @@ th {
   font-size: 20px;
   width: 1660px;
   height: 340px;
+  z-index: 100;
+  box-shadow: 0 10px 20px 20px rgb(0 0 0 / 10%);
 }
 
 #chartDialog {
@@ -111,4 +108,16 @@ th {
 
 .select-cell {
   border: 3px solid red;
+}
+
+#fixed-links-container.right-top {
+  position: fixed;
+  top: 520px;
+  margin-right: 0;
+}
+
+#fixed-links-container.right-top .fixed-links {
+  background-color: #FFF;
+  box-shadow: 0 10px 20px 20px rgb(0 0 0 / 10%);
+  padding: 3px 20px;
 }

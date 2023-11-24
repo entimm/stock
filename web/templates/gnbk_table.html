@@ -20,10 +20,12 @@
   <link rel="stylesheet" href="/static/table.css">
 {% endblock %}
 {% block content %}
-  <div id="fixed-links">
-    {% for value in year_list %}
-      <a href="?year={{ value }}" {% if value == year %}class="highlight"{% endif %}>{{ value }}</a>
-    {% endfor %}
+  <div id="fixed-links-container" class="right-top">
+    <div class="fixed-links">
+      {% for value in year_list %}
+        <a href="?year={{ value }}" {% if value == year %}class="highlight"{% endif %}>{{ value }}</a>
+      {% endfor %}
+    </div>
   </div>
 
   <dialog id="chartDialog" style="overflow: hidden;">
@@ -34,7 +36,7 @@
   <div id="grid-container">
     <table id="grid" class="striped centered"></table>
     <div id="tooltip" style="display:none;"></div>
-    <div id="tooltip-trend" class="tooltip-big" style="display:none;"></div>
+    <div id="tooltip-trend" style="display:none;"></div>
   </div>
 {% endblock %}
 {% block footer %}

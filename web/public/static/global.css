@@ -39,3 +39,39 @@ nav .nav-wrapper {
   padding-left: 50px;
   padding-right: 50px;
 }
+
+#chart {
+  width: 100%;
+  height: 100%;
+}
+
+#fixed-links-container {
+  position: absolute;
+  z-index: 99;
+  margin-left: 20px;
+}
+
+.fixed-links {
+  position: relative;
+  text-align: right;
+}
+
+.fixed-links a {
+  margin: 0 3px;
+}
+
+.fixed-links .highlight {
+  color: #FF5733;
+  font-weight: bold;
+  font-size: 20px;
+  text-decoration: underline;
+}
+
+.right-top {
+  right: 0;
+  top: 5px;
+}
+
+#fixed-links-container.right-top {
+  margin-right: 80px;
+}

@@ -1,19 +1,13 @@
 {% extends '_layout.html' %}
 {% block head %}
   <title>自定义板块</title>
-  <style>
-    .tooltip-big {;
-      width: 1660px;
-      height: 340px;
-    }
-  </style>
   <link rel="stylesheet" href="/static/table.css">
 {% endblock %}
 {% block content %}
   <div id="grid-container">
     <table id="grid" class="striped centered"></table>
     <div id="tooltip" style="display:none;"></div>
-    <div id="tooltip-trend" class="tooltip-big" style="display:none;"></div>
+    <div id="tooltip-trend" style="display:none;"></div>
   </div>
 
   <dialog id="chartDialog" style="overflow: hidden;">

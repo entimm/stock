@@ -1,28 +1,24 @@
 {% extends '_layout.html' %}
 {% block head %}
   <title>自定义板块</title>
-  <style>
-    .tooltip-big {;
-      width: 1660px;
-      height: 340px;
-    }
-  </style>
   <link rel="stylesheet" href="/static/table.css">
 {% endblock %}
 {% block content %}
-  <div id="fixed-links">
-    {% for value in ma_list %}
-      <a href="?bk_key={{ bk_key }}&ma={{ value }}&direction={{ direction }}" {% if value == ma %}class="highlight"{% endif %}>{{ value }}</a>
-    {% endfor %}
-    {% for key, value in direction_list.items() %}
-      <a href="?bk_key={{ bk_key }}&ma={{ ma }}&direction={{ key }}" {% if direction == key %}class="highlight"{% endif %}>{{ value['name'] }}</a>
-    {% endfor %}
+  <div id="fixed-links-container" class="right-top">
+    <div class="fixed-links">
+      {% for value in ma_list %}
+        <a href="?bk_key={{ bk_key }}&ma={{ value }}&direction={{ direction }}" {% if value == ma %}class="highlight"{% endif %}>{{ value }}</a>
+      {% endfor %}
+      {% for key, value in direction_list.items() %}
+        <a href="?bk_key={{ bk_key }}&ma={{ ma }}&direction={{ key }}" {% if direction == key %}class="highlight"{% endif %}>{{ value['name'] }}</a>
+      {% endfor %}
+    </div>
   </div>
 
   <div id="grid-container">
     <table id="grid" class="striped centered"></table>
     <div id="tooltip" style="display:none;"></div>
-    <div id="tooltip-trend" class="tooltip-big" style="display:none;"></div>
+    <div id="tooltip-trend" style="display:none;"></div>
   </div>
 
   <dialog id="chartDialog" style="overflow: hidden;">
