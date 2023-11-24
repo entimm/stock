@@ -9,22 +9,6 @@
     }
   })
   chart._chartStore._timeScaleStore.setBarSpaceLimitConfig(0.01, 20)
-  chart.createIndicator({
-    name: 'MA',
-    precision: 3,
-    calcParams: [5, 10, 20, 60, 240, 480, 960],
-    styles: {
-      lines: [
-        {style: 'solid', size: 0.5, color: '#930606'},
-        {style: 'solid', size: 0.5, color: '#ECAB07'},
-        {style: 'solid', size: 0.5, color: '#EF15DE'},
-        {style: 'solid', size: 1, color: '#16DE45'},
-        {style: 'solid', size: 0.5, color: '#6E28E5'},
-        {style: 'solid', size: 0.5, color: '#E50B33'},
-        {style: 'solid', size: 0.5, color: '#16B9DE'},
-      ]
-    }
-  }, false, {id: 'candle_pane'})
   chart.createIndicator('VOL')
   chart.createIndicator('MACD')
   chart.setStyles({
@@ -101,3 +85,25 @@
   window.addEventListener('resize', resizeChart);
   window.addEventListener('load', resizeChart);
 </script>
+{% if show_chan %}
+  {% include "_chart_kline_chan.html" %}
+{% else %}
+  <script>
+    chart.createIndicator({
+      name: 'MA',
+      precision: 3,
+      calcParams: [5, 10, 20, 60, 240, 480, 960],
+      styles: {
+        lines: [
+          {style: 'solid', size: 0.5, color: '#930606'},
+          {style: 'solid', size: 0.5, color: '#ECAB07'},
+          {style: 'solid', size: 0.5, color: '#EF15DE'},
+          {style: 'solid', size: 1, color: '#16DE45'},
+          {style: 'solid', size: 0.5, color: '#6E28E5'},
+          {style: 'solid', size: 0.5, color: '#E50B33'},
+          {style: 'solid', size: 0.5, color: '#16B9DE'},
+        ]
+      }
+    }, false, {id: 'candle_pane'})
+  </script>
+{% endif %}

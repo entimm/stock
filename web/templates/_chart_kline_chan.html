@@ -1,0 +1,21 @@
+<script type="text/javascript" src="/static/klinecharts_overlay.js"></script>
+<script>
+  let chan_data = {{ chan_data | safe }}
+  let output_text = chan_data.output_text
+  let overlayGroup = {}
+
+  function addOverlay(item) {
+    if (overlayGroup[item.groupId]) {
+      overlayGroup[item.groupId].push(item.id);
+    } else {
+      overlayGroup[item.groupId] = [item.id];
+    }
+    chart.createOverlay(item)
+  }
+
+  chan_data.bar_union_list?.forEach(item => addOverlay(barUnionOverlayData(item)))
+  chan_data.fractal_list?.forEach(item => addOverlay(fractalOverlayData(item)))
+  chan_data.stroke_list?.forEach(item => addOverlay(strokeOverlayData(item)))
+  chan_data.stroke_list?.forEach(item => addOverlay(strokeBarOverlayData(item)))
+  chan_data.segment_list?.forEach(item => addOverlay(segmentOverlayData(item)))
+</script>

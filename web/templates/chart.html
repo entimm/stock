@@ -15,11 +15,12 @@
   <div id="fixed-links-container" class="right-top">
     <div class="fixed-links">
       {% for period_key, period_name in period_list.items() %}
-        <a href="/chart?symbol={{ symbol }}&period={{ period_key }}&req_real={{ req_real }}&chart={{ chart_engine }}" {% if period_key == period %}class="highlight"{% endif %}>{{ period_name }}</a>
+        <a href="/chart?symbol={{ symbol }}&period={{ period_key }}&req_real={{ req_real }}&chart={{ chart_engine }}&chan={{ chan }}" {% if period_key == period %}class="highlight"{% endif %}>{{ period_name }}</a>
       {% endfor %}
-      <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=0&chart={{ chart_engine }}" {% if req_real == 0 %}class="highlight"{% endif %}>本地</a>
-      <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1&chart={{ chart_engine }}" {% if req_real == 1 %}class="highlight"{% endif %}>实时</a>
-      <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1&chart={{ (not chart_engine) | int }}">切换</a>
+      <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=0&chart={{ chart_engine }}&chan={{ chan }}" {% if req_real == 0 %}class="highlight"{% endif %}>本地</a>
+      <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1&chart={{ chart_engine }}&chan={{ chan }}" {% if req_real == 1 %}class="highlight"{% endif %}>实时</a>
+      <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1&chart={{ (not chart_engine) | int }}&chan={{ chan }}">切换</a>
+      <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1&chart={{ (not chart_engine) | int }}&chan={{ (not show_chan) | int }}" {% if show_chan == 1 %}class="highlight"{% endif %}>缠论</a>
     </div>
     <div class="fixed-links">
       <span class="symbol">{{ symbol }} - </span><span class="symbol-name">{{ symbol_name }}</span>
