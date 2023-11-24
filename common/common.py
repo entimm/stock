@@ -59,6 +59,6 @@ MENUS = [
     {'name': '选股宝-涨停复盘', 'url': 'https://xuangubao.cn', 'type': 'external'},
     {'name': 'i问财', 'url': 'http://iwencai.com/unifiedwap/home/index', 'type': 'external'},
     {'name': '股票投资管理', 'url': 'https://beyondme.feishu.cn/base/Wdclb8yiaaSOqasOcYycdZV1nxN?table=tbldAfNroUPByq7y&view=vewFGTsFzC', 'type': 'external'},
-    {'name': 'TradingView行情', 'url': 'https://cn.tradingview.com/chart/rrCcZSIn/?symbol=SSE:000001', 'type': 'external'},
-    {'name': 'TradingView市场', 'url': 'https://cn.tradingview.com/markets/china/', 'type': 'external'},
+    {'name': 'TV行情', 'url': 'https://cn.tradingview.com/chart/rrCcZSIn/?symbol=SSE:000001', 'type': 'external'},
+    {'name': 'TV市场', 'url': 'https://cn.tradingview.com/markets/china/', 'type': 'external'},
 ]

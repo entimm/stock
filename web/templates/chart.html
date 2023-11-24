@@ -19,7 +19,7 @@
       {% endfor %}
       <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=0&chart={{ chart_engine }}&chan={{ chan }}" {% if req_real == 0 %}class="highlight"{% endif %}>本地</a>
       <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1&chart={{ chart_engine }}&chan={{ chan }}" {% if req_real == 1 %}class="highlight"{% endif %}>实时</a>
-      <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1&chart={{ (not chart_engine) | int }}&chan={{ chan }}">切换</a>
+      <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1&chart={{ (not chart_engine) | int }}&chan={{ chan }}" {% if chart_engine == 0 %}class="highlight"{% endif %}>TV</a>
       <a href="/chart?symbol={{ symbol }}&period={{ period }}&req_real=1&chart={{ (not chart_engine) | int }}&chan={{ (not show_chan) | int }}" {% if show_chan == 1 %}class="highlight"{% endif %}>缠论</a>
     </div>
     <div class="fixed-links">
