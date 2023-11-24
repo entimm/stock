@@ -137,7 +137,7 @@ def symbol_all():
 
 def row_to_kline(row):
     return {
-        'timestamp': row.name.strftime("%Y-%m-%d %H:%M:%S"),
+        'time': row.name.strftime("%Y-%m-%d %H:%M:%S"),
         'open': row['open'],
         'high': row['high'],
         'low': row['low'],

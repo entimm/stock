@@ -3,7 +3,7 @@
 <script>
   let klineList = {{ kline_list | tojson }}
     klineList = klineList.map(item => ({
-      time: new Date(item.timestamp).getTime() / 1000 + 3600 * 8,
+      time: new Date(item.time).getTime() / 1000 + 3600 * 8,
       open: item.open,
       high: item.high,
       low: item.low,

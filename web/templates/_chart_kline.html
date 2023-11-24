@@ -78,11 +78,24 @@
   });
 
   chart._chartStore.getTimeScaleStore().zoom(1000)
-  chart.applyNewData({{ kline_list | tojson }})
 
+  let kline_list = {{ kline_list | safe }}
+  kline_list = kline_list.map(convertKlineData)
+  chart.applyNewData(kline_list)
 
   function resizeChart() {
     chart.resize()
+  }
+
+  function convertKlineData(item) {
+    return {
+      timestamp: item.time,
+      open: item.open,
+      high: item.high,
+      low: item.low,
+      close: item.close,
+      volume: item.volume,
+    }
   }
 
   window.addEventListener('resize', resizeChart);
