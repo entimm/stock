@@ -21,88 +21,31 @@
 {% endblock %}
 {% block footer %}
   <script src="/static/third/echarts.min.js"></script>
+  <script src="/static/echart2.js"></script>
   <script>
     let data = {{ data | safe }};
 
-    let generateChartConfig = (data) => {
-      let seriesData = [];
-      for (let key in data) {
-        seriesData.push({
-          name: key,
-          value: data[key]
-        });
-      }
-
-      return {
-        grid: {
-          top: '2%',
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          data: Object.keys(data)
-        },
-        yAxis: {
-          type: 'value',
-          position: 'right',
-        },
-        series: [{
-          type: 'line',
-          data: seriesData,
-          itemStyle: {
-            color: 'rgb(246,119,119)'
-          },
-          areaStyle: {
-            color: 'rgb(246,119,119)'
-          },
-          lineStyle: {
-            color: 'rgba(245,91,91,0.5)'
-          },
-          smooth: 0.4,
-          markLine: {
-            data: [
-              {
-                name: '非常火爆', yAxis: 15000, lineStyle: {color: 'rgb(245,0,255)'}
-              },
-              {
-                name: '火爆', yAxis: 12000, lineStyle: {color: 'rgb(255,0,0)'}
-              },
-              {
-                name: '万亿', yAxis: 10000, lineStyle: {color: 'rgb(255,115,0)'}
-              },
-              {
-                name: '低迷', yAxis: 8000, lineStyle: {color: 'rgb(0,229,53)'}
-              },
-              {
-                name: '极致低迷', yAxis: 6000, lineStyle: {color: 'rgb(22,32,222)'}
-              }
-            ],
-          },
-        }],
-        tooltip: {
-          trigger: 'axis',
-          position: function (pt) {
-            return [pt[0], '10%'];
-          }
-        },
-        dataZoom: [
-          {
-            type: 'inside',
-            start: 0,
-            end: 9999
-          },
-          {
-            start: 0,
-            end: 9999
-          }
-        ],
-      };
-    };
-
     let turnoverChart = echarts.init(document.getElementById('turnoverChart'));
-    turnoverChart.setOption(generateChartConfig(data));
+    chartOption = generateChartConfig(data);
+    chartOption['series'][0]['markLine'] = {
+      data: [
+        {
+          name: '非常火爆', yAxis: 15000, lineStyle: {color: 'rgb(245,0,255)'}
+        },
+        {
+          name: '火爆', yAxis: 12000, lineStyle: {color: 'rgb(255,0,0)'}
+        },
+        {
+          name: '万亿', yAxis: 10000, lineStyle: {color: 'rgb(255,115,0)'}
+        },
+        {
+          name: '低迷', yAxis: 8000, lineStyle: {color: 'rgb(0,229,53)'}
+        },
+        {
+          name: '极致低迷', yAxis: 6000, lineStyle: {color: 'rgb(22,32,222)'}
+        }
+      ],
+    };
+    turnoverChart.setOption(chartOption);
   </script>
 {% endblock %}

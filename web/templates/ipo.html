@@ -23,69 +23,11 @@
 {% endblock %}
 {% block footer %}
   <script src="/static/third/echarts.min.js"></script>
+  <script src="/static/echart2.js"></script>
   <script>
     let weekCounts = {{ weekly_count | safe }};
     let monthCounts = {{ monthly_count | safe }};
     let yearCounts = {{ yearly_count | safe }};
-
-    let generateChartConfig = (data) => {
-      let seriesData = [];
-      for (let key in data) {
-        seriesData.push({
-          name: key,
-          value: data[key]
-        });
-      }
-
-      return {
-        grid: {
-          top: '2%',
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          data: Object.keys(data)
-        },
-        yAxis: {
-          type: 'value',
-          position: 'right',
-        },
-        series: [{
-          type: 'line',
-          data: seriesData,
-          itemStyle: {
-            color: 'rgb(246,119,119)'
-          },
-          areaStyle: {
-            color: 'rgb(246,119,119)'
-          },
-          lineStyle: {
-            color: 'rgba(245,91,91,0.5)'
-          },
-          smooth: 0.4
-        }],
-        tooltip: {
-          trigger: 'axis',
-          position: function (pt) {
-            return [pt[0], '10%'];
-          }
-        },
-        dataZoom: [
-          {
-            type: 'inside',
-            start: 0,
-            end: 9999
-          },
-          {
-            start: 0,
-            end: 9999
-          }
-        ],
-      };
-    };
 
     let weekChart = echarts.init(document.getElementById('weekChart'));
     weekChart.setOption(generateChartConfig(weekCounts));
