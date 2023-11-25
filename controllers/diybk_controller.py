@@ -5,7 +5,7 @@ from mootdx.quotes import Quotes
 
 from common import price_calculate
 from common.data import trade_date_list, local_tdx_reader
-from common.utils import read_bk, symbol_name
+from common.utils import read_bk, ticker_name
 
 blueprint = Blueprint('diybk', __name__)
 
@@ -57,7 +57,7 @@ def diybk():
             for symbol in symbols:
                 if len(symbol) > 0:
                     price = real_price_map.get(symbol, '-')
-                    data.setdefault(bk_name, []).append(f'{symbol_name(symbol)}|{symbol}|{price}')
+                    data.setdefault(bk_name, []).append(f'{ticker_name(symbol)}|{symbol}|{price}')
 
     template_var = {
         'data': data,
@@ -107,7 +107,7 @@ def diybk_history():
             if not idx.empty:
                 ptc_charge = stock_df.loc[idx, 'ptc_charge'].values[0]
                 value = stock_df.loc[idx, f'{ma}_trend'].values[0]
-                temp_list.append((f'{symbol_name(symbol)}|{symbol}|{round(ptc_charge, 2)}|{round(value, 2)}', value))
+                temp_list.append((f'{ticker_name(symbol)}|{symbol}|{round(ptc_charge, 2)}|{round(value, 2)}', value))
 
         temp_list = temp_list + [('-', None)] * (len(symbols) - len(temp_list))
 
@@ -118,11 +118,13 @@ def diybk_history():
 
     template_var = {
         'data': dict(reversed(result_dict.items())),
-        'bk_key': bk_key,
         'ma_list': ma_list,
-        'ma': ma,
         'direction_list': direction_list,
-        'direction': direction,
+        'request_args': {
+            'bk_key': bk_key,
+            'ma': ma,
+            'direction': direction,
+        }
     }
 
     return render_template('diybk_history.html', **template_var)

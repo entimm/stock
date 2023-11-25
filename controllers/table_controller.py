@@ -6,7 +6,7 @@ import pandas as pd
 from flask import render_template, request, Blueprint
 
 from common.common import PROCESSED_PATH
-from common.data import gnbk_dict, symbol_name_dict, YEAR
+from common.data import gnbk_dict, ticker_name_dict, YEAR
 
 blueprint = Blueprint('table', __name__)
 
@@ -23,7 +23,7 @@ def read_table_data(file_path: str, is_gnbk: bool = False) -> Dict[str, List[str
                 if is_gnbk:
                     value = '|'.join([gnbk_dict.get(symbol, symbol).replace('概念', ''), symbol, *rest])
                 else:
-                    value = '|'.join([symbol_name_dict.get(symbol, symbol), symbol, *rest])
+                    value = '|'.join([ticker_name_dict.get(symbol, symbol), symbol, *rest])
             result.setdefault(f'-{date}-', []).append(value)
 
     result = dict(reversed(result.items()))
@@ -52,11 +52,13 @@ def astock_table():
     template_var = {
         'ma_list': ma_list,
         'year_list': year_list,
-        'ma': ma,
-        'year': year,
         'direction_list': direction_list,
-        'direction': direction,
         'data': json.dumps(data, sort_keys=False),
+        'request_args': {
+            'ma': ma,
+            'year': year,
+            'direction': direction,
+        }
     }
 
     return render_template('astock_table.html', **template_var)
@@ -73,8 +75,10 @@ def gnbk_table():
 
     template_var = {
         'year_list': year_list,
-        'year': year,
         'data': json.dumps(data, sort_keys=False),
+        'request_args': {
+            'year': year,
+        }
     }
 
     return render_template('gnbk_table.html', **template_var)

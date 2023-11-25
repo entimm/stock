@@ -85,7 +85,7 @@
   window.addEventListener('resize', resizeChart);
   window.addEventListener('load', resizeChart);
 </script>
-{% if show_chan %}
+{% if request_args.show_chan %}
   {% include "_chart_kline_chan.html" %}
 {% else %}
   <script>

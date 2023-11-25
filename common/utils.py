@@ -9,7 +9,7 @@ import pandas as pd
 from mootdx.quotes import Quotes
 
 from common.common import PeriodEnum, TDX_FREQUENCY_MAP, TDX_BLOCK_NEW_PATH
-from common.data import local_tdx_reader, gnbk_dict, etf_dict, symbol_name_dict, index_dict
+from common.data import local_tdx_reader, gnbk_dict, etf_dict, ticker_name_dict, index_dict
 from common.price_calculate import resample_kline
 
 
@@ -119,7 +119,7 @@ def symbol_type(symbol):
         return 'STOCK'
 
 
-def symbol_name(symbol):
+def ticker_name(symbol):
     tp = symbol_type(symbol)
     if tp == 'GNBK':
         return gnbk_dict.get(symbol, symbol).replace('概念', '')
@@ -128,11 +128,11 @@ def symbol_name(symbol):
     elif tp == 'INDEX':
         return index_dict.get(symbol, symbol)
     else:
-        return symbol_name_dict[symbol]
+        return ticker_name_dict[symbol]
 
 
 def symbol_all():
-    symbol_dict = {**symbol_name_dict, **index_dict, **gnbk_dict, **etf_dict}
+    symbol_dict = {**ticker_name_dict, **index_dict, **gnbk_dict, **etf_dict}
     return [{'key': k, 'value': v} for k, v in symbol_dict.items()]
 
 
@@ -153,7 +153,8 @@ def create_href(params):
     return f'?{urlencode(params)}'
 
 
-def create_link(params, highlight_condition, text):
+def create_link(request_args, update_args, highlight_condition, text):
+    request_args = {**request_args, **update_args}
     highlight_attr = 'class ="highlight"' if highlight_condition else ''
 
-    return f'<a href="{create_href(params)}" {highlight_attr}>{text}</a>'
+    return f'<a href="{create_href(request_args)}" {highlight_attr}>{text}</a>'

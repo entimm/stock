@@ -4,7 +4,7 @@ import pandas as pd
 from flask import Blueprint, render_template, request
 
 from common.common import TOTAL_PATH
-from common.data import symbol_name_dict, trade_date_list
+from common.data import ticker_name_dict, trade_date_list
 
 blueprint = Blueprint('limit_stock', __name__)
 
@@ -48,7 +48,7 @@ def limited():
         df['max_result'] = round(df['max_result'], 2)
 
         df['ts_code'] = df['ts_code'].str[:6]
-        df['ts_name'] = df['ts_code'].map(symbol_name_dict)
+        df['ts_name'] = df['ts_code'].map(ticker_name_dict)
         df['show'] = df['ts_name'].astype(str) + '|' + df['ts_code'].astype(str) + '|' + df['pct_chg'].astype(str) + '|' + df['max_result'].astype(str)
 
         result_dict[f'-{date}-'] = df['show'].to_list()
@@ -56,7 +56,9 @@ def limited():
     template_var = {
         'data': dict(reversed(result_dict.items())),
         'direction_list': direction_list,
-        'direction': direction,
+        'request_args': {
+            'direction': direction,
+        }
     }
 
     return render_template('limited.html', **template_var)

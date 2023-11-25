@@ -6,17 +6,17 @@
   <div id="fixed-links-container" class="right-top">
     <div class="fixed-links">
       {% for value in type_list %}
-        {{ create_link({'year':year, 'line_id':line_id, 'type':loop.index0}, type == loop.index0, value) | safe }}
+        {{ create_link(request_args, {'type':loop.index0}, request_args.type == loop.index0, value) | safe }}
       {% endfor %}
     </div>
     <div class="fixed-links">
       {% for value in year_list %}
-        {{ create_link({'year':value, 'line_id':line_id, 'type':type}, value == year, value) | safe }}
+        {{ create_link(request_args, {'year':value}, request_args.year == value, value) | safe }}
       {% endfor %}
     </div>
     <div class="fixed-links">
       {% for value in line_list %}
-        {{ create_link({'year':year, 'line_id':loop.index0, 'type':type}, line_id == loop.index0, '线{}'.format(loop.index0)) | safe }}
+        {{ create_link(request_args, {'line_id':loop.index0}, request_args.line_id == loop.index0, '线{}'.format(loop.index0)) | safe }}
       {% endfor %}
     </div>
   </div>

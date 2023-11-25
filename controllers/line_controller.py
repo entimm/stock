@@ -5,7 +5,7 @@ import pandas as pd
 from flask import render_template, request, Blueprint
 
 from common.common import PROCESSED_PATH
-from common.data import symbol_name_dict, gnbk_dict, YEAR
+from common.data import ticker_name_dict, gnbk_dict, YEAR
 
 blueprint = Blueprint('line', __name__)
 
@@ -20,7 +20,7 @@ def read_data(file_path: str, row_numbers: List[int], type_val: int = 0, is_gnbk
 
         for date, value in zip(df.columns, row):
             arr = value.split('|')
-            name = gnbk_dict.get(arr[0], arr[0]) if is_gnbk else symbol_name_dict.get(arr[0], arr[0])
+            name = gnbk_dict.get(arr[0], arr[0]) if is_gnbk else ticker_name_dict.get(arr[0], arr[0])
             result['name'].setdefault(date, []).append(name)
             result['value'].setdefault(date, []).append(arr[2])
 
@@ -57,12 +57,14 @@ def astock():
         'year_list': year_list,
         'line_list': line_list,
         'rows': rows,
-        'ma': ma,
-        'year': year,
-        'line_id': line_id,
         'direction_list': direction_list,
-        'direction': direction,
         'data': data,
+        'request_args': {
+            'ma': ma,
+            'year': year,
+            'line_id': line_id,
+            'direction': direction,
+        }
     }
 
     return render_template('astock.html', **template_var)
@@ -91,11 +93,13 @@ def gnbk():
         'year_list': year_list,
         'line_list': line_list,
         'rows': rows,
-        'year': year,
-        'line_id': line_id,
         'type_list': type_list,
-        'type': type_val,
         'data': data,
+        'request_args': {
+            'year': year,
+            'line_id': line_id,
+            'type': type_val,
+        }
     }
 
     return render_template('gnbk.html', **template_var)

@@ -34,7 +34,9 @@ def ipo():
         'monthly_count': monthly_count.to_dict(),
         'yearly_count': yearly_count.to_dict(),
         'field_list': field_list,
-        'field': field,
+        'request_args': {
+            'field': field,
+        }
     }
 
     return render_template('north_funds.html', **template_var)
