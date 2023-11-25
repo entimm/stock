@@ -54,16 +54,17 @@ nav .nav-wrapper {
 .fixed-links {
   position: relative;
   text-align: right;
+  margin: 10px;
 }
 
 .fixed-links a {
   margin: 0 3px;
+  font-size: 16px;
 }
 
 .fixed-links .highlight {
   color: #FF5733;
   font-weight: bold;
-  font-size: 20px;
   text-decoration: underline;
 }
 

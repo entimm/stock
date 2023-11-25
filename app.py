@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template
 
 from common.common import MENUS
+from common.utils import create_link
 
 app = Flask(__name__, template_folder='web/templates', static_folder='web/public/static')
 
@@ -25,7 +26,10 @@ for controller in controllers:
 
 @app.context_processor
 def inject_layout_vars():
-    return {'menus': MENUS}
+    return {
+        'menus': MENUS,
+        'create_link': create_link,
+    }
 
 
 @app.errorhandler(404)

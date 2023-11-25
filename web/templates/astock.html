@@ -9,22 +9,22 @@
   <div id="fixed-links-container" class="right-top">
     <div class="fixed-links">
       {% for value in ma_list %}
-        <a href="?ma={{ value }}&year={{ year }}&line_id={{ line_id }}&direction={{ direction }}" {% if value == ma %}class="highlight"{% endif %}>{{ value }}</a>
+        {{ create_link({'ma':value, 'year':year, 'line_id':line_id, 'direction':direction}, ma == value, value) | safe }}
       {% endfor %}
     </div>
     <div class="fixed-links">
       {% for value in year_list %}
-        <a href="?ma={{ ma }}&year={{ value }}&line_id={{ line_id }}&direction={{ direction }}" {% if value == year %}class="highlight"{% endif %}>{{ value }}</a>
+        {{ create_link({'ma':ma, 'year':value, 'line_id':line_id, 'direction':direction}, year == value, value) | safe }}
       {% endfor %}
     </div>
     <div class="fixed-links">
       {% for value in line_list %}
-        <a href="?ma={{ ma }}&year={{ year }}&line_id={{ loop.index0 }}&direction={{ direction }}" {% if line_id == loop.index0 %}class="highlight"{% endif %}>线{{ loop.index0 }}</a>
+        {{ create_link({'ma':ma, 'year':year, 'line_id':loop.index0, 'direction':direction}, line_id == loop.index0, '线{}'.format(loop.index0)) | safe }}
       {% endfor %}
     </div>
     <div class="fixed-links">
       {% for key, value in direction_list.items() %}
-        <a href="?ma={{ ma }}&year={{ year }}&line_id={{ key }}&direction={{ key }}" {% if direction == key %}class="highlight"{% endif %}>{{ value['name'] }}</a>
+        {{ create_link({'ma':ma, 'year':year, 'line_id':line_id, 'direction':key}, direction == key, value['name']) | safe }}
       {% endfor %}
     </div>
   </div>

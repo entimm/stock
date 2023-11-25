@@ -3,6 +3,7 @@ import os
 import re
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import urlencode
 
 import pandas as pd
 from mootdx.quotes import Quotes
@@ -144,3 +145,15 @@ def row_to_kline(row):
         'close': row['close'],
         'volume': row['volume'],
     }
+
+
+def create_href(params):
+    params = {key: int(value) if isinstance(value, bool) else value for key, value in params.items()}
+
+    return f'?{urlencode(params)}'
+
+
+def create_link(params, highlight_condition, text):
+    highlight_attr = 'class ="highlight"' if highlight_condition else ''
+
+    return f'<a href="{create_href(params)}" {highlight_attr}>{text}</a>'
