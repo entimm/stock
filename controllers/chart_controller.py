@@ -1,10 +1,12 @@
 import json
 
+from chan import chan_config
 from chan.chan import Chan
 from flask import render_template, Blueprint, request, url_for, redirect
 from numpy import bool_
 
 from common.common import PeriodEnum
+from common.config import DEFAULT_SELECT_OPTIONS
 from common.utils import realtime_whole_df, ticker_name, symbol_all, row_to_kline
 
 blueprint = Blueprint('chart', __name__)
@@ -52,6 +54,7 @@ def chart():
 
     if show_chan:
         chart_engine = 1
+        chan_config.output_text = False
         chan_data = Chan(kline_list).output()
         template_var['chan_data'] = json.dumps(chan_data, default=lambda x: to_bool(x))
         template_var['request_args']['chart_engine'] = chart_engine
@@ -63,13 +66,5 @@ def chart():
 def symbol_list():
     return {
         'symbol_all_list': symbol_all(),
-        'default_show_list': [
-            '999999',
-            '399006',
-            '399001',
-            '399300',
-            '880003',
-            '880878',
-            '880879',
-        ],
+        'default_show_list': DEFAULT_SELECT_OPTIONS,
     }

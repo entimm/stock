@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template
 
-from common.common import MENUS
+from common.config import MENUS
 from common.utils import create_link
 
 app = Flask(__name__, template_folder='web/templates', static_folder='web/public/static')

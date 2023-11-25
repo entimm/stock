@@ -1,4 +1,4 @@
 vendor/
 resources/
 __pycache__/
-config.ini
+config.yaml

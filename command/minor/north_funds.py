@@ -5,7 +5,8 @@ import click
 import pandas as pd
 import tushare as ts
 
-from common.common import TUSHARE_TOKEN, NORTH_FUNDS_FILE_PATH
+from common.common import NORTH_FUNDS_FILE_PATH
+from common.config import TUSHARE_TOKEN
 
 
 @click.command()

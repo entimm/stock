@@ -16,7 +16,7 @@
     <div class="nav-wrapper">
       <a href="/" class="brand-logo">韭菜收割机</a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        {% for menu in menus %}
+        {% for menu in menus if menu.type == 'system' %}
           <li {% if menu.url == request.path %}class="active"{% endif %}>
             <a href="{{ menu.url }}" {% if menu.type == 'external' %}target="_blank"{% endif %}>{{ menu.name }}</a>
           </li>

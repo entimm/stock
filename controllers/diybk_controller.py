@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, request
 from mootdx.quotes import Quotes
 
 from common import price_calculate
+from common.config import config
 from common.data import trade_date_list, local_tdx_reader
 from common.utils import read_bk, ticker_name
 
@@ -40,13 +41,13 @@ def diybk():
 
     data = {}
 
-    excluded = ['行业概念', '临时']
+    excluded = config['diybk']['excluded']
     for item_dict in [zxg_dict, bk_code_dict]:
         for bk_name, symbols in item_dict.items():
             if bk_name in excluded:
                 continue
             real_price_map = {}
-            if bk_name not in ['风格', '关键风格']:
+            if bk_name not in config['diybk']['not_real_price']:
                 try:
                     real_price_df = client.quotes(symbol=symbols)
                     real_price_df['pct_change'] = round(
