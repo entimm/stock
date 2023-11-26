@@ -31,7 +31,7 @@ document.addEventListener('keydown', function (event) {
     if (selectedCell) {
       let symbol = selectedCell.getAttribute('symbol');
       if (symbol) {
-        openDialog(`/?symbol=${symbol}&period=F5`);
+        openDialog(`/chart?symbol=${symbol}&period=F5`);
       }
     }
   }
