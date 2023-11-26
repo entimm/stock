@@ -31,8 +31,7 @@ def filter_files_by_date(directory, file_pattern):
 
     for root, dirs, files in os.walk(directory):
         for file in files:
-            match = file_regex.match(file)
-            if match:
+            if match := file_regex.match(file):
                 file_list.append((os.path.join(root, file), match.group(1)))
 
     return file_list
@@ -70,8 +69,7 @@ def realtime_whole_df(symbol, period_enum, req_real=1):
     if not req_real:
         return df
 
-    minutes = minutes_since_open()
-    if minutes:
+    if minutes := minutes_since_open():
         match base_period_enum:
             case PeriodEnum.D:
                 offset = 5
