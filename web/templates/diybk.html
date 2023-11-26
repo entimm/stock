@@ -1,7 +1,7 @@
 {% extends '_layout.html' %}
 {% block head %}
   <title>自定义板块</title>
-  <link rel="stylesheet" href="/static/table.css">
+  <link rel="stylesheet" href="/static/data_table.css">
 {% endblock %}
 {% block content %}
   <div id="grid-container">
@@ -17,7 +17,7 @@
 {% endblock %}
 {% block footer %}
   <script src="/static/third/jquery-3.7.1.min.js"></script>
-  <script src="/static/table.js"></script>
+  <script src="/static/data_table.js"></script>
   <script>
     let data = {{ data | safe }};
     let bk_key_dict = {{ bk_key_dict | safe }};

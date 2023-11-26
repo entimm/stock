@@ -38,7 +38,7 @@
       border-bottom: 4px solid #008000;
     }
   </style>
-  <link rel="stylesheet" href="/static/table.css">
+  <link rel="stylesheet" href="/static/data_table.css">
 {% endblock %}
 {% block content %}
   <div id="fixed-links-container" class="right-top">
@@ -67,7 +67,7 @@
   </div>
 {% endblock %}
 {% block footer %}
-  <script src="/static/table.js"></script>
+  <script src="/static/data_table.js"></script>
   <script>
     let data = {{ data | safe }};
     const KLINE_PERIOD = 'F5';

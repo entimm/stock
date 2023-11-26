@@ -92,17 +92,9 @@
     chart.createIndicator({
       name: 'MA',
       precision: 3,
-      calcParams: [5, 10, 20, 60, 240, 480, 960],
+      calcParams: indicator_ma_config.map(item => item.period),
       styles: {
-        lines: [
-          {style: 'solid', size: 0.5, color: '#930606'},
-          {style: 'solid', size: 0.5, color: '#ECAB07'},
-          {style: 'solid', size: 0.5, color: '#EF15DE'},
-          {style: 'solid', size: 1, color: '#16DE45'},
-          {style: 'solid', size: 0.5, color: '#6E28E5'},
-          {style: 'solid', size: 0.5, color: '#E50B33'},
-          {style: 'solid', size: 0.5, color: '#16B9DE'},
-        ]
+        lines: indicator_ma_config.map(item => {return { style: 'solid', size: item.size, color: item.color }}),
       }
     }, false, {id: 'candle_pane'})
   </script>
