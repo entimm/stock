@@ -5,8 +5,7 @@ from chan.chan import Chan
 from flask import render_template, Blueprint, request, url_for, redirect
 from numpy import bool_
 
-from common.common import PeriodEnum
-from common.config import DEFAULT_SELECT_OPTIONS
+from common.common import PeriodEnum, DEFAULT_SELECT_OPTIONS
 from common.utils import realtime_whole_df, ticker_name, symbol_all, row_to_kline
 
 blueprint = Blueprint('chart', __name__)

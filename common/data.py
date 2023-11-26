@@ -3,8 +3,7 @@ import datetime
 import pandas as pd
 from mootdx.reader import Reader
 
-from common.common import GNBK_FILE_PATH, STOCK_META_FILE_PATH, ETF_FILE_PATH, INDEX_FILE_PATH
-from common.config import TDX_PATH
+from common.common import GNBK_FILE_PATH, STOCK_META_FILE_PATH, ETF_FILE_PATH, INDEX_FILE_PATH, TDX_PATH
 
 stock_meta_df = pd.read_csv(STOCK_META_FILE_PATH, dtype={1: str, 6: str})
 ticker_name_dict = dict(zip(stock_meta_df['symbol'], stock_meta_df['name']))

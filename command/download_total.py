@@ -3,8 +3,7 @@ import os
 import click
 import tushare as ts
 
-from common.common import TOTAL_PATH
-from common.config import TUSHARE_TOKEN
+from common.common import TOTAL_PATH, TUSHARE_TOKEN
 from common.data import trade_date_list
 
 

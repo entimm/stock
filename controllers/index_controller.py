@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 from collections import defaultdict
 
-from common.config import MENUS
+from common.common import MENUS
 
 blueprint = Blueprint('index', __name__)
 

@@ -1,7 +1,7 @@
 import os
 from enum import Enum, auto
 
-from .config import TDX_PATH
+from common.config import config
 
 APP_PATH = os.path.dirname(os.path.dirname(__file__))
 
@@ -17,9 +17,13 @@ PROCESSED_PATH = os.path.join(RESOURCES_PATH, 'new_processed')
 RAW_PATH = os.path.join(RESOURCES_PATH, 'raw')
 TOTAL_PATH = os.path.join(RESOURCES_PATH, 'total')
 
+TDX_PATH = config['tdx']['app_path']
 TDX_EXPORT_PATH = TDX_PATH + '/T0002/export'
 TDX_BLOCK_NEW_PATH = os.path.join(TDX_PATH, 'T0002', 'blocknew')
 
+TUSHARE_TOKEN = config['tushare']['token']
+MENUS = config['menus']
+DEFAULT_SELECT_OPTIONS = config['default_select_options']
 
 class PeriodEnum(Enum):
     F1 = auto()
