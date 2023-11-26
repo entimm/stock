@@ -6,6 +6,7 @@ from flask import render_template, Blueprint, request, url_for, redirect
 from numpy import bool_
 
 from common.common import PeriodEnum, DEFAULT_SELECT_OPTIONS
+from common.config import config
 from common.utils import realtime_whole_df, ticker_name, symbol_all, row_to_kline
 
 blueprint = Blueprint('chart', __name__)
@@ -53,7 +54,7 @@ def chart():
 
     if show_chan:
         chart_engine = 1
-        chan_config.output_text = False
+        chan_config.output_text = config['chart']['chan']['output_text']
         chan_data = Chan(kline_list).output()
         template_var['chan_data'] = json.dumps(chan_data, default=lambda x: to_bool(x))
         template_var['request_args']['chart_engine'] = chart_engine
