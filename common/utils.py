@@ -66,30 +66,28 @@ def realtime_whole_df(symbol, period_enum, req_real=1):
 
     frequency = TDX_FREQUENCY_MAP.get(base_period_enum)
     df = fetch_local_data(local_tdx_reader, symbol, base_period_enum)
-    if not req_real:
-        return df
+    if req_real:
+        if minutes := minutes_since_open():
+            match base_period_enum:
+                case PeriodEnum.D:
+                    offset = 5
+                case PeriodEnum.F1:
+                    offset = minutes
+                case _:
+                    offset = minutes / 5
 
-    if minutes := minutes_since_open():
-        match base_period_enum:
-            case PeriodEnum.D:
-                offset = 5
-            case PeriodEnum.F1:
-                offset = minutes
-            case _:
-                offset = minutes / 5
-
-        tp = symbol_type(symbol)
-        if tp in ['INDEX', 'GNBK']:
-            client = Quotes.factory(market='std')
-            real_time_df = client.index(symbol=symbol, frequency=frequency, offset=offset)
-        else:
-            client = Quotes.factory(market='std')
-            real_time_df = client.bars(symbol=symbol, frequency=frequency, offset=offset)
-        if period_enum == PeriodEnum.D:
-            real_time_df = real_time_df[real_time_df.index.date > df.index[-1].date()]
-        else:
-            real_time_df = real_time_df[real_time_df.index > df.index[-1]]
-        df = pd.concat([df, real_time_df[['open', 'high', 'low', 'close', 'amount', 'volume']]], axis=0).drop_duplicates()
+            tp = symbol_type(symbol)
+            if tp in ['INDEX', 'GNBK']:
+                client = Quotes.factory(market='std')
+                real_time_df = client.index(symbol=symbol, frequency=frequency, offset=offset)
+            else:
+                client = Quotes.factory(market='std')
+                real_time_df = client.bars(symbol=symbol, frequency=frequency, offset=offset)
+            if period_enum == PeriodEnum.D:
+                real_time_df = real_time_df[real_time_df.index.date > df.index[-1].date()]
+            else:
+                real_time_df = real_time_df[real_time_df.index > df.index[-1]]
+            df = pd.concat([df, real_time_df[['open', 'high', 'low', 'close', 'amount', 'volume']]], axis=0)
 
     if period_enum in [PeriodEnum.F15, PeriodEnum.F30]:
         df = resample_kline(df, period_enum)
