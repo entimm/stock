@@ -25,24 +25,25 @@ def limited():
         csv_file = os.path.join(TOTAL_PATH, f'data_{date}.csv')
         df = pd.read_csv(csv_file)
         df = df[df['ts_code'].str.endswith(('SH', 'SZ'))]
-        if direction == 1:
-            df = df[df['high'] == df['close']]
-            df = df[df['pct_chg'] >= 9.6]
-            df = df.sort_values(by='pct_chg', ascending=False)
-            df['max_result'] = (df['close'] / df['low'] - 1) * 100
-        elif direction == 2:
-            df = df[df['low'] == df['close']]
-            df = df[df['pct_chg'] <= -9.6]
-            df = df.sort_values(by='pct_chg', ascending=True)
-            df['max_result'] = (df['close'] / df['high'] - 1) * 100
-        elif direction == 3:
-            df['max_result'] = (df['close'] / df['low'] - 1) * 100
-            df = df[df['max_result'] >= 9.6]
-            df = df.sort_values(by='max_result', ascending=False)
-        else:
-            df['max_result'] = (df['close'] / df['high'] - 1) * 100
-            df = df[df['max_result'] <= -9.6]
-            df = df.sort_values(by='max_result', ascending=True)
+        match direction:
+            case 1:
+                df = df[df['high'] == df['close']]
+                df = df[df['pct_chg'] >= 9.6]
+                df = df.sort_values(by='pct_chg', ascending=False)
+                df['max_result'] = (df['close'] / df['low'] - 1) * 100
+            case 2:
+                df = df[df['low'] == df['close']]
+                df = df[df['pct_chg'] <= -9.6]
+                df = df.sort_values(by='pct_chg', ascending=True)
+                df['max_result'] = (df['close'] / df['high'] - 1) * 100
+            case 3:
+                df['max_result'] = (df['close'] / df['low'] - 1) * 100
+                df = df[df['max_result'] >= 9.6]
+                df = df.sort_values(by='max_result', ascending=False)
+            case _:
+                df['max_result'] = (df['close'] / df['high'] - 1) * 100
+                df = df[df['max_result'] <= -9.6]
+                df = df.sort_values(by='max_result', ascending=True)
 
         df['pct_chg'] = round(df['pct_chg'], 2)
         df['max_result'] = round(df['max_result'], 2)

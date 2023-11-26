@@ -53,12 +53,13 @@ def minutes_since_open():
 
 
 def fetch_local_data(reader, symbol, period):
-    if period == PeriodEnum.F1:
-        return reader.minute(symbol=symbol)
-    elif period == PeriodEnum.F5:
-        return reader.fzline(symbol=symbol)
-    elif period == PeriodEnum.D:
-        return reader.daily(symbol=symbol)
+    match period:
+        case PeriodEnum.F1:
+            return reader.minute(symbol=symbol)
+        case PeriodEnum.F5:
+            return reader.fzline(symbol=symbol)
+        case PeriodEnum.D:
+            return reader.daily(symbol=symbol)
 
 
 def realtime_whole_df(symbol, period_enum, req_real=1):
@@ -71,12 +72,13 @@ def realtime_whole_df(symbol, period_enum, req_real=1):
 
     minutes = minutes_since_open()
     if minutes:
-        if base_period_enum == PeriodEnum.D:
-            offset = 5
-        elif base_period_enum == PeriodEnum.F1:
-            offset = minutes
-        else:
-            offset = minutes / 5
+        match base_period_enum:
+            case PeriodEnum.D:
+                offset = 5
+            case PeriodEnum.F1:
+                offset = minutes
+            case _:
+                offset = minutes / 5
 
         tp = symbol_type(symbol)
         if tp in ['INDEX', 'GNBK']:
@@ -120,15 +122,15 @@ def symbol_type(symbol):
 
 
 def ticker_name(symbol):
-    tp = symbol_type(symbol)
-    if tp == 'GNBK':
-        return gnbk_dict.get(symbol, symbol).replace('概念', '')
-    elif tp == 'ETF':
-        return etf_dict.get(symbol, symbol)
-    elif tp == 'INDEX':
-        return index_dict.get(symbol, symbol)
-    else:
-        return ticker_name_dict[symbol]
+    match symbol_type(symbol):
+        case 'GNBK':
+            return gnbk_dict.get(symbol, symbol).replace('概念', '')
+        case 'ETF':
+            return etf_dict.get(symbol, symbol)
+        case 'INDEX':
+            return index_dict.get(symbol, symbol)
+        case _:
+            return ticker_name_dict[symbol]
 
 
 def symbol_all():
