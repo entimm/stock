@@ -36,8 +36,8 @@ nav .brand-logo {
 }
 
 nav .nav-wrapper {
-  padding-left: 50px;
-  padding-right: 50px;
+  padding-left: 1%;
+  padding-right: 1%;
 }
 
 #chart {
@@ -75,4 +75,8 @@ nav .nav-wrapper {
 
 #fixed-links-container.right-top {
   margin-right: 80px;
+}
+
+.card .card-content {
+  padding: 0;
 }

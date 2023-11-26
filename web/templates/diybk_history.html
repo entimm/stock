@@ -4,7 +4,12 @@
   <link rel="stylesheet" href="/static/data_table.css">
 {% endblock %}
 {% block content %}
-  <div id="fixed-links-container" class="right-top">
+  <div id="fixed-links-container" class="right-top" style="top: 1000px;">
+    <div class="fixed-links">
+      {% for key, value in bk_key_dict.items() %}
+        {{ create_link(request_args, {'bk_key':value}, request_args.bk_key == value.upper(), key) | safe }}
+      {% endfor %}
+    </div>
     <div class="fixed-links">
       {% for value in ma_list %}
         {{ create_link(request_args, {'ma':value}, request_args.ma == value, value) | safe }}

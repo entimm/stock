@@ -1,5 +1,9 @@
 let selectedCell = null;
 let focusMode = 'cursor';
+let tooltipTrend = document.getElementById('tooltip-trend');
+let tooltip = document.getElementById('tooltip');
+let iframe = document.getElementById('iframeContent');
+let table = document.getElementById('grid');
 window.addEventListener('message', function (event) {
   if (event.data === 'close_me') {
     closeDialog();
@@ -9,7 +13,6 @@ window.addEventListener('message', function (event) {
     if (cell) {
       let symbol = cell.getAttribute('symbol');
       if (symbol) {
-        let iframe = document.getElementById('iframeContent');
         iframe.src = iframe.contentWindow.document.URL.replace(/\d{6}/, symbol);
         setSelectedCell(cell);
       }
@@ -38,15 +41,14 @@ document.addEventListener('keydown', function (event) {
     return;
   }
   if (event.code === 'Escape') {
-    document.getElementById('tooltip').style.display = 'none';
-    document.getElementById('tooltip-trend').style.display = 'none';
+    tooltip.style.display = 'none';
+    tooltipTrend.style.display = 'none';
     focusMode = 'key'
     return;
   }
 });
 
 function renderGrid(data) {
-  let table = document.getElementById('grid');
   table.innerHTML = '';
 
   // 添加表头
@@ -94,9 +96,13 @@ function renderCell(cell, value, i) {
     if (clickX < cellRect.width / 2) {
       highlightCells(cell.textContent);
     } else {
+      setSelectedCell(cell);
       if (focusMode === 'cursor') {
-        setSelectedCell(cell)
         openDialog(`/chart?symbol=${value[1]}&period=${KLINE_PERIOD}`);
+      }
+      if (tooltipTrend.style.display == 'none') {
+        show_tooltip_trend(cell);
+        show_tooltip(cell);
       }
       focusMode = 'cursor';
     }
@@ -104,15 +110,14 @@ function renderCell(cell, value, i) {
   cell.addEventListener('mouseover', function () {
     if (focusMode === 'cursor') {
       show_tooltip_trend(this);
-      show_tooltip(this)
-      setSelectedCell(this)
+      show_tooltip(this);
+      setSelectedCell(this);
     }
 
   });
 }
 
 function openDialog(url) {
-  let iframe = document.getElementById('iframeContent');
   iframe.src = url;
 
   chartDialog.showModal();
@@ -136,7 +141,6 @@ function getAdjacentCell(cell, direction) {
   let row = cell.parentNode.rowIndex;
   let col = cell.cellIndex;
 
-  let table = document.getElementById("grid");
   let numRows = table.rows.length;
   let numCols = table.rows[0].cells.length;
 
@@ -196,36 +200,36 @@ function getExchangeCode(symbol) {
 }
 
 function show_tooltip_trend(cell) {
-  let tooltip = document.getElementById('tooltip-trend');
   let symbol = cell.getAttribute('symbol');
   let code = getExchangeCode(symbol);
-  tooltip.textContent = '';
+  tooltipTrend.textContent = '';
   if (!code) {
-    tooltip.style.display = 'none';
+    tooltipTrend.style.display = 'none';
     return
   }
 
-  let img1 = document.createElement("img");
-  img1.src = `https://image2.sinajs.cn/newchart/min/n/${code}.gif`;
-  tooltip.appendChild(img1);
-  let img2 = document.createElement("img");
-  img2.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif`;
-  tooltip.appendChild(img2);
-  let img3 = document.createElement("img");
-  img3.src = `https://image2.sinajs.cn/newchart/weekly/n/${code}.gif`;
-  tooltip.appendChild(img3);
+  let timestamp = new Date().getTime();
 
-  // 计算tooltip的位置
+  let img1 = document.createElement("img");
+  img1.src = `https://image2.sinajs.cn/newchart/min/n/${code}.gif?t=${timestamp}`;
+  tooltipTrend.appendChild(img1);
+  let img2 = document.createElement("img");
+  img2.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif?t=${timestamp}`;
+  tooltipTrend.appendChild(img2);
+  let img3 = document.createElement("img");
+  img3.src = `https://image2.sinajs.cn/newchart/weekly/n/${code}.gif?t=${timestamp}`;
+  tooltipTrend.appendChild(img3);
+
+  // 计算tooltipTrend的位置
   let screenHeight = window.innerHeight;
   const isTopHalf = event.clientY <= screenHeight / 2;
-  tooltip.classList.toggle('right-bottom', isTopHalf);
-  tooltip.classList.toggle('right-top', !isTopHalf);
+  tooltipTrend.classList.toggle('right-bottom', isTopHalf);
+  tooltipTrend.classList.toggle('right-top', !isTopHalf);
 
-  tooltip.style.display = 'block';
+  tooltipTrend.style.display = 'block';
 }
 
 function show_tooltip(cell) {
-  let tooltip = document.getElementById('tooltip');
   tooltip.textContent = cell.getAttribute('v');
 
   // 计算tooltip的位置

@@ -76,8 +76,7 @@ def realtime_whole_df(symbol, period_enum, req_real=1):
                 case _:
                     offset = minutes / 5
 
-            tp = symbol_type(symbol)
-            if tp in ['INDEX', 'GNBK']:
+            if symbol_type(symbol) in ['INDEX', 'GNBK']:
                 client = Quotes.factory(market='std')
                 real_time_df = client.index(symbol=symbol, frequency=frequency, offset=offset)
             else:

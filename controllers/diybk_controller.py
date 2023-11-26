@@ -29,10 +29,9 @@ def custom_compare_asc(x, y):
 def diybk():
     df = local_tdx_reader.block_new(group=True)
 
-    zxg_dict = {'自选': read_bk('zxg')}
-
     bk_key_dict = dict(zip(df['blockname'], df['block_type']))
     bk_key_dict['自选'] = 'zxg'
+
     bk_code_dict = dict(zip(df['blockname'], df['code_list']))
     for bk_name, symbols_str in bk_code_dict.items():
         bk_code_dict[bk_name] = symbols_str.split(',')
@@ -41,10 +40,10 @@ def diybk():
 
     data = {}
 
-    excluded = config['diybk']['excluded']
+    zxg_dict = {'自选': read_bk('zxg')}
     for item_dict in [zxg_dict, bk_code_dict]:
         for bk_name, symbols in item_dict.items():
-            if bk_name in excluded:
+            if bk_name in config['diybk']['excluded']:
                 continue
             real_price_map = {}
             if bk_name not in config['diybk']['not_real_price']:
@@ -59,6 +58,8 @@ def diybk():
                 if len(symbol) > 0:
                     price = real_price_map.get(symbol, '-')
                     data.setdefault(bk_name, []).append(f'{ticker_name(symbol)}|{symbol}|{price}')
+
+
 
     template_var = {
         'data': data,
@@ -110,6 +111,7 @@ def diybk_history():
                 value = stock_df.loc[idx, f'{ma}_trend'].values[0]
                 temp_list.append((f'{ticker_name(symbol)}|{symbol}|{round(ptc_charge, 2)}|{round(value, 2)}', value))
 
+        # 长度不齐就补空白
         temp_list = temp_list + [('-', None)] * (len(symbols) - len(temp_list))
 
         custom_compare_method = custom_compare_desc if direction == 1 else custom_compare_asc
@@ -117,10 +119,16 @@ def diybk_history():
 
         result_dict[date.strftime('%Y-%m-%d')] = sorted_list
 
+    df = local_tdx_reader.block_new(group=True)
+    bk_key_dict = dict(zip(df['blockname'], df['block_type']))
+    bk_key_dict = {key: value for key, value in bk_key_dict.items() if key not in config['diybk']['excluded']}
+    bk_key_dict['自选'] = 'zxg'
+
     template_var = {
         'data': dict(reversed(result_dict.items())),
         'ma_list': ma_list,
         'direction_list': direction_list,
+        'bk_key_dict': bk_key_dict,
         'request_args': {
             'bk_key': bk_key,
             'ma': ma,
