@@ -216,20 +216,12 @@ function show_tooltip_trend(cell) {
   tooltip.appendChild(img3);
 
   // 计算tooltip的位置
-
-  // 获取屏幕的宽度和高度
-  let screenWidth = window.innerWidth;
   let screenHeight = window.innerHeight;
+  const isTopHalf = event.clientY <= screenHeight / 2;
+  tooltip.classList.toggle('right-bottom', isTopHalf);
+  tooltip.classList.toggle('right-top', !isTopHalf);
+
   tooltip.style.display = 'block';
-  if (event.clientY <= screenHeight / 2) {
-    // 右下角
-    tooltip.style.left = (screenWidth - tooltip.offsetWidth) + 'px';
-    tooltip.style.top = (screenHeight - tooltip.offsetHeight) + 'px';
-  } else {
-    // 右上角
-    tooltip.style.left = (screenWidth - tooltip.offsetWidth) + 'px';
-    tooltip.style.top = '0px';
-  }
 }
 
 function show_tooltip(cell) {

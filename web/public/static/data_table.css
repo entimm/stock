@@ -121,3 +121,13 @@ td .highlight {
   box-shadow: 0 10px 20px 20px rgb(0 0 0 / 10%);
   padding: 3px 20px;
 }
+
+.right-bottom {
+  right: 0;
+  bottom: 0;
+}
+
+.right-top {
+  right: 0;
+  top: 0;
+}
