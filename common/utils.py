@@ -130,7 +130,7 @@ def ticker_name(symbol):
 
 
 def symbol_all():
-    symbol_dict = {**ticker_name_dict, **index_dict, **gnbk_dict, **etf_dict}
+    symbol_dict = ticker_name_dict | index_dict | gnbk_dict | etf_dict
     return [{'key': k, 'value': v} for k, v in symbol_dict.items()]
 
 
@@ -152,7 +152,7 @@ def create_href(params):
 
 
 def create_link(request_args, update_args, highlight_condition, text):
-    request_args = {**request_args, **update_args}
+    request_args = request_args | update_args
     highlight_attr = 'class ="highlight"' if highlight_condition else ''
 
     return f'<a href="{create_href(request_args)}" {highlight_attr}>{text}</a>'
