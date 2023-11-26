@@ -26,6 +26,7 @@ document.addEventListener('keydown', function (event) {
       show_tooltip(cell);
       show_tooltip_trend(cell);
     }
+    return;
   }
   if (event.code === 'Space') {
     if (selectedCell) {
@@ -34,6 +35,13 @@ document.addEventListener('keydown', function (event) {
         openDialog(`/chart?symbol=${symbol}&period=F5`);
       }
     }
+    return;
+  }
+  if (event.code === 'Escape') {
+    document.getElementById('tooltip').style.display = 'none';
+    document.getElementById('tooltip-trend').style.display = 'none';
+    focusMode = 'key'
+    return;
   }
 });
 
@@ -212,19 +220,16 @@ function show_tooltip_trend(cell) {
   // 获取屏幕的宽度和高度
   let screenWidth = window.innerWidth;
   let screenHeight = window.innerHeight;
-
+  tooltip.style.display = 'block';
   if (event.clientY <= screenHeight / 2) {
     // 右下角
-    tooltip.style.left = screenWidth - tooltip.offsetWidth + 'px';
-    tooltip.style.top = screenHeight - tooltip.offsetHeight + 'px';
+    tooltip.style.left = (screenWidth - tooltip.offsetWidth) + 'px';
+    tooltip.style.top = (screenHeight - tooltip.offsetHeight) + 'px';
   } else {
     // 右上角
-    tooltip.style.left = screenWidth - tooltip.offsetWidth + 'px';
+    tooltip.style.left = (screenWidth - tooltip.offsetWidth) + 'px';
     tooltip.style.top = '0px';
-
   }
-
-  tooltip.style.display = 'block';
 }
 
 function show_tooltip(cell) {

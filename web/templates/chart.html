@@ -50,15 +50,26 @@
 {% endblock %}
 {% block footer %}
   <script>
+    function communicateParent(event) {
+      if (['Escape'].includes(event.code)) {
+        window.parent.postMessage('close_me', '*');
+      }
+      if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.code)) {
+        window.parent.postMessage(`${event.code}`, '*');
+      }
+    }
     document.addEventListener('keydown', function () {
       if (!$('#search-dialog').hasClass('open')) {
-        if (['Escape', 'Space'].includes(event.code)) {
-          window.parent.postMessage('close_me', '*');
+        if (['Space'].includes(event.code)) {
+          openSearchDialog();
+          return;
         }
-        if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.code)) {
-          window.parent.postMessage(`${event.code}`, '*');
+        if (window.self !== window.top) {
+          communicateParent(event);
+          return;
         }
       }
+
     });
   </script>
 {% endblock %}
