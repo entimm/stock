@@ -1,12 +1,17 @@
 {% extends '_layout.html' %}
 {% block head %}
-  <title>A股概念趋势图 - {{ type_list[type] }}</title>
+  <title>A股概念趋势图</title>
 {% endblock %}
 {% block content %}
   <div id="fixed-links-container" class="right-top">
     <div class="fixed-links">
-      {% for value in type_list %}
-        {{ create_link(request_args, {'type':loop.index0}, request_args.type == loop.index0, value) | safe }}
+      {% for key, value in data_type_list.items() %}
+        {{ create_link(request_args, {'data_type':key}, request_args.data_type == key, value.name) | safe }}
+      {% endfor %}
+    </div>
+    <div class="fixed-links">
+      {% for value in data_type_list[request_args.data_type]['values'] %}
+        {{ create_link(request_args, {'sub_data_type':loop.index0}, request_args.sub_data_type == loop.index0, value) | safe }}
       {% endfor %}
     </div>
     <div class="fixed-links">

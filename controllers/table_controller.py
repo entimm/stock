@@ -70,18 +70,27 @@ def astock_table():
 @blueprint.route('/gnbk_table')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def gnbk_table():
+    data_type_list = {
+        'ANGLE': '强度',
+        'TREND-UP': '趋势涨',
+        'TREND-DOWN': '趋势跌',
+    }
+    data_type = request.args.get('data_type', 'ANGLE', type=str)
+
     year_list = list(range(YEAR, 2017, -1))
     year = request.args.get('year', year_list[0], type=int)
 
-    file_path = os.path.join(PROCESSED_PATH, f'GNBK{year}.csv')
+    file_path = os.path.join(PROCESSED_PATH, f'GNBK-{data_type}{year}.csv')
 
     data = read_table_data(file_path, is_gnbk=True)
 
     template_var = {
         'year_list': year_list,
+        'data_type_list': data_type_list,
         'data': json.dumps(data, sort_keys=False),
         'request_args': {
             'year': year,
+            'data_type': data_type,
         }
     }
 

@@ -76,33 +76,39 @@ def astock():
 @blueprint.route('/gnbk')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def gnbk():
-    type_list = ['超短↖', '综合↖', '超短↘', '综合↘']
+    data_type_list = {
+        'ANGLE': {'name': '强度', 'values': ['超短↖', '综合↖', '超短↘', '综合↘']},
+        'TREND-UP': {'name': '趋势涨', 'values': ['MA5↖', 'MA10↖', 'MA20↖', 'MA60↖']},
+        'TREND-DOWN': {'name': '趋势跌', 'values': ['MA5↘', 'MA10↘', 'MA20↘', 'MA60↘']},
+    }
     year_list = list(range(YEAR, 2017, -1))
     line_list = [
         '1,2,3,4,5',
         '5,10,15,20',
     ]
 
-    type_val = request.args.get('type', 0, type=int)
+    data_type = request.args.get('data_type', 'ANGLE', type=str)
+    sub_data_type = request.args.get('sub_data_type', 0, type=int)
     year = request.args.get('year', year_list[0], type=int)
     line_id = request.args.get('line_id', 0, type=int)
 
     rows = list(map(int, line_list[line_id].split(',')))
 
-    file_path = os.path.join(PROCESSED_PATH, f'GNBK{year}.csv')
+    file_path = os.path.join(PROCESSED_PATH, f'GNBK-{data_type}{year}.csv')
 
-    data = read_data(file_path, rows, type_val, True)
+    data = read_data(file_path, rows, sub_data_type, True)
 
     template_var = {
         'year_list': year_list,
         'line_list': line_list,
         'rows': rows,
-        'type_list': type_list,
+        'data_type_list': data_type_list,
         'data': data,
         'request_args': {
             'year': year,
             'line_id': line_id,
-            'type': type_val,
+            'sub_data_type': sub_data_type,
+            'data_type': data_type,
         }
     }
 

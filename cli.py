@@ -5,7 +5,7 @@ import click
 from command.download_total import download_total
 from command.analyze import analyze
 from command.convert_astock import convert_astock
-from command.convert_gnbk import convert_gnbk
+from command.convert_gnbk import convert_gnbk, convert_gnbk_trend_up, convert_gnbk_trend_down
 from command.minor.test import test
 from command.minor.cal_trend_ptg import cal_trend_ptg
 from command.minor.convert_tdx_xls import convert_tdx_xls
@@ -22,6 +22,8 @@ main.add_command(analyze)
 
 main.add_command(convert_astock)
 main.add_command(convert_gnbk)
+main.add_command(convert_gnbk_trend_up)
+main.add_command(convert_gnbk_trend_down)
 
 main.add_command(download_total)
 main.add_command(mv_raw)
