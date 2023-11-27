@@ -4,7 +4,7 @@ from rich.table import Table
 
 from common import price_calculate
 from common.common import PeriodEnum
-from common.utils import realtime_whole_df
+from common.quotes import fetch_local_plus_real
 
 MA_CONFIG_LIST = {
     'ma5': {
@@ -62,8 +62,8 @@ def cal(df, title):
 @click.command()
 @click.argument('symbol', type=str)
 def analyze(symbol):
-    df_5f = realtime_whole_df(symbol, PeriodEnum.F5)
+    df_5f = fetch_local_plus_real(symbol, PeriodEnum.F5)
     cal(df_5f, '5分钟K')
 
-    df_d = realtime_whole_df(symbol, PeriodEnum.D)
+    df_d = fetch_local_plus_real(symbol, PeriodEnum.D)
     cal(df_d, '日K')

@@ -9,7 +9,8 @@ from pypinyin import pinyin, Style
 from app_cache import cache
 from common.common import PeriodEnum, DEFAULT_SELECT_OPTIONS
 from common.config import config
-from common.utils import realtime_whole_df, ticker_name, symbol_all, row_to_kline
+from common.quotes import fetch_local_plus_real
+from common.utils import ticker_name, symbol_all, row_to_kline
 from controllers import make_cache_key
 
 blueprint = Blueprint('chart', __name__)
@@ -34,7 +35,7 @@ def chart():
         return redirect(url_for('chart.chart', symbol='999999', period=PeriodEnum.D.name, req_real=0))
 
     period_enum = PeriodEnum[period]
-    df = realtime_whole_df(symbol, period_enum, req_real)
+    df = fetch_local_plus_real(symbol, period_enum, req_real)
     kline_list = df.apply(row_to_kline, axis=1).to_list()
 
     template_var = {

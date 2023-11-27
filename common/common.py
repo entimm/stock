@@ -1,3 +1,4 @@
+import datetime
 import os
 from enum import Enum, auto
 
@@ -24,6 +25,9 @@ TDX_BLOCK_NEW_PATH = os.path.join(TDX_PATH, 'T0002', 'blocknew')
 TUSHARE_TOKEN = config['tushare']['token']
 MENUS = config['menus']
 DEFAULT_SELECT_OPTIONS = config['default_select_options']
+
+YEAR = datetime.datetime.now().year
+
 
 class PeriodEnum(Enum):
     F1 = auto()

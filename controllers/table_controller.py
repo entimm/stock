@@ -6,8 +6,8 @@ import pandas as pd
 from flask import render_template, request, Blueprint
 
 from app_cache import cache
-from common.common import PROCESSED_PATH
-from common.data import gnbk_dict, ticker_name_dict, YEAR
+from common.common import PROCESSED_PATH, YEAR
+from common.data import gnbk_dict, ticker_name_dict
 from controllers import make_cache_key
 
 blueprint = Blueprint('table', __name__)

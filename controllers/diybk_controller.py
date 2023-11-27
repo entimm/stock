@@ -1,13 +1,14 @@
 from functools import cmp_to_key
 
 from flask import Blueprint, render_template, request
-from mootdx.quotes import Quotes
 
 from app_cache import cache
 from common import price_calculate
 from common.config import config
-from common.data import trade_date_list, local_tdx_reader
-from common.utils import read_bk, ticker_name
+from common.quotes import fetch_latest_daily, fetch_local_daily, local_tdx_reader
+from common.quotes import trade_date_list
+from common.tdx import read_bk
+from common.utils import ticker_name
 from controllers import make_cache_key
 
 blueprint = Blueprint('diybk', __name__)
@@ -39,8 +40,6 @@ def diybk():
     for bk_name, symbols_str in bk_code_dict.items():
         bk_code_dict[bk_name] = symbols_str.split(',')
 
-    client = Quotes.factory(market='std')
-
     data = {}
 
     zxg_dict = {'自选': read_bk('zxg')}
@@ -51,7 +50,7 @@ def diybk():
             real_price_map = {}
             if bk_name not in config['diybk']['not_real_price']:
                 try:
-                    real_price_df = client.quotes(symbol=symbols)
+                    real_price_df = fetch_latest_daily(symbols)
                     real_price_df['pct_change'] = round(
                         (real_price_df['price'] / real_price_df['last_close'] - 1) * 100, 2)
                     real_price_map = dict(zip(real_price_df['code'], real_price_df['pct_change']))
@@ -89,7 +88,7 @@ def diybk_history():
 
     stock_data = {}
     for symbol in symbols:
-        one_df = local_tdx_reader.daily(symbol=symbol).reset_index().tail(101)
+        one_df = fetch_local_daily(symbol=symbol).reset_index().tail(101)
 
         one_df = one_df.reset_index()
 

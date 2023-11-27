@@ -5,7 +5,8 @@ from flask import Blueprint, render_template, request
 
 from app_cache import cache
 from common.common import TOTAL_PATH
-from common.data import ticker_name_dict, trade_date_list
+from common.data import ticker_name_dict
+from common.quotes import trade_date_list
 from controllers import make_cache_key
 
 blueprint = Blueprint('limit_stock', __name__)
