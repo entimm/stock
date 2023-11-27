@@ -4,6 +4,7 @@ from chan import chan_config
 from chan.chan import Chan
 from flask import render_template, Blueprint, request, url_for, redirect
 from numpy import bool_
+from pypinyin import pinyin, Style
 
 from common.common import PeriodEnum, DEFAULT_SELECT_OPTIONS
 from common.config import config
@@ -64,7 +65,11 @@ def chart():
 
 @blueprint.route('/symbol_list')
 def symbol_list():
+    symbol_all_list = symbol_all()
+    for item in symbol_all_list:
+        item['pinyin'] = ''.join([item[0] for item in pinyin(item['value'], style=Style.FIRST_LETTER)]).upper()
+
     return {
-        'symbol_all_list': symbol_all(),
+        'symbol_all_list': symbol_all_list,
         'default_show_list': DEFAULT_SELECT_OPTIONS,
     }

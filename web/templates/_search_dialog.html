@@ -64,7 +64,7 @@
       return;
     }
     const filteredResults = option_list.filter(item =>
-      item.key.toLowerCase().includes(query) || item.value.toLowerCase().includes(query)
+      item.key.toLowerCase().includes(query) || item.value.toLowerCase().includes(query) || item.pinyin.toLowerCase().includes(query)
     );
     displayResults(filteredResults);
   });
