@@ -25,3 +25,10 @@ def read_bk(bk_key):
     codes = open(zxg_file).read().splitlines()
 
     return [c[1:] for c in codes if c != ""]
+
+
+def export_data_sort(df, col, asc, num):
+    top = df.sort_values(by=col, ascending=asc).head(num)
+    top = top['代码'].astype(str) + '|' + top['涨幅%'].astype(str) + '|' + top[col].astype(str)
+
+    return top.values
