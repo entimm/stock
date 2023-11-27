@@ -4,8 +4,10 @@ from typing import Dict, List
 import pandas as pd
 from flask import render_template, request, Blueprint
 
+from app_cache import cache
 from common.common import PROCESSED_PATH
 from common.data import ticker_name_dict, gnbk_dict, YEAR
+from controllers import make_cache_key
 
 blueprint = Blueprint('line', __name__)
 
@@ -28,6 +30,7 @@ def read_data(file_path: str, row_numbers: List[int], type_val: int = 0, is_gnbk
 
 
 @blueprint.route('/astock')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def astock():
     ma_list = ['MA5', 'MA10', 'MA20', 'MA60']
     year_list = list(range(YEAR, 2010, -1))
@@ -71,6 +74,7 @@ def astock():
 
 
 @blueprint.route('/gnbk')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def gnbk():
     type_list = ['超短↖', '综合↖', '超短↘', '综合↘']
     year_list = list(range(YEAR, 2017, -1))

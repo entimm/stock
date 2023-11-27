@@ -3,11 +3,14 @@ from flask import Blueprint, render_template
 from pandas import Series
 
 from common.data import stock_meta_df
+from app_cache import cache
+from controllers import make_cache_key
 
 blueprint = Blueprint('ipo', __name__)
 
 
 @blueprint.route('/ipo')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def ipo():
     stock_meta_df['list_date'] = pd.to_datetime(stock_meta_df['list_date'], format='%Y%m%d')
 

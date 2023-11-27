@@ -6,9 +6,11 @@ from flask import render_template, Blueprint, request, url_for, redirect
 from numpy import bool_
 from pypinyin import pinyin, Style
 
+from app_cache import cache
 from common.common import PeriodEnum, DEFAULT_SELECT_OPTIONS
 from common.config import config
 from common.utils import realtime_whole_df, ticker_name, symbol_all, row_to_kline
+from controllers import make_cache_key
 
 blueprint = Blueprint('chart', __name__)
 
@@ -20,6 +22,7 @@ def to_bool(value):
 
 
 @blueprint.route('/chart')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def chart():
     symbol = request.args.get('symbol', '', type=str)
     period = request.args.get('period', '', type=str).upper()
@@ -64,6 +67,7 @@ def chart():
 
 
 @blueprint.route('/symbol_list')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def symbol_list():
     symbol_all_list = symbol_all()
     for item in symbol_all_list:

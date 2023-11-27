@@ -3,10 +3,12 @@ from functools import cmp_to_key
 from flask import Blueprint, render_template, request
 from mootdx.quotes import Quotes
 
+from app_cache import cache
 from common import price_calculate
 from common.config import config
 from common.data import trade_date_list, local_tdx_reader
 from common.utils import read_bk, ticker_name
+from controllers import make_cache_key
 
 blueprint = Blueprint('diybk', __name__)
 
@@ -26,6 +28,7 @@ def custom_compare_asc(x, y):
 
 
 @blueprint.route('/diybk')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def diybk():
     df = local_tdx_reader.block_new(group=True)
 
@@ -59,8 +62,6 @@ def diybk():
                     price = real_price_map.get(symbol, '-')
                     data.setdefault(bk_name, []).append(f'{ticker_name(symbol)}|{symbol}|{price}')
 
-
-
     template_var = {
         'data': data,
         'bk_key_dict': bk_key_dict
@@ -70,6 +71,7 @@ def diybk():
 
 
 @blueprint.route('/diybk_history')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def diybk_history():
     ma_config = {'MA5': 5, 'MA10': 10, 'MA20': 20, 'MA60': 60}
     ma_list = list(ma_config.keys())

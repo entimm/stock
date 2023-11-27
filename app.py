@@ -4,8 +4,12 @@ from flask import Flask, render_template
 
 from common.common import MENUS
 from common.utils import create_link
+from app_cache import cache
 
 app = Flask(__name__, template_folder='web/templates', static_folder='web/public/static')
+
+app.config['CACHE_TYPE'] = 'simple'
+cache.init_app(app)
 
 controllers = [
     'index_controller',

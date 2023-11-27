@@ -5,8 +5,10 @@ from typing import Dict, List
 import pandas as pd
 from flask import render_template, request, Blueprint
 
+from app_cache import cache
 from common.common import PROCESSED_PATH
 from common.data import gnbk_dict, ticker_name_dict, YEAR
+from controllers import make_cache_key
 
 blueprint = Blueprint('table', __name__)
 
@@ -32,6 +34,7 @@ def read_table_data(file_path: str, is_gnbk: bool = False) -> Dict[str, List[str
 
 
 @blueprint.route('/astock_table')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def astock_table():
     ma_list = ['MA5', 'MA10', 'MA20', 'MA60']
     year_list = list(range(YEAR, 2010, -1))
@@ -65,6 +68,7 @@ def astock_table():
 
 
 @blueprint.route('/gnbk_table')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def gnbk_table():
     year_list = list(range(YEAR, 2017, -1))
     year = request.args.get('year', year_list[0], type=int)
