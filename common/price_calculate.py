@@ -39,7 +39,7 @@ def ma_trend(df, condition):
 
 
 def pct_change(df):
-    ((df['close'] - df['close'].shift(1)) / df['close'].shift(1)) * 100
+    return ((df['close'] - df['close'].shift(1)) / df['close'].shift(1)) * 100
 
 
 def resample_kline(df, period_enum: PeriodEnum):

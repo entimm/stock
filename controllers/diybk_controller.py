@@ -5,6 +5,7 @@ from flask import Blueprint, render_template, request
 from app_cache import cache
 from common import price_calculate
 from common.config import config
+from common.price_calculate import pct_change
 from common.quotes import fetch_latest_daily, fetch_local_daily, local_tdx_reader
 from common.quotes import trade_date_list
 from common.tdx import read_bk
@@ -51,8 +52,7 @@ def diybk():
             if bk_name not in config['diybk']['not_real_price']:
                 try:
                     real_price_df = fetch_latest_daily(symbols)
-                    real_price_df['pct_change'] = round(
-                        (real_price_df['price'] / real_price_df['last_close'] - 1) * 100, 2)
+                    real_price_df['pct_change'] = round(pct_change(real_price_df), 2)
                     real_price_map = dict(zip(real_price_df['code'], real_price_df['pct_change']))
                 except:
                     pass

@@ -9,6 +9,7 @@ from pypinyin import pinyin, Style
 from app_cache import cache
 from common.common import PeriodEnum, DEFAULT_SELECT_OPTIONS
 from common.config import config
+from common.price_calculate import pct_change
 from common.quotes import fetch_local_plus_real
 from common.utils import ticker_name, symbol_all, row_to_kline
 from controllers import make_cache_key
@@ -36,6 +37,7 @@ def chart():
 
     period_enum = PeriodEnum[period]
     df = fetch_local_plus_real(symbol, period_enum, req_real)
+    df['pct_change'] = round(pct_change(df), 2)
     kline_list = df.apply(row_to_kline, axis=1).to_list()
 
     template_var = {
