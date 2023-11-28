@@ -43,16 +43,5 @@ function generateChartConfig(data) {
         return [pt[0], '10%'];
       }
     },
-    dataZoom: [
-      {
-        type: 'inside',
-        start: 0,
-        end: 9999
-      },
-      {
-        start: 0,
-        end: 9999
-      }
-    ],
   };
 }

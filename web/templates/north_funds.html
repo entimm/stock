@@ -32,7 +32,13 @@
     let yearCounts = {{ yearly_count | safe }};
 
     let dayChart = echarts.init(document.getElementById('dayChart'));
-    dayChart.setOption(generateChartConfig(dayCounts));
+    chartOption = generateChartConfig(dayCounts);
+    chartOption['dataZoom'] = {
+      show: true,
+      start: 80,
+      end: 100,
+    };
+    dayChart.setOption(chartOption);
 
     let weekChart = echarts.init(document.getElementById('weekChart'));
     weekChart.setOption(generateChartConfig(weekCounts));

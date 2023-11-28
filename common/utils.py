@@ -70,7 +70,7 @@ def row_to_kline(row):
         'low': row['low'],
         'close': row['close'],
         'volume': row['volume'],
-        'pct_change': row['pct_change'],
+        'pct_change': row['pct_change'] if not math.isnan(row['pct_change']) else '',
     }
 
 

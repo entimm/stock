@@ -222,7 +222,7 @@ function show_tooltip_trend(cell) {
 
   // 计算tooltipTrend的位置
   let screenHeight = window.innerHeight;
-  const isTopHalf = event.clientY <= screenHeight / 2;
+  const isTopHalf = cell.getBoundingClientRect().top <= screenHeight / 2;
   tooltipTrend.classList.toggle('right-bottom', isTopHalf);
   tooltipTrend.classList.toggle('right-top', !isTopHalf);
 

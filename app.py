@@ -8,7 +8,7 @@ from app_cache import cache
 
 app = Flask(__name__, template_folder='web/templates', static_folder='web/public/static')
 
-# app.config['CACHE_TYPE'] = 'simple'
+app.config['CACHE_TYPE'] = 'simple'
 cache.init_app(app)
 
 controllers = [

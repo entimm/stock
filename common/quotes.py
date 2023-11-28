@@ -39,7 +39,7 @@ def fetch_local_daily(symbol):
 
 
 def fetch_local_plus_real(symbol, period_enum, req_real=1):
-    base_period_enum = PeriodEnum.F1 if period_enum in [PeriodEnum.F15, PeriodEnum.F30] else period_enum
+    base_period_enum = PeriodEnum.F5 if period_enum in [PeriodEnum.F15, PeriodEnum.F30] else period_enum
 
     df = fetch_local_data(symbol, base_period_enum)
     if req_real:

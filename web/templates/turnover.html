@@ -25,7 +25,7 @@
   <script>
     let data = {{ data | safe }};
 
-    let turnoverChart = echarts.init(document.getElementById('turnoverChart'));
+    let chart = echarts.init(document.getElementById('turnoverChart'));
     chartOption = generateChartConfig(data);
     chartOption['series'][0]['markLine'] = {
       data: [
@@ -46,6 +46,12 @@
         }
       ],
     };
-    turnoverChart.setOption(chartOption);
+
+    chartOption['dataZoom'] = {
+      show: true,
+      start: 80,
+      end: 100,
+    };
+    chart.setOption(chartOption);
   </script>
 {% endblock %}

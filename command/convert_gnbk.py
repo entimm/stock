@@ -49,7 +49,7 @@ def convert_gnbk(year):
         ('强度评分', True, 20),
     ]
 
-    process_data(get_file_list(year), export_columns, f'GNBK{year}.csv')
+    process_data(get_file_list(year), export_columns, f'GNBK-ANGLE{year}.csv')
 
 
 @click.command()

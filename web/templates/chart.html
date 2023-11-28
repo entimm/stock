@@ -20,6 +20,7 @@
       {{ create_link(request_args, {'req_real': (not request_args.req_real)}, request_args.req_real == 1, '实时') | safe }}
       {{ create_link(request_args, {'chart_engine': (not request_args.chart_engine), 'show_chan': 0}, request_args.chart_engine == 0, 'TV') | safe }}
       {{ create_link(request_args, {'show_chan': (not request_args.show_chan)}, request_args.show_chan == 1, '缠论') | safe }}
+      <a href="#" target="_blank">新窗口</a>
     </div>
     <div class="fixed-links">
       <span class="symbol">{{ request_args.symbol }} - </span><span class="symbol-name">{{ ticker_name }}</span>

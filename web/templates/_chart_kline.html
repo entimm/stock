@@ -94,7 +94,7 @@
       precision: 3,
       calcParams: indicator_ma_config.map(item => item.period),
       styles: {
-        lines: indicator_ma_config.map(item => {return { style: 'solid', size: item.size, color: item.color }}),
+        lines: indicator_ma_config.map(item => ({ style: 'solid', size: item.size, color: item.color })),
       }
     }, false, {id: 'candle_pane'})
   </script>
