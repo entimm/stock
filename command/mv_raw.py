@@ -5,7 +5,7 @@ import shutil
 
 import click
 
-from common.common import RAW_PATH, TDX_EXPORT_PATH
+from common.common import TDX_EXPORT_PATH, RAW_V2_PATH
 
 
 def is_recently_created(file_path, threshold_minutes=120):
@@ -32,7 +32,7 @@ def mv_raw():
         if not is_recently_created(source_path):
             continue
 
-        destination_path = os.path.join(RAW_PATH, match.group(1), item)
+        destination_path = os.path.join(RAW_V2_PATH, match.group(1), item)
 
         if os.path.exists(destination_path):
             continue

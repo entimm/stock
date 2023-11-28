@@ -16,6 +16,7 @@ INDEX_FILE_PATH = os.path.join(RESOURCES_PATH, 'index.csv')
 
 PROCESSED_PATH = os.path.join(RESOURCES_PATH, 'new_processed')
 RAW_PATH = os.path.join(RESOURCES_PATH, 'raw')
+RAW_V2_PATH = os.path.join(RESOURCES_PATH, 'rawV2')
 TOTAL_PATH = os.path.join(RESOURCES_PATH, 'total')
 
 TDX_PATH = config['tdx']['app_path']
