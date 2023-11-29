@@ -199,7 +199,7 @@ function getExchangeCode(symbol) {
 }
 
 function show_tooltip_trend(cell) {
-  let symbol = cell.getAttribute('symbol');
+  let symbol = cell.getAttribute('symbol') ?? '';
   let code = getExchangeCode(symbol);
   tooltipTrend.textContent = '';
   if (!code) {

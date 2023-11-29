@@ -115,3 +115,7 @@ nav .nav-wrapper {
   overflow-y: hidden;
   z-index: 99;
 }
+
+nav ul li.active {
+    background-color: #480BAD;
+}
