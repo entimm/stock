@@ -9,6 +9,11 @@
     .fixed-links .symbol {
       font-size: 15px;
     }
+
+    #tooltip-stock-info {
+      position: fixed;
+      display: none;
+    }
   </style>
 {% endblock %}
 {% block content %}
@@ -39,15 +44,16 @@
   <div id="chart"></div>
 
   <script src="/static/indicator_config.js"></script>
+
   {% if request_args.chart_engine == 0 %}
     {% include "_chart_tradingview.html" %}
   {% else %}
     {% include "_chart_kline.html" %}
   {% endif %}
 
-
   {% include "_search_dialog.html" %}
 
+  <div id="tooltip-stock-info" class="stock-info right-bottom card-panel teal z-depth-5"></div>
 {% endblock %}
 {% block footer %}
   <script>
@@ -59,6 +65,7 @@
         window.parent.postMessage(`${event.code}`, '*');
       }
     }
+
     document.addEventListener('keydown', function () {
       if (!$('#search-dialog').hasClass('open')) {
         if (['Space'].includes(event.code)) {
@@ -67,10 +74,39 @@
         }
         if (window.self !== window.top) {
           communicateParent(event);
-          return;
         }
       }
-
     });
+  </script>
+
+  <script>
+    let symbol = '{{ request_args.symbol }}'
+    let tooltip = document.getElementById('tooltip-stock-info');
+    fetch(`/stock_info/${symbol}`).then(response => response.json())
+      .then(jsonData => {
+        if (Object.keys(jsonData).length === 0) {
+          tooltip.innerHTML = '<div class="card-content compact-content"><p><strong>没有数据</strong></p></div>';
+          return;
+        }
+        tooltip.innerHTML = `
+            <div class="card-content compact-content">
+            <p><strong>主题投资:</strong> ${jsonData['主题投资']}</p>
+            <p><strong>主营业务:</strong> ${jsonData['主营业务']}</p>
+            <p><strong>公司亮点:</strong> ${jsonData['公司亮点']}</p>
+            <p><strong>行业:</strong> ${jsonData['行业']}</p>
+            <p><strong>概念:</strong> ${jsonData['概念']}</p>
+            <p><strong>地域:</strong> ${jsonData['地域']}</p>
+            <p><strong>风格:</strong> ${jsonData['风格']}</p>
+            <p><strong>流通市值:</strong> ${jsonData['流通市值']}</p>
+           </div>`;
+      });
+    $('.fixed-links .symbol-name').hover(
+      function () {
+        $(tooltip).show();
+      },
+      function () {
+        $(tooltip).hide();
+      }
+    );
   </script>
 {% endblock %}

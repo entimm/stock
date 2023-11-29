@@ -44,7 +44,6 @@ document.addEventListener('keydown', function (event) {
     tooltip.style.display = 'none';
     tooltipTrend.style.display = 'none';
     focusMode = 'key'
-    return;
   }
 });
 
@@ -100,7 +99,7 @@ function renderCell(cell, value, i) {
       if (focusMode === 'cursor') {
         openDialog(`/chart?symbol=${value[1]}&period=${KLINE_PERIOD}`);
       }
-      if (tooltipTrend.style.display == 'none') {
+      if (tooltipTrend.style.display === 'none') {
         show_tooltip_trend(cell);
         show_tooltip(cell);
       }
@@ -227,6 +226,25 @@ function show_tooltip_trend(cell) {
   tooltipTrend.classList.toggle('right-top', !isTopHalf);
 
   tooltipTrend.style.display = 'block';
+
+  let infoCardDiv = document.createElement("div");
+  infoCardDiv.classList.add('stock-info', 'card-panel', 'teal');
+  tooltipTrend.prepend(infoCardDiv);
+  fetch(`/stock_info/${symbol}`).then(response => response.json())
+    .then(jsonData => {
+      infoCardDiv.innerHTML = `
+        <div class="card-content compact-content">
+            <p><strong>主题投资:</strong> ${jsonData['主题投资']}</p>
+            <p><strong>主营业务:</strong> ${jsonData['主营业务']}</p>
+            <p><strong>公司亮点:</strong> ${jsonData['公司亮点']}</p>
+            <p><strong>行业:</strong> ${jsonData['行业']}</p>
+            <p><strong>概念:</strong> ${jsonData['概念']}</p>
+            <p><strong>地域:</strong> ${jsonData['地域']}</p>
+            <p><strong>风格:</strong> ${jsonData['风格']}</p>
+            <p><strong>流通市值:</strong> ${jsonData['流通市值']}</p>
+        </div>
+    `;
+    });
 }
 
 function show_tooltip(cell) {

@@ -11,6 +11,7 @@ from common.common import PeriodEnum, DEFAULT_SELECT_OPTIONS
 from common.config import config
 from common.price_calculate import pct_change
 from common.quotes import fetch_local_plus_real
+from common.tdx import stock_info_df
 from common.utils import ticker_name, symbol_all, row_to_kline
 from controllers import make_cache_key
 
@@ -80,3 +81,11 @@ def symbol_list():
         'symbol_all_list': symbol_all_list,
         'default_show_list': DEFAULT_SELECT_OPTIONS,
     }
+
+
+@blueprint.route('/stock_info/<symbol>')
+def stock_info(symbol):
+    result = {}
+    if symbol in stock_info_df.index:
+        result = stock_info_df.loc[symbol].to_json()
+    return result
