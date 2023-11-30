@@ -228,7 +228,7 @@ function show_tooltip_trend(cell) {
   tooltipTrend.style.display = 'block';
 
   let infoCardDiv = document.createElement("div");
-  infoCardDiv.classList.add('stock-info', 'card-panel', 'teal');
+  infoCardDiv.classList.add('stock-info', 'card-panel', 'teal', 'z-depth-5');
   tooltipTrend.prepend(infoCardDiv);
   fetch(`/stock_info/${symbol}`).then(response => response.json())
     .then(jsonData => {
@@ -243,6 +243,27 @@ function show_tooltip_trend(cell) {
             <p><strong>风格:</strong> ${jsonData['风格']}</p>
             <p><strong>流通市值:</strong> ${jsonData['流通市值']}</p>
         </div>
+    `;
+    });
+
+  let infoCardDiv2 = document.createElement("div");
+  infoCardDiv2.classList.add('stock-info', 'card-panel', 'teal', 'z-depth-5');
+  tooltipTrend.prepend(infoCardDiv2);
+  fetch(`/limited_up_info/${symbol}`).then(response => response.json())
+    .then(jsonData => {
+      infoCardDiv2.innerHTML = `
+            <div class="card-content compact-content">
+            <p><strong>日期:</strong> ${jsonData['date']}</p>
+            <p><strong>换手:</strong> ${jsonData['turnover_ratio']}</p>
+            <p><strong>流畅市值:</strong> ${jsonData['flow_capital']}</p>
+            <p><strong>上市日期:</strong> ${jsonData['listed_date']}</p>
+            <p><strong>开板次数:</strong> ${jsonData['break_times']}</p>
+            <p><strong>首次上板时间:</strong> ${jsonData['first_limit_up']}</p>
+            <p><strong>最后上板时间:</strong> ${jsonData['last_limit_up']}</p>
+            <p><strong>连板:</strong>${jsonData['limited_freq']}</p>
+            <p><strong>题材:</strong> ${jsonData['plates_info'].join(' + ')}</p>
+            <p><strong>涨停原因:</strong> ${jsonData['reason']}</p>
+           </div>
     `;
     });
 }
