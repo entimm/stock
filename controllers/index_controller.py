@@ -12,7 +12,6 @@ blueprint = Blueprint('index', __name__)
 @blueprint.route('/')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def index():
-    print('hello')
     grouped_menus = defaultdict(list)
     for item in MENUS:
         grouped_menus[item['type']].append(item)

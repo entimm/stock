@@ -1,0 +1,349 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>涨停动力</title>
+  <style>
+    #grid-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: max-content;
+    }
+
+    td, th {
+      padding: 0;
+      white-space: nowrap;
+      min-width: 100px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    th {
+      color: white;
+      background-color: #480bad;
+      position: sticky;
+      top: 0;
+    }
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    #tooltip {
+      position: absolute;
+      color: #f1f8e9;
+      background-color: rgb(94, 0, 178);
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 20px;
+    }
+
+    .dot::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 8px;
+      height: 8px;
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .red-dot1::after {
+      background-color: #ff8a80;
+    }
+
+    .red-dot2::after {
+      background-color: #f50057;
+    }
+
+    .red-dot3::after {
+      background-color: #d500f9;
+    }
+
+    .green-dot1::after {
+      background-color: #40c4ff;
+    }
+
+    .green-dot2::after {
+      background-color: #00e676;
+    }
+
+    .green-dot3::after {
+      background-color: #ffee58;
+    }
+
+    .select-cell {
+      border: 2px solid red;
+    }
+
+    #stock-container {
+      position: fixed;
+      overflow-y: auto;
+      height: 800px;
+      width: 100%;
+    }
+
+    #stock-container .stock-info.card-panel {
+      height: 500px;
+      min-width: 200px;
+      width: 12.5%;
+      padding: 5px;
+    }
+
+    #tooltip-trend {
+      position: fixed;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      /*padding: 10px;*/
+      font-size: 20px;
+      width: 2182px;
+      height: 310px;
+      z-index: 100;
+      box-shadow: 0 10px 20px 20px rgb(0 0 0 / 10%);
+    }
+  </style>
+{% endblock %}
+{% block content %}
+
+  <div id="grid-container">
+    <table id="grid" class="striped centered"></table>
+    <div id="tooltip" style="display:none;"></div>
+    <div id="tooltip-trend" style="display:none;"></div>
+    <div id="stock-container"></div>
+  </div>
+
+{% endblock %}
+{% block footer %}
+  <script src="/static/third/jquery-3.7.1.min.js"></script>
+  <script>
+    let focusMode = 'free';
+    let total_plate_list = {{ result_plate_list | safe }};
+    let total_stock_list = {{ result_stock_list | safe }};
+    let table = document.getElementById('grid');
+    let tooltipTrend = document.getElementById('tooltip-trend');
+    let selectedCell = null;
+    let stockContainer = document.getElementById('stock-container');
+    renderGrid(total_plate_list);
+
+    function renderGrid(data) {
+      table.innerHTML = '';
+
+      // 添加表头
+      let thead = document.createElement('thead');
+      let headerRow = document.createElement('tr');
+      for (let colName in data) {
+        let headerCell = document.createElement('th');
+        headerCell.textContent = colName;
+        headerRow.appendChild(headerCell);
+      }
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      let tbody = document.createElement('tbody');
+
+      let maxRows = Math.max(...Object.values(data).map(col => col.length));
+      for (let i = 0; i < maxRows; i++) {
+        let row = document.createElement('tr');
+        for (let colName in data) {
+          let cell = document.createElement('td');
+          row.appendChild(cell);
+          renderCell(cell, data[colName][i] || {}, colName)
+        }
+        tbody.appendChild(row);
+      }
+      table.appendChild(tbody);
+    }
+
+    function renderCell(cell, value, colName) {
+      let stock_num = value['stock_list']?.length;
+      if (stock_num) {
+        cell.textContent = value['plate_name'];
+      }
+      cell.setAttribute('plate_reason', value['plate_reason'] ?? '');
+      cell.setAttribute('stock_num', stock_num);
+      addDotClass(cell, stock_num)
+      cell.addEventListener('click', function () {
+        let cellRect = cell.getBoundingClientRect();
+
+        let clickX = event.clientX - cellRect.left;
+
+        if (clickX < cellRect.width / 2) {
+          highlightCells(cell.textContent);
+        } else {
+          focusMode = 'selected'
+          setSelectedCell(cell);
+          show_stocks(value['plate_name'], colName)
+        }
+      });
+      cell.addEventListener('mouseover', function () {
+        if (focusMode === 'selected') return;
+        if (stock_num) {
+          show_tooltip(this);
+          setSelectedCell(this);
+        }
+      });
+    }
+
+    function show_tooltip(cell) {
+      tooltip.textContent = [cell.getAttribute('plate_reason'), cell.getAttribute('stock_num')].join(' | ');
+
+      // 计算tooltip的位置
+      let boundingRect = cell.getBoundingClientRect();
+      let tooltipX = boundingRect.right + window.pageXOffset - 10;
+      let tooltipY = boundingRect.bottom + window.pageYOffset - 10;
+
+      tooltip.style.display = 'block';
+      tooltip.style.left = tooltipX + 'px';
+      tooltip.style.top = tooltipY + 'px';
+    }
+
+    function addDotClass(element, value) {
+      let num = value
+      const dotClasses = [
+        {'condition': num >= 30, 'className': 'red-dot3'},
+        {'condition': num >= 25, 'className': 'red-dot2'},
+        {'condition': num >= 20, 'className': 'red-dot1'},
+        {'condition': num >= 15, 'className': 'green-dot3'},
+        {'condition': num >= 10, 'className': 'green-dot2'},
+        {'condition': num >= 5, 'className': 'green-dot1'},
+      ];
+      dotClasses.forEach((dotClass) => {
+        if (dotClass.condition) {
+          element.classList.add('dot', dotClass.className);
+        }
+      });
+    }
+
+    function setSelectedCell(cell) {
+      if (selectedCell) {
+        selectedCell.classList.remove('select-cell')
+      }
+      selectedCell = cell
+      cell.classList.add('select-cell')
+    }
+
+    function getRandomColor() {
+      let letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 3; i++) {
+        color += letters[Math.floor(Math.random() * 6) + 8]; // 从8到F中选择亮色
+      }
+      return color;
+    }
+
+    function highlightCells(value) {
+      let cells = document.querySelectorAll('td');
+      color = getRandomColor();
+      for (let cell of cells) {
+        if (cell.textContent === value) {
+          cell.style.backgroundColor = cell.style.backgroundColor ? "" : color;
+        }
+      }
+    }
+
+    function show_stocks(plate_name, colName) {
+      stockContainer.style.display = 'block';
+      stockContainer.innerHTML = '';
+      let stockList = total_stock_list[colName].filter(item => item['plate_names'].includes(plate_name));
+      stockList.forEach(function (jsonData) {
+        const card = document.createElement('div')
+        card.classList.add('stock-info', 'card-panel', 'teal', 'z-depth-5')
+        card.innerHTML = `
+            <div class="card-content compact-content">
+            <p><strong>日期:</strong> ${jsonData['date']}</p>
+            <p><strong>代码:</strong> <a href="/chart?symbol=${jsonData['symbol']}&period=D&req_real=0" target="_blank">${jsonData['symbol']}</a></p>
+            <p><strong>名称:</strong> ${jsonData['name']}</p>
+            <p><strong>换手:</strong> ${jsonData['turnover_ratio']}</p>
+            <p><strong>流畅市值:</strong> ${jsonData['flow_capital']}</p>
+            <p><strong>上市日期:</strong> ${jsonData['listed_date']}</p>
+            <p><strong>开板次数:</strong> ${jsonData['break_times']}</p>
+            <p><strong>首次上板时间:</strong> ${jsonData['first_limit_up']}</p>
+            <p><strong>最后上板时间:</strong> ${jsonData['last_limit_up']}</p>
+            <p><strong>连板:</strong>${jsonData['limited_freq']}</p>
+            <p><strong>题材:</strong> ${jsonData['plate_names'].join(' + ')}</p>
+            <p><strong>涨停原因:</strong> ${jsonData['reason']}</p>
+           </div>
+      `;
+        stockContainer.append(card);
+        $(card).hover(function () {
+          show_tooltip_trend(jsonData['symbol'])
+        });
+        $(stockContainer).mouseleave(function () {
+          tooltipTrend.style.display = 'none';
+        });
+      });
+    }
+
+    function getExchangeCode(symbol) {
+      let exchangeCode = symbol.slice(0, 2);
+
+      if (exchangeCode === "60" || exchangeCode === "68") {
+        return `sh${symbol}`;
+      } else if (exchangeCode === "00" || exchangeCode === "30") {
+        return `sz${symbol}`;
+      } else if (exchangeCode === "43" || exchangeCode === "83" || exchangeCode === "87") {
+        return `bj${symbol}`;
+      } else {
+        return '';
+      }
+    }
+
+    function show_tooltip_trend(symbol) {
+      let code = getExchangeCode(`${symbol}`);
+      tooltipTrend.textContent = '';
+      if (!code) {
+        tooltipTrend.style.display = 'none';
+        return
+      }
+
+      let timestamp = new Date().getTime();
+
+      let img1 = document.createElement("img");
+      img1.src = `https://image2.sinajs.cn/newchart/min/n/${code}.gif?t=${timestamp}`;
+      tooltipTrend.appendChild(img1);
+      let img2 = document.createElement("img");
+      img2.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif?t=${timestamp}`;
+      tooltipTrend.appendChild(img2);
+      let img3 = document.createElement("img");
+      img3.src = `https://image2.sinajs.cn/newchart/weekly/n/${code}.gif?t=${timestamp}`;
+      tooltipTrend.appendChild(img3);
+
+      // 计算tooltipTrend的位置
+      let screenHeight = window.innerHeight;
+
+      tooltipTrend.classList.add('right-top');
+
+      tooltipTrend.style.display = 'block';
+
+      let infoCardDiv = document.createElement("div");
+      infoCardDiv.classList.add('stock-info', 'card-panel', 'teal');
+      tooltipTrend.prepend(infoCardDiv);
+      fetch(`/stock_info/${symbol}`).then(response => response.json())
+        .then(jsonData => {
+          infoCardDiv.innerHTML = `
+        <div class="card-content compact-content">
+            <p><strong>主题投资:</strong> ${jsonData['主题投资']}</p>
+            <p><strong>主营业务:</strong> ${jsonData['主营业务']}</p>
+            <p><strong>公司亮点:</strong> ${jsonData['公司亮点']}</p>
+            <p><strong>行业:</strong> ${jsonData['行业']}</p>
+            <p><strong>概念:</strong> ${jsonData['概念']}</p>
+            <p><strong>地域:</strong> ${jsonData['地域']}</p>
+            <p><strong>风格:</strong> ${jsonData['风格']}</p>
+            <p><strong>流通市值:</strong> ${jsonData['流通市值']}</p>
+        </div>
+    `;
+        });
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'Escape') {
+        tooltip.style.display = 'none';
+        tooltipTrend.style.display = 'none';
+        stockContainer.style.display = 'none';
+        focusMode = 'free'
+      }
+    });
+  </script>
+{% endblock %}

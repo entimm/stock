@@ -9,6 +9,7 @@ from pypinyin import pinyin, Style
 from app_cache import cache
 from common.common import PeriodEnum, DEFAULT_SELECT_OPTIONS
 from common.config import config
+from common.data import limited_up_total_dict
 from common.price_calculate import pct_change
 from common.quotes import fetch_local_plus_real
 from common.tdx import stock_info_df
@@ -88,4 +89,14 @@ def stock_info(symbol):
     result = {}
     if symbol in stock_info_df.index:
         result = stock_info_df.loc[symbol].to_json()
+    return result
+
+
+@blueprint.route('/limited_up_info/<symbol>')
+def limited_up_info(symbol):
+    result = limited_up_total_dict.get(symbol, {})
+    result['plates_info'] = []
+    for item in result.get('plates', []):
+        result['plates_info'].append(f"【{item['plate_name']}({item['count']})】{item.get('plate_reason', '')}")
+
     return result

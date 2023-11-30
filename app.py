@@ -22,6 +22,7 @@ controllers = [
     'north_funds_controller',
     'turnover_controller',
     'mode_controller',
+    'limited_power_controller',
 ]
 
 for controller in controllers:

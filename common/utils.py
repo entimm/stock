@@ -1,8 +1,11 @@
+import json
 import math
 import os
 import re
 from datetime import datetime
 from urllib.parse import urlencode
+
+import requests
 
 from common.data import gnbk_dict, etf_dict, ticker_name_dict, index_dict
 
@@ -85,3 +88,12 @@ def create_link(request_args, update_args, highlight_condition, text):
     highlight_attr = 'class ="highlight"' if highlight_condition else ''
 
     return f'<a href="{create_href(request_args)}" {highlight_attr}>{text}</a>'
+
+
+def send_request(url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+
+    response = requests.get(url, headers=headers)
+    return json.loads(response.text)
