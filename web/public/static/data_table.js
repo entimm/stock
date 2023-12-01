@@ -100,13 +100,29 @@ function renderGrid(data) {
     if (event.target.tagName === 'TD') {
       let cell = event.target;
       if (focusMode === 'cursor') {
-        show_tooltip_trend(cell);
+        debouncedFunction(cell);
         show_tooltip(cell);
         setSelectedCell(cell);
       }
     }
   });
 }
+
+function debounce(func, delay) {
+  let timeoutId;
+
+  return function () {
+    clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(() => {
+      func.apply(this, arguments);
+    }, delay);
+  };
+}
+
+const debouncedFunction = debounce(function (cell) {
+  show_tooltip_trend(cell);
+}, 200);
 
 function renderCell(cell, value, i) {
   value = value.split('|');
