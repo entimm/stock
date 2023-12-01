@@ -94,9 +94,12 @@ def stock_info(symbol):
 
 @blueprint.route('/limited_up_info/<symbol>')
 def limited_up_info(symbol):
-    result = limited_up_total_dict.get(symbol, {})
+    result = dict(limited_up_total_dict.get(symbol, {}))
+
     result['plates_info'] = []
     for item in result.get('plates', []):
         result['plates_info'].append(f"【{item['plate_name']}({item['count']})】{item.get('plate_reason', '')}")
+
+    result.pop('plates', None)
 
     return result

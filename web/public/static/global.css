@@ -28,7 +28,7 @@ main {
 nav {
   height: 32px;
   line-height: 32px;
-  background-color: #ff6a89;
+  background-color: #ff80ab;
 }
 
 nav .brand-logo {
@@ -38,6 +38,10 @@ nav .brand-logo {
 nav .nav-wrapper {
   padding-left: 1%;
   padding-right: 1%;
+}
+
+nav ul li.active {
+  background-color: #480BAD;
 }
 
 #chart {
@@ -66,11 +70,6 @@ nav .nav-wrapper {
   color: #FF5733;
   font-weight: bold;
   text-decoration: underline;
-}
-
-.right-top {
-  right: 0;
-  top: 5px;
 }
 
 #fixed-links-container.right-top {
@@ -114,8 +113,4 @@ nav .nav-wrapper {
   height: 308px;
   overflow-y: hidden;
   z-index: 99;
-}
-
-nav ul li.active {
-    background-color: #480BAD;
 }

@@ -13,3 +13,8 @@ echo 'convert-gnbk-trend-up'
 python cli.py convert-gnbk-trend-up
 echo 'convert-gnbk-trend-down'
 python cli.py convert-gnbk-trend-down
+
+python cli.py  download-xuangubao-detail
+python cli.py  download-xuangubao-plates
+python cli.py  download-xuangubao-stock
+python cli.py  arrange-xuangubao-detail

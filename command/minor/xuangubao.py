@@ -1,23 +1,20 @@
 import json
 import os
-from datetime import datetime
 
 import click
 import pandas as pd
 
 from common.common import RESOURCES_PATH
-from common.quotes import fetch_local_daily
+from common.quotes import fetch_local_daily, trade_date_list
 from common.utils import send_request
 from common.xuangubao import row2info
-
-trade_date_list = fetch_local_daily(symbol='999999').reset_index().tail(2000)['date'].to_list()[::-1]
 
 xuangubao_url = 'https://flash-api.xuangubao.cn/api'
 
 
 @click.command()
 def download_xuangubao_plates():
-    for ts in trade_date_list:
+    for ts in trade_date_list.tail(1000)['date'].to_list()[::-1]:
         date_str = ts.strftime('%Y%m%d')
         file_path = os.path.join(RESOURCES_PATH, 'xuangubao', 'plates', f'plates-{date_str}.csv')
         if os.path.exists(file_path):
@@ -38,7 +35,7 @@ def download_xuangubao_plates():
 
 @click.command()
 def download_xuangubao_stock():
-    for ts in trade_date_list:
+    for ts in trade_date_list.tail(1000)['date'].to_list()[::-1]:
         date_str = ts.strftime('%Y%m%d')
         file_path = os.path.join(RESOURCES_PATH, 'xuangubao', 'stocks', f'stock-{date_str}.csv')
         if os.path.exists(file_path):
@@ -58,7 +55,7 @@ def download_xuangubao_stock():
 
 @click.command()
 def download_xuangubao_detail():
-    for ts in trade_date_list:
+    for ts in trade_date_list.tail(1000)['date'].to_list()[::-1]:
         date_str = ts.strftime('%Y%m%d')
         date_str2 = ts.strftime('%Y-%m-%d')
         file_path = os.path.join(RESOURCES_PATH, 'xuangubao', 'details', f'detail-{date_str}.csv')
@@ -79,7 +76,7 @@ def download_xuangubao_detail():
 @click.command()
 def arrange_xuangubao_detail():
     stock_total_dict = {}
-    for ts in trade_date_list:
+    for ts in trade_date_list.tail(2000)['date'].to_list()[::-1]:
         date_str = ts.strftime('%Y%m%d')
         file_path = os.path.join(RESOURCES_PATH, 'xuangubao', 'details', f'detail-{date_str}.csv')
         if not os.path.exists(file_path):
@@ -105,7 +102,7 @@ def arrange_xuangubao_detail():
             if symbol in stock_total_dict:
                 continue
 
-            info = row2info(row)
+            info = row2info(row.to_dict())
             info['date'] = date_str
             info['plates'] = related_plates
 

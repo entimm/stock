@@ -11,7 +11,7 @@ from common.quotes import trade_date_list
 def download_total():
     pro = ts.pro_api(TUSHARE_TOKEN)
 
-    for current_date in trade_date_list[::-1]:
+    for current_date in trade_date_list['date'].to_list()[::-1]:
         current_date = current_date.strftime('%Y%m%d')
         df = pro.daily(trade_date=current_date)
 

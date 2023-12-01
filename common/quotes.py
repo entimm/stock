@@ -65,4 +65,4 @@ def fetch_local_plus_real(symbol, period_enum, req_real=1):
     return df
 
 
-trade_date_list = fetch_local_daily(symbol='999999').reset_index().tail(200)['date'].to_list()
+trade_date_list = fetch_local_daily(symbol='999999').reset_index()

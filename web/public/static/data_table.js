@@ -50,7 +50,6 @@ document.addEventListener('keydown', function (event) {
 function renderGrid(data) {
   table.innerHTML = '';
 
-  // 添加表头
   let thead = document.createElement('thead');
   let headerRow = document.createElement('tr');
   for (let colName in data) {
@@ -63,7 +62,6 @@ function renderGrid(data) {
 
   let tbody = document.createElement('tbody');
 
-  // 以最大列长度为标准，添加数据行
   let maxRows = Math.max(...Object.values(data).map(col => col.length));
   for (let i = 0; i < maxRows; i++) {
     let row = document.createElement('tr');
@@ -198,6 +196,19 @@ function getExchangeCode(symbol) {
   }
 }
 
+function show_tooltip(cell) {
+  tooltip.textContent = cell.getAttribute('v');
+
+  // 计算tooltip的位置
+  let boundingRect = cell.getBoundingClientRect();
+  let tooltipX = boundingRect.right + window.pageXOffset - 10;
+  let tooltipY = boundingRect.bottom + window.pageYOffset - 10;
+
+  tooltip.style.display = 'block';
+  tooltip.style.left = tooltipX + 'px';
+  tooltip.style.top = tooltipY + 'px';
+}
+
 function show_tooltip_trend(cell) {
   let symbol = cell.getAttribute('symbol') ?? '';
   let code = getExchangeCode(symbol);
@@ -233,17 +244,16 @@ function show_tooltip_trend(cell) {
   fetch(`/stock_info/${symbol}`).then(response => response.json())
     .then(jsonData => {
       infoCardDiv.innerHTML = `
-        <div class="card-content compact-content">
-            <p><strong>主题投资:</strong> ${jsonData['主题投资']}</p>
-            <p><strong>主营业务:</strong> ${jsonData['主营业务']}</p>
-            <p><strong>公司亮点:</strong> ${jsonData['公司亮点']}</p>
-            <p><strong>行业:</strong> ${jsonData['行业']}</p>
-            <p><strong>概念:</strong> ${jsonData['概念']}</p>
-            <p><strong>地域:</strong> ${jsonData['地域']}</p>
-            <p><strong>风格:</strong> ${jsonData['风格']}</p>
-            <p><strong>流通市值:</strong> ${jsonData['流通市值']}</p>
-        </div>
-    `;
+    <div class="card-content compact-content">
+      <p><strong>主题投资:</strong> ${jsonData['主题投资']}</p>
+      <p><strong>主营业务:</strong> ${jsonData['主营业务']}</p>
+      <p><strong>公司亮点:</strong> ${jsonData['公司亮点']}</p>
+      <p><strong>行业:</strong> ${jsonData['行业']}</p>
+      <p><strong>概念:</strong> ${jsonData['概念']}</p>
+      <p><strong>地域:</strong> ${jsonData['地域']}</p>
+      <p><strong>风格:</strong> ${jsonData['风格']}</p>
+      <p><strong>流通市值:</strong> ${jsonData['流通市值']}</p>
+    </div>`;
     });
 
   let infoCardDiv2 = document.createElement("div");
@@ -252,31 +262,17 @@ function show_tooltip_trend(cell) {
   fetch(`/limited_up_info/${symbol}`).then(response => response.json())
     .then(jsonData => {
       infoCardDiv2.innerHTML = `
-            <div class="card-content compact-content">
-            <p><strong>日期:</strong> ${jsonData['date']}</p>
-            <p><strong>换手:</strong> ${jsonData['turnover_ratio']}</p>
-            <p><strong>流畅市值:</strong> ${jsonData['flow_capital']}</p>
-            <p><strong>上市日期:</strong> ${jsonData['listed_date']}</p>
-            <p><strong>开板次数:</strong> ${jsonData['break_times']}</p>
-            <p><strong>首次上板时间:</strong> ${jsonData['first_limit_up']}</p>
-            <p><strong>最后上板时间:</strong> ${jsonData['last_limit_up']}</p>
-            <p><strong>连板:</strong>${jsonData['limited_freq']}</p>
-            <p><strong>题材:</strong> ${jsonData['plates_info'].join(' + ')}</p>
-            <p><strong>涨停原因:</strong> ${jsonData['reason']}</p>
-           </div>
-    `;
+        <div class="card-content compact-content">
+        <p><strong>日期:</strong> ${jsonData['date']}</p>
+        <p><strong>题材:</strong> ${jsonData['plates_info'].join(' + ')}</p>
+        <p><strong>涨停原因:</strong> ${jsonData['reason']}</p>
+        <p><strong>连板:</strong>${jsonData['limited_freq']}</p>
+        <p><strong>上板时间:</strong> 首${jsonData['first_limit_up']} 末${jsonData['last_limit_up']}</p>
+        <p><strong>封单比:</strong> ${jsonData['buy_lock_volume_ratio']}</p>
+        <p><strong>流通市值:</strong> ${jsonData['flow_capital']}</p>
+        <p><strong>换手:</strong> ${jsonData['turnover_ratio']}</p>
+        <p><strong>开板次数:</strong> ${jsonData['break_times']}</p>
+        <p><strong>上市日期:</strong> ${jsonData['listed_date']}</p>
+       </div>`;
     });
-}
-
-function show_tooltip(cell) {
-  tooltip.textContent = cell.getAttribute('v');
-
-  // 计算tooltip的位置
-  let boundingRect = cell.getBoundingClientRect();
-  let tooltipX = boundingRect.right + window.pageXOffset - 10;
-  let tooltipY = boundingRect.bottom + window.pageYOffset - 10;
-
-  tooltip.style.display = 'block';
-  tooltip.style.left = tooltipX + 'px';
-  tooltip.style.top = tooltipY + 'px';
 }

@@ -102,7 +102,7 @@ def diybk_history():
         stock_data[symbol] = one_df
 
     result_dict = {}
-    for date in trade_date_list:
+    for date in trade_date_list.tail(200)['date'].to_list():
         temp_list = []
 
         for symbol, stock_df in stock_data.items():

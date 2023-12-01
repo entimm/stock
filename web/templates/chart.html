@@ -127,15 +127,15 @@
             <p><strong>日期:</strong> ${jsonData['date']}</p>
             <p><strong>代码:</strong> <a href="/chart?symbol=${jsonData['symbol']}&period=D&req_real=0" target="_blank">${jsonData['symbol']}</a></p>
             <p><strong>名称:</strong> ${jsonData['name']}</p>
-            <p><strong>换手:</strong> ${jsonData['turnover_ratio']}</p>
-            <p><strong>流畅市值:</strong> ${jsonData['flow_capital']}</p>
-            <p><strong>上市日期:</strong> ${jsonData['listed_date']}</p>
-            <p><strong>开板次数:</strong> ${jsonData['break_times']}</p>
-            <p><strong>首次上板时间:</strong> ${jsonData['first_limit_up']}</p>
-            <p><strong>最后上板时间:</strong> ${jsonData['last_limit_up']}</p>
-            <p><strong>连板:</strong>${jsonData['limited_freq']}</p>
             <p><strong>题材:</strong> ${jsonData['plates_info'].join(' + ')}</p>
             <p><strong>涨停原因:</strong> ${jsonData['reason']}</p>
+            <p><strong>连板:</strong>${jsonData['limited_freq']}</p>
+            <p><strong>上板时间:</strong> 首${jsonData['first_limit_up']} 末${jsonData['last_limit_up']}</p>
+            <p><strong>封单比:</strong> ${jsonData['buy_lock_volume_ratio']}</p>
+            <p><strong>流通市值:</strong> ${jsonData['flow_capital']}</p>
+            <p><strong>换手:</strong> ${jsonData['turnover_ratio']}</p>
+            <p><strong>开板次数:</strong> ${jsonData['break_times']}</p>
+            <p><strong>上市日期:</strong> ${jsonData['listed_date']}</p>
            </div>
       `;
         tooltipStockInfo.appendChild(card)

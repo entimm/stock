@@ -27,13 +27,6 @@ th {
   display: none;
 }
 
-td .highlight {
-  color: #FF5733;
-  font-weight: bold;
-  font-size: 20px;
-  text-decoration: underline;
-}
-
 .dot::after {
   content: "";
   position: absolute;
@@ -41,7 +34,7 @@ td .highlight {
   right: 0;
   width: 8px;
   height: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
 .red-dot1::after {
@@ -66,6 +59,10 @@ td .highlight {
 
 .green-dot3::after {
   background-color: #1619de;
+}
+
+.select-cell {
+  border: 2px solid red;
 }
 
 #tooltip {
@@ -109,10 +106,6 @@ td .highlight {
   font-size: 30px;
   font-weight: bolder;
   color: red;
-}
-
-.select-cell {
-  border: 2px solid red;
 }
 
 #fixed-links-container.right-top {

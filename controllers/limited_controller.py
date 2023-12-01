@@ -24,7 +24,7 @@ def limited():
     direction = request.args.get('direction', 1, type=int)
 
     result_dict = {}
-    for date in trade_date_list:
+    for date in trade_date_list.tail(200)['date'].to_list():
         date = date.strftime('%Y%m%d')
         csv_file = os.path.join(TOTAL_PATH, f'data_{date}.csv')
         df = pd.read_csv(csv_file)
