@@ -73,6 +73,39 @@ function renderGrid(data) {
     tbody.appendChild(row);
   }
   table.appendChild(tbody);
+
+  tbody.addEventListener('click', function (event) {
+    if (event.target.tagName === 'TD') {
+      let cell = event.target;
+      let cellRect = cell.getBoundingClientRect();
+
+      let clickX = event.clientX - cellRect.left;
+
+      if (clickX < cellRect.width / 2) {
+        highlightCells(cell.textContent);
+      } else {
+        setSelectedCell(cell);
+        if (focusMode === 'cursor') {
+          openDialog(`/chart?symbol=${cell.getAttribute('symbol')}&period=${KLINE_PERIOD}`);
+        }
+        if (tooltipTrend.style.display === 'none') {
+          show_tooltip_trend(cell);
+          show_tooltip(cell);
+        }
+        focusMode = 'cursor';
+      }
+    }
+  });
+  tbody.addEventListener('mouseover', function (event) {
+    if (event.target.tagName === 'TD') {
+      let cell = event.target;
+      if (focusMode === 'cursor') {
+        show_tooltip_trend(cell);
+        show_tooltip(cell);
+        setSelectedCell(cell);
+      }
+    }
+  });
 }
 
 function renderCell(cell, value, i) {
@@ -85,33 +118,6 @@ function renderCell(cell, value, i) {
   addDotClass(cell, value)
   cell.setAttribute('v', value.slice(2).join(' # '));
   cell.setAttribute('symbol', value[1]);
-  cell.addEventListener('click', function () {
-    let cellRect = cell.getBoundingClientRect();
-
-    let clickX = event.clientX - cellRect.left;
-
-    if (clickX < cellRect.width / 2) {
-      highlightCells(cell.textContent);
-    } else {
-      setSelectedCell(cell);
-      if (focusMode === 'cursor') {
-        openDialog(`/chart?symbol=${value[1]}&period=${KLINE_PERIOD}`);
-      }
-      if (tooltipTrend.style.display === 'none') {
-        show_tooltip_trend(cell);
-        show_tooltip(cell);
-      }
-      focusMode = 'cursor';
-    }
-  });
-  cell.addEventListener('mouseover', function () {
-    if (focusMode === 'cursor') {
-      show_tooltip_trend(this);
-      show_tooltip(this);
-      setSelectedCell(this);
-    }
-
-  });
 }
 
 function openDialog(url) {

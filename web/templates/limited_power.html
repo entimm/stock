@@ -116,14 +116,44 @@
         for (let colName in data) {
           let cell = document.createElement('td');
           row.appendChild(cell);
-          renderCell(cell, data[colName][i] || {}, colName)
+          renderCell(cell, data[colName][i] || {})
         }
         tbody.appendChild(row);
       }
       table.appendChild(tbody);
+
+      tbody.addEventListener('click', function (event) {
+        if (event.target.tagName === 'TD') {
+          let cell = event.target;
+          let stock_num = cell.getAttribute('stock_num');
+          if (!stock_num) return;
+          let cellRect = cell.getBoundingClientRect();
+          let clickX = event.clientX - cellRect.left;
+
+          if (clickX < cellRect.width / 2) {
+            highlightCells(cell.textContent);
+          } else {
+            let colName = table.rows[0].cells[event.target.cellIndex].innerHTML;
+            focusMode = 'selected'
+            show_tooltip(cell);
+            setSelectedCell(cell);
+            show_stocks(cell.textContent, colName)
+          }
+        }
+      });
+      tbody.addEventListener('mouseover', function (event) {
+        if (event.target.tagName === 'TD') {
+          let cell = event.target;
+          let stock_num = cell.getAttribute('stock_num');
+          if (focusMode === 'selected') return;
+          if (!stock_num) return;
+          show_tooltip(cell);
+          setSelectedCell(cell);
+        }
+      });
     }
 
-    function renderCell(cell, value, colName) {
+    function renderCell(cell, value) {
       let stock_num = value['stock_list']?.length;
       if (stock_num) {
         cell.textContent = value['plate_name'];
@@ -131,27 +161,6 @@
       cell.setAttribute('plate_reason', value['plate_reason'] ?? '');
       cell.setAttribute('stock_num', stock_num);
       addDotClass(cell, stock_num)
-      cell.addEventListener('click', function () {
-        if (!stock_num) return;
-        let cellRect = cell.getBoundingClientRect();
-
-        let clickX = event.clientX - cellRect.left;
-
-        if (clickX < cellRect.width / 2) {
-          highlightCells(cell.textContent);
-        } else {
-          focusMode = 'selected'
-          show_tooltip(this);
-          setSelectedCell(cell);
-          show_stocks(value['plate_name'], colName)
-        }
-      });
-      cell.addEventListener('mouseover', function () {
-        if (focusMode === 'selected') return;
-        if (!stock_num) return;
-        show_tooltip(this);
-        setSelectedCell(this);
-      });
     }
 
     function setSelectedCell(cell) {
