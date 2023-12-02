@@ -63,12 +63,12 @@
 
   chart._chartStore.getTimeScaleStore().zoom(1000)
 
-  let kline_list = {{ kline_list | safe }}
-  kline_list = kline_list.map(convertKlineData)
-  chart.applyNewData(kline_list)
+  let kline_list = {{ kline_list | safe }};
+  kline_list = kline_list.map(convertKlineData);
+  chart.applyNewData(kline_list);
 
   function resizeChart() {
-    chart.resize()
+    chart.resize();
   }
 
   function convertKlineData(item) {

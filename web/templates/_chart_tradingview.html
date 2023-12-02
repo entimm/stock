@@ -1,7 +1,7 @@
 <script src="/static/third/lightweight-charts.standalone.production.js"></script>
 <script src="/static/indicator_calculate.js"></script>
 <script>
-  let klineList = {{ kline_list | tojson }}
+  let klineList = {{ kline_list | tojson }};
     klineList = klineList.map(item => {
       let data = {
         time: new Date(item.time).getTime() / 1000 + 3600 * 8,
@@ -12,8 +12,8 @@
         volume: item.volume,
         pct_change: item.pct_change,
       }
-      if (item.pct_change >= 9.6) data.color = '#f500ff'
-      if (item.pct_change <= -9.6) data.color = '#00ff2a'
+      if (item.pct_change >= 9.6) data.color = '#f500ff';
+      if (item.pct_change <= -9.6) data.color = '#00ff2a';
       return data;
     });
   const chart = LightweightCharts.createChart(document.getElementById('chart'), {

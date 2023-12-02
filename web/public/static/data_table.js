@@ -9,7 +9,7 @@ window.addEventListener('message', function (event) {
     closeDialog();
   }
   if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.data)) {
-    let cell = getAdjacentCell(selectedCell, event.data)
+    let cell = getAdjacentCell(selectedCell, event.data);
     if (cell) {
       let symbol = cell.getAttribute('symbol');
       if (symbol) {
@@ -22,7 +22,7 @@ window.addEventListener('message', function (event) {
 
 document.addEventListener('keydown', function (event) {
   if (event.code === 'ArrowUp' || event.code === 'ArrowDown' || event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
-    let cell = getAdjacentCell(selectedCell, event.code)
+    let cell = getAdjacentCell(selectedCell, event.code);
     if (cell) {
       focusMode = 'key'
       setSelectedCell(cell);

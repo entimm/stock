@@ -19,6 +19,7 @@ def read_table_data(file_path: str, is_gnbk: bool = False) -> Dict[str, List[str
     df = pd.read_csv(file_path)
 
     for date, row in df.items():
+        date = f"{date[:4]}-{date[4:6]}-{date[6:]}"
         for col_index, value in enumerate(row):
             if type(value) is str:
                 symbol, *rest = value.split('|')
@@ -26,7 +27,7 @@ def read_table_data(file_path: str, is_gnbk: bool = False) -> Dict[str, List[str
                     value = '|'.join([gnbk_dict.get(symbol, symbol).replace('概念', ''), symbol, *rest])
                 else:
                     value = '|'.join([ticker_name_dict.get(symbol, symbol), symbol, *rest])
-            result.setdefault(f'-{date}-', []).append(value)
+            result.setdefault(date, []).append(value)
 
     result = dict(reversed(result.items()))
 

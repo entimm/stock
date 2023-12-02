@@ -56,7 +56,7 @@ def limited():
         df['ts_name'] = df['ts_code'].map(ticker_name_dict)
         df['show'] = df['ts_name'].astype(str) + '|' + df['ts_code'].astype(str) + '|' + df['pct_chg'].astype(str) + '|' + df['max_result'].astype(str)
 
-        result_dict[f'-{date}-'] = df['show'].to_list()
+        result_dict[f"{date[:4]}-{date[4:6]}-{date[6:]}"] = df['show'].to_list()
 
     template_var = {
         'data': dict(reversed(result_dict.items())),

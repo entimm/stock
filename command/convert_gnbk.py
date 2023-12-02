@@ -4,7 +4,7 @@ import click
 import numpy as np
 import pandas as pd
 
-from common.common import PROCESSED_PATH, RAW_PATH, YEAR
+from common.common import PROCESSED_PATH, RAW_V2_PATH, YEAR
 from common.tdx import read_tdx_text, export_data_sort
 from common.utils import filter_files_by_date
 
@@ -30,7 +30,7 @@ def process_data(file_list, export_columns, output_filename):
 
 
 def get_file_list(year):
-    directory_path = os.path.join(RAW_PATH, '行业概念')
+    directory_path = os.path.join(RAW_V2_PATH, '行业概念')
     file_pattern = r'(\d{4})'
     file_pattern = f'行业概念({year}{file_pattern}).txt'
 

@@ -23,8 +23,9 @@ def limited():
     for ts in trade_date_list.tail(300)['date'].to_list():
         plate_dict = {}
         stock_list = []
-        date_str = ts.strftime('%Y%m%d')
-        file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{date_str}.csv')
+        date = ts.strftime('%Y%m%d')
+        date2 = ts.strftime('%Y-%m-%d')
+        file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{date}.csv')
         df = pd.read_csv(file_path)
         for _, row in df.iterrows():
             related_plates = []
@@ -34,13 +35,13 @@ def limited():
                 plate_dict.setdefault(item['plate_name'], {'plate_reason': item.get('plate_reason', '空'), 'stock_list': []})['stock_list'].append(row['symbol'])
 
             stock_data = row2info(row.to_dict())
-            stock_data['date'] = date_str
+            stock_data['date'] = date2
             stock_data['plate_names'] = [item['plate_name'] for item in related_plates]
 
             stock_list.append(stock_data)
 
-        result_plate_list[f'-{date_str}-'] = [{'plate_name': name, 'plate_reason': item['plate_reason'], 'stock_list': item['stock_list']} for name, item in plate_dict.items()]
-        result_stock_list[f'-{date_str}-'] = sorted(stock_list, key=lambda x: -x['m_days_n_boards_boards'])
+        result_plate_list[date2] = [{'plate_name': name, 'plate_reason': item['plate_reason'], 'stock_list': item['stock_list']} for name, item in plate_dict.items()]
+        result_stock_list[date2] = sorted(stock_list, key=lambda x: -x['m_days_n_boards_boards'])
 
     template_var = {
         'result_plate_list': dict(reversed(result_plate_list.items())),

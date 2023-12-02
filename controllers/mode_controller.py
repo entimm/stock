@@ -63,7 +63,7 @@ def mode():
         df = mode_call(df)
         df = df.sort_values(by='MA5涨1', ascending=False)
         df['show'] = df['名称'].astype(str) + '|' + df['代码'].astype(str) + '|' + df['涨幅%'].astype(str) + '|' + df['MA5涨1'].astype(str)
-        result_dict[f'-{date}-'] = df['show'].to_list()
+        result_dict[f"{date[:4]}-{date[4:6]}-{date[6:]}"] = df['show'].to_list()
 
     template_var = {
         'data': dict(reversed(result_dict.items())),

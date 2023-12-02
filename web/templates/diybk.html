@@ -26,7 +26,7 @@
     renderGrid(data);
 
     function addDotClass(element, value) {
-      let price = value[2]
+      let price = value[2];
       const dotClasses = [
         {'condition': price >= 15, 'className': 'red-dot3'},
         {'condition': price >= 9.6, 'className': 'red-dot2'},
@@ -43,7 +43,7 @@
     }
 
     $('#grid th').on('click', function () {
-      let bk_key = bk_key_dict[this.innerHTML]
+      let bk_key = bk_key_dict[this.innerHTML];
       if (bk_key) {
         window.location.href = `/diybk_history?bk_key=${bk_key}`
       }

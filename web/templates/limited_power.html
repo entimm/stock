@@ -154,6 +154,7 @@
     }
 
     function renderCell(cell, value) {
+      if (Object.entries(value).length === 0) return;
       let stock_num = value['stock_list']?.length;
       if (stock_num) {
         cell.textContent = value['plate_name'];

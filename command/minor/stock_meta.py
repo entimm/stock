@@ -30,4 +30,4 @@ def stock_meta():
         'list_date'
     ])
 
-    df.to_csv(os.path.join(RESOURCES_PATH, 'stock_meta_list.csv'), index=False)
+    df.to_csv(os.path.join(RESOURCES_PATH, 'a_stock_meta_list.csv'), index=False)
