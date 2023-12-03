@@ -23,6 +23,7 @@ controllers = [
     'turnover_controller',
     'mode_controller',
     'limited_power_controller',
+    'line2_controller',
 ]
 
 for controller in controllers:

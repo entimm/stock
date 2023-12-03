@@ -1,0 +1,153 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>对比线</title>
+{% endblock %}
+{% block content %}
+  <div id="fixed-links-container" class="right-top" style="top: 20px">
+    <div class="fixed-links">
+      {% for period_key, period_name in period_list.items() %}
+        {{ create_link(request_args, {'period': period_key}, request_args.period == period_key, period_name) | safe }}
+      {% endfor %}
+      {% if request_args.date %}
+        {% for flag in flag_list %}
+          {{ create_link(request_args, {'flag': loop.index0}, request_args.flag == loop.index0, flag) | safe }}
+        {% endfor %}
+      {% endif %}
+      {% for num in num_list %}
+        {{ create_link(request_args, {'num': num}, request_args.num == num, num) | safe }}
+      {% endfor %}
+      <a href="#" onclick="next()">下一组</a>
+    </div>
+  </div>
+
+  <div id="chart"></div>
+{% endblock %}
+{% block footer %}
+  <script src="/static/third/echarts.min.js"></script>
+  <script>
+    let chart_data = {{ chart_data | safe }};
+    let selectedGroup = 0;
+    let num = {{ request_args.num }};
+
+    let chart = echarts.init(document.getElementById('chart'));
+    let option = {
+      color: [
+        '#FF5733',
+        '#3498DB',
+        '#FFC300',
+        '#27AE60',
+        '#E74C3C',
+        '#8E44AD',
+        '#2ECC71',
+        '#F39C12',
+        '#1ABC9C',
+        '#D35400',
+        '#2980B9',
+        '#E67E22',
+        '#16A085',
+        '#C0392B',
+        '#9B59B6',
+        '#2C3E50',
+        '#F1C40F',
+        '#7F8C8D',
+        '#FF6347',
+        '#3498DB',
+      ],
+      grid: {
+        left: '1%',
+        right: '2%',
+        bottom: '1%',
+        containLabel: true
+      },
+      legend: {
+        data: chart_data.map(item => item.name),
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross'
+        }
+      },
+      xAxis: {
+        type: 'category',
+        data: Object.keys(chart_data[chart_data.length - 1].values),
+      },
+      yAxis: {
+        position: 'right',
+        interval: 5,
+      },
+      series: [],
+      dataZoom: [
+        {
+          type: 'inside',
+          start: 0,
+          end: 9999
+        },
+        {
+          start: 0,
+          end: 9999
+        }
+      ],
+    };
+
+    chart_data.forEach(function (item) {
+      let itemData = {
+        name: item.name,
+        data: Object.entries(item.values),
+        type: 'line',
+        showSymbol: false,
+        smooth: 0.3,
+        emphasis: {
+          focus: 'series',
+          lineStyle: {
+            width: 2,
+          },
+        },
+        blur: {
+          lineStyle: {
+            opacity: 0.3,
+          }
+        },
+        lineStyle: {
+          width: 2,
+        },
+      }
+      if (item.broad_index) {
+        itemData['lineStyle'] = {
+          width: 2,
+          type: [6, 3]
+        }
+        itemData['visible'] = false;
+      }
+      option.series.push(itemData)
+    });
+
+    option['legend']['selected'] = calSelectedLegend(selectedGroup);
+
+    option && chart.setOption(option);
+
+    window.addEventListener('resize', function () {
+      chart.resize();
+    });
+
+    function calSelectedLegend(groupId) {
+      console.log(groupId)
+      return chart_data.reduce(function (data, item, index) {
+        data[item.name] = groupId * num <= index && index < (groupId + 1) * num;
+        return data;
+      }, {});
+    }
+
+
+    function next() {
+      selectedGroup++
+      selectedGroup = selectedGroup % Math.ceil(chart_data.length / num)
+
+      chart.setOption({
+        legend: {
+          selected: calSelectedLegend(selectedGroup),
+        }
+      });
+    }
+  </script>
+{% endblock %}

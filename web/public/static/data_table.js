@@ -74,6 +74,19 @@ function renderGrid(data) {
   }
   table.appendChild(tbody);
 
+  thead.addEventListener('click', function (event) {
+    if (event.target.tagName === 'TH') {
+      let colName = event.target.textContent;
+      let symbols = data[colName].slice(0, 20).map(function (item) {
+        let values = item.split('|');
+        return values[1];
+      }).join('-');
+      if (/^\d{4}-\d{2}-\d{2}$/.test(colName)) {
+        window.open(`/line2?date=${colName}&period=D&flag=1&symbols=${symbols}`, "_blank");
+      }
+    }
+  });
+
   tbody.addEventListener('click', function (event) {
     if (event.target.tagName === 'TD') {
       let cell = event.target;
