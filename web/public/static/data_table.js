@@ -29,6 +29,7 @@ document.addEventListener('keydown', function (event) {
       show_tooltip(cell);
       show_tooltip_trend(cell);
     }
+    event.preventDefault();
     return;
   }
   if (event.code === 'Space') {
