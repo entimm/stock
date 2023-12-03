@@ -203,7 +203,7 @@ function getRandomColor() {
   let letters = '0123456789ABCDEF';
   let color = '#';
   for (let i = 0; i < 3; i++) {
-    color += letters[Math.floor(Math.random() * 6) + 8]; // 从8到F中选择亮色
+    color += letters[Math.floor(Math.random() * 10)]; // 从0到9中选择暗色
   }
   return color;
 }
@@ -213,7 +213,13 @@ function highlightCells(value) {
   color = getRandomColor();
   for (let cell of cells) {
     if (cell.textContent === value) {
-      cell.style.backgroundColor = cell.style.backgroundColor ? "" : color;
+      if (cell.style.backgroundColor) {
+        cell.style.backgroundColor = "";
+        cell.style.color = '#000';
+      } else {
+        cell.style.backgroundColor = color;
+        cell.style.color = '#fff';
+      }
     }
   }
 }
