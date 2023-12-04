@@ -1,20 +1,20 @@
 echo 'download-total'
-python cli.py download-total
+python cmd download-total
 echo 'north-funds'
-python cli.py north-funds
+python cmd north-funds
 
 echo 'mv-raw'
-python cli.py mv-raw
+python cmd mv-raw
 echo 'convert-astock'
-python cli.py convert-astock
+python cmd convert-astock
 echo 'convert-gnbk'
-python cli.py convert-gnbk
+python cmd convert-gnbk
 echo 'convert-gnbk-trend-up'
-python cli.py convert-gnbk-trend-up
+python cmd convert-gnbk-trend-up
 echo 'convert-gnbk-trend-down'
-python cli.py convert-gnbk-trend-down
+python cmd convert-gnbk-trend-down
 
-python cli.py  download-xuangubao-detail
-python cli.py  download-xuangubao-plates
-python cli.py  download-xuangubao-stock
-python cli.py  arrange-xuangubao-detail
+python cmd  download-xuangubao-detail
+python cmd  download-xuangubao-plates
+python cmd  download-xuangubao-stock
+python cmd  arrange-xuangubao-detail
