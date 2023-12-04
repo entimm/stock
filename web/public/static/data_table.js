@@ -51,6 +51,10 @@ document.addEventListener('keydown', function (event) {
 function renderGrid(data) {
   table.innerHTML = '';
 
+  let container = document.createElement('div');
+  container.classList.add('table-container');
+  container.id = 'table-container'
+  
   let thead = document.createElement('thead');
   let headerRow = document.createElement('tr');
   for (let colName in data) {
@@ -59,7 +63,6 @@ function renderGrid(data) {
     headerRow.appendChild(headerCell);
   }
   thead.appendChild(headerRow);
-  table.appendChild(thead);
 
   let tbody = document.createElement('tbody');
 
@@ -69,11 +72,23 @@ function renderGrid(data) {
     for (let colName in data) {
       let cell = document.createElement('td');
       row.appendChild(cell);
-      renderCell(cell, data[colName][i] || "", i)
+      renderCell(cell, data[colName][i] || "", i);
     }
     tbody.appendChild(row);
   }
-  table.appendChild(tbody);
+
+  container.appendChild(thead);
+  container.appendChild(tbody);
+  table.appendChild(container);
+
+  container.addEventListener('scroll', function () {
+    thead.style.transform = `translateX(-${container.scrollLeft}px)`;
+  });
+
+  container.style.overflowX = 'auto';
+  container.style.overflowY = 'hidden';
+  container.style.maxHeight = '2400px'; // 设置最大高度，根据实际情况调整
+  container.style.position = 'relative';
 
   thead.addEventListener('click', function (event) {
     if (event.target.tagName === 'TH') {
@@ -169,23 +184,28 @@ function handleClickOutside(event) {
   }
 }
 
+function getRowIndex(cell) {
+  let row = cell.parentElement;
+  return Array.from(row.parentElement.children).indexOf(row);
+}
+
 function getAdjacentCell(cell, direction) {
   if (!cell) return;
-  let row = cell.parentNode.rowIndex;
+  let row = getRowIndex(cell);
   let col = cell.cellIndex;
 
-  let numRows = table.rows.length;
-  let numCols = table.rows[0].cells.length;
+  let numRows = table.querySelector('tbody').childNodes.length;
+  let numCols = table.querySelector('thead tr').cells.length;
 
   switch (direction) {
     case "ArrowUp":
-      return row > 0 ? table.rows[row - 1].cells[col] : null;
+      return row > 0 ? table.querySelector(`tbody tr:nth-child(${row}) td:nth-child(${col + 1})`) : null;
     case "ArrowRight":
-      return col < numCols - 1 ? table.rows[row].cells[col + 1] : null;
+      return col < numCols - 1 ? cell.nextElementSibling : null;
     case "ArrowDown":
-      return row < numRows - 1 ? table.rows[row + 1].cells[col] : null;
+      return row < numRows - 1 ? table.querySelector(`tbody tr:nth-child(${row + 2}) td:nth-child(${col + 1})`) : null;
     case "ArrowLeft":
-      return col > 0 ? table.rows[row].cells[col - 1] : null;
+      return col > 0 ? cell.previousElementSibling : null;
     default:
       return null;
   }
