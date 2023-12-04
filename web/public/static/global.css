@@ -28,11 +28,11 @@ main {
 nav {
   height: 32px;
   line-height: 32px;
-  background-color: #ff80ab;
+  background-color: #e7107c;
 }
 
 nav .brand-logo {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
 }
 
 nav .nav-wrapper {
@@ -41,7 +41,11 @@ nav .nav-wrapper {
 }
 
 nav ul li.active {
-  background-color: #480BAD;
+  background-color: #008b7d;
+}
+
+th {
+  background-color: #008b7d;
 }
 
 #chart {
