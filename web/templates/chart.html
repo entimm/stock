@@ -49,7 +49,10 @@
 
   <div id="chart"></div>
 
-  <script src="/static/indicator_config.js"></script>
+  <script>
+    const indicator_ma_config = {{ indicator_config.get('ma') | safe }};
+    const indicator_macd_config = {{ indicator_config.get('macd') | safe }};
+  </script>
 
   {% if request_args.chart_engine == 0 %}
     {% include "_chart_tradingview.html" %}

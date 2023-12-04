@@ -58,7 +58,8 @@ def chart():
             'req_real': req_real,
             'chart_engine': chart_engine,
             'show_chan': show_chan,
-        }
+        },
+        'indicator_config': config.get('indicator'),
     }
 
     if show_chan:
