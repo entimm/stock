@@ -38,6 +38,11 @@ nav .brand-logo {
 nav .nav-wrapper {
   padding-left: 1%;
   padding-right: 1%;
+  overflow: hidden;
+}
+
+nav ul {
+  margin-left: 200px;
 }
 
 nav ul li.active {
