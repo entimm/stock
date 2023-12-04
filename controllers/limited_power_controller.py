@@ -6,6 +6,7 @@ from flask import Blueprint, render_template
 
 from app_cache import cache
 from common.common import RESOURCES_PATH
+from common.config import config
 from common.quotes import trade_date_list
 from common.xuangubao import row2info
 from controllers import make_cache_key
@@ -20,7 +21,7 @@ XUANGUBAO_DETAIL_PATH = os.path.join(RESOURCES_PATH, 'xuangubao', 'details')
 def limited():
     result_plate_list = {}
     result_stock_list = {}
-    for ts in trade_date_list.tail(300)['date'].to_list():
+    for ts in trade_date_list.tail(config.get('table_cols', 200))['date'].to_list():
         plate_dict = {}
         stock_list = []
         date = ts.strftime('%Y%m%d')

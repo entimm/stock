@@ -7,6 +7,7 @@ from flask import render_template, request, Blueprint
 
 from app_cache import cache
 from common.common import PROCESSED_PATH, YEAR
+from common.config import config
 from common.data import gnbk_dict, ticker_name_dict
 from controllers import make_cache_key
 
@@ -17,7 +18,8 @@ def read_table_data(file_path: str, is_gnbk: bool = False) -> Dict[str, List[str
     result = {}
 
     df = pd.read_csv(file_path)
-
+    if talbe_cols := config.get('table_cols'):
+        df = df.iloc[:, -talbe_cols:]
     for date, row in df.items():
         date = f"{date[:4]}-{date[4:6]}-{date[6:]}"
         for col_index, value in enumerate(row):
