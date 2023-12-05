@@ -1,3 +1,9 @@
+<style>
+  #search-dialog {
+    max-height: 80%;
+  }
+</style>
+
 <div id="search-dialog" class="modal">
   <div class="modal-content">
     <h4>搜索</h4>
@@ -33,7 +39,8 @@
     fetch(`/symbol_list`).then(response => response.json())
       .then(data => {
         option_list = data.symbol_all_list;
-        default_show_items = option_list.filter(item => data.default_show_list.includes(item.key));
+        // default_show_items = option_list.filter(item => data.default_show_list.includes(item.key));
+        default_show_items = data.default_show_list.map(targetKey => option_list.find(item => item.key === targetKey)).filter(Boolean);
       });
     $('.modal').modal();
   });
@@ -41,6 +48,7 @@
 
   function openSearchDialog() {
     $('#search-dialog').modal('open');
+    searchInput.value = searchInput.value.trim();
     searchInput.focus();
     selectedIndex = -1;
     updateSelectedResult();
