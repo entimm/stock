@@ -28,7 +28,7 @@ klinecharts.registerOverlay({
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
   createPointFigures: ({overlay, coordinates}) => {
-    text = output_text ? overlay.extendData : ''
+    text = output_debug ? overlay.extendData : ''
     if (coordinates.length === 2) {
       return [
         {
@@ -80,52 +80,6 @@ klinecharts.registerOverlay({
     return []
   }
 });
-klinecharts.registerOverlay({
-  name: 'chan-annotation',
-  totalStep: 2,
-  styles: {
-    text: {
-      borderSize: 1,
-      borderRadius: 8,
-      borderColor: 'rgba(129,1,1,0.5)',
-      paddingLeft: 5,
-      paddingRight: 5,
-      paddingTop: 5,
-      paddingBottom: 5,
-      backgroundColor: 'rgba(236,171,7,0.8)'
-    },
-    line: {style: 'dashed', color: 'rgba(129,1,1,0.5)'},
-    polygon: {color: 'rgba(129,1,1,0.5)'}
-  },
-  createPointFigures: ({overlay, coordinates}) => {
-    let text = overlay.extendData.text ?? ''
-    text = output_text ? text : ''
-    let direction = overlay.extendData.direction ?? true
-    const startX = coordinates[0].x
-    const startY = coordinates[0].y
-    const lineEndY = startY - (direction ? 30 : -30)
-    return [
-      {
-        type: 'line',
-        attrs: {coordinates: [{x: startX, y: startY}, {x: startX, y: lineEndY}]},
-        ignoreEvent: true
-      },
-
-      {
-        type: 'text',
-        attrs: {
-          x: startX,
-          y: lineEndY,
-          text: text,
-          align: 'center',
-          baseline: direction ? 'bottom' : 'top'
-        },
-        ignoreEvent: true
-      }
-    ]
-  }
-});
-
 
 ////////////////
 

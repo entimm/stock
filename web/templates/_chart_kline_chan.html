@@ -1,7 +1,9 @@
 <script type="text/javascript" src="/static/klinecharts_overlay.js"></script>
 <script>
   let chan_data = {{ chan_data | safe }};
+  let output_ma = chan_data.output_ma;
   let output_text = chan_data.output_text;
+  let output_debug = chan_data.output_debug;
   let overlayGroup = {};
 
   function addOverlay(item) {
@@ -19,3 +21,21 @@
   chan_data.stroke_list?.forEach(item => addOverlay(strokeBarOverlayData(item)));
   chan_data.segment_list?.forEach(item => addOverlay(segmentOverlayData(item)));
 </script>
+
+  <script>
+    if (output_ma) {
+      let chanIndicatorMaConfig = [
+        {size: 1, color: '#59de10', period: 15,},
+        {size: 1, color: '#0066ff', period: 60,},
+        {size: 1, color: '#E70F7C', period: 432,},
+      ]
+      chart.createIndicator({
+        name: 'MA',
+        precision: 3,
+        calcParams: chanIndicatorMaConfig.map(item => item.period),
+        styles: {
+          lines: chanIndicatorMaConfig.map(item => ({style: 'solid', size: item.size, color: item.color})),
+        }
+      }, false, {id: 'candle_pane'});
+    }
+  </script>

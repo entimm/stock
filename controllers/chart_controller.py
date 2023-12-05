@@ -64,8 +64,15 @@ def chart():
 
     if show_chan:
         chart_engine = 1
-        chan_config.output_text = config['chart']['chan']['output_text']
+        chan_config.force_stroke_vertex = config['chart']['chan']['force_stroke_vertex']
+        chan_config.force_segment_vertex = config['chart']['chan']['force_segment_vertex']
+
         chan_data = Chan(kline_list).output()
+        chan_data['output_ma'] = config['chart']['chan']['output_ma']
+        chan_data['output_text'] = config['chart']['chan']['output_text']
+        chan_data['output_debug'] = config['chart']['chan']['output_debug']
+        chan_data['output_union'] = config['chart']['chan']['output_union']
+
         template_var['chan_data'] = json.dumps(chan_data, default=lambda x: to_bool(x))
         template_var['request_args']['chart_engine'] = chart_engine
 
