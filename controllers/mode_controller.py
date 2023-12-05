@@ -59,6 +59,7 @@ def mode():
 
     mode_call = mode_list[mode][1]
     for file_path, date in file_list:
+        if not os.path.exists(file_path): continue
         df = read_tdx_text(file_path)
         df = mode_call(df)
         df = df.sort_values(by='MA5涨1', ascending=False)

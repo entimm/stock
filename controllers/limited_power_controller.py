@@ -27,6 +27,7 @@ def limited():
         date = ts.strftime('%Y%m%d')
         date2 = ts.strftime('%Y-%m-%d')
         file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{date}.csv')
+        if not os.path.exists(file_path): continue
         df = pd.read_csv(file_path)
         for _, row in df.iterrows():
             related_plates = []

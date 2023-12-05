@@ -28,6 +28,7 @@ def limited():
     for date in trade_date_list.tail(config.get('table_cols', 200))['date'].to_list():
         date = date.strftime('%Y%m%d')
         csv_file = os.path.join(TOTAL_PATH, f'data_{date}.csv')
+        if not os.path.exists(csv_file): continue
         df = pd.read_csv(csv_file)
         df = df[df['ts_code'].str.endswith(('SH', 'SZ'))]
         match direction:
