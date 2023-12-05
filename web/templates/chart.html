@@ -33,6 +33,7 @@
       {{ create_link(request_args, {'show_chan': (not request_args.show_chan)}, request_args.show_chan == 1, '缠论') | safe }}
       <a href="https://basic.10jqka.com.cn/{{ request_args.symbol }}/" target="_blank">同花顺F10</a>
       <a href="#" target="_blank">新窗口</a>
+      <a href="#" onclick="openSearchDialog()">搜索</a>
     </div>
     <div class="fixed-links">
       <span class="symbol">{{ request_args.symbol }} - </span><span class="symbol-name">{{ ticker_name }}</span>
@@ -49,7 +50,8 @@
   </script>
 
   <div id="chart"></div>
-
+  <script src="/static/third/jquery-3.7.1.min.js"></script>
+  <script src="/static/third/materialize.min.js"></script>
   <script>
     const indicator_ma_config = {{ indicator_config.get('ma') | safe }};
     const indicator_macd_config = {{ indicator_config.get('macd') | safe }};

@@ -2,8 +2,6 @@ klinecharts.registerOverlay({
   name: 'chan-text',
   totalStep: 2,
   createPointFigures: ({overlay, coordinates}) => {
-    let text = overlay.extendData.text ?? ''
-    text = output_text ? text : ''
     let direction = overlay.extendData.direction ?? true
     return [
       {
@@ -11,7 +9,7 @@ klinecharts.registerOverlay({
         attrs: {
           x: coordinates[0].x,
           y: coordinates[0].y,
-          text: text,
+          text: overlay.extendData.text ?? '',
           align: 'center',
           baseline: direction ? 'bottom' : 'top'
         },
@@ -28,7 +26,7 @@ klinecharts.registerOverlay({
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
   createPointFigures: ({overlay, coordinates}) => {
-    text = output_debug ? overlay.extendData : ''
+    text = show_debug ? overlay.extendData : ''
     if (coordinates.length === 2) {
       return [
         {
@@ -108,13 +106,14 @@ function fractalOverlayData(item) {
     groupId: 'fractal',
     extendData: {
       'direction': item.direction === 'TOP',
-      'text': item.direction === 'TOP' ? '∇' : '∆',
+      'text': item.direction === 'TOP' ? '⬇' : '⬆',
     },
     lock: true,
     points: [{timestamp: item.time, value: item.value}],
     styles: {
       text: {
-        color: item.direction === 'TOP' ? '#800080' : '#0000FF',
+        color: item.direction === 'TOP' ? '#00a42a' : '#d90026',
+        size: 8,
       }
     },
   }
@@ -141,7 +140,7 @@ function strokeOverlayData(item) {
       },
       text: {
         color: '#000',
-        size: 12
+        size: 10
       }
     },
   }
@@ -183,11 +182,11 @@ function segmentOverlayData(item) {
         color: !item.is_trend_1f ? '#de16a5' : '#1620de',
         style: item.is_sure ? 'solid' : 'dashed',
         dashedValue: [10, 5],
-        size: 2
+        size: 1.2
       },
       text: {
         color: !item.is_trend_1f ? '#de16a5' : '#1620de',
-        size: 15
+        size: 12
       }
     },
   }

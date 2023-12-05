@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template
 
 from common.common import MENUS
+from common.config import load_config
 from common.utils import create_link
 from app_cache import cache
 

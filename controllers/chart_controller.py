@@ -26,7 +26,6 @@ def to_bool(value):
 
 
 @blueprint.route('/chart')
-@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def chart():
     symbol = request.args.get('symbol', '', type=str)
     period = request.args.get('period', '', type=str).upper()
@@ -64,14 +63,17 @@ def chart():
 
     if show_chan:
         chart_engine = 1
-        chan_config.force_stroke_vertex = config['chart']['chan']['force_stroke_vertex']
-        chan_config.force_segment_vertex = config['chart']['chan']['force_segment_vertex']
+
+        tmp_chan_config_keys = ['force_stroke_vertex', 'force_segment_vertex', 'output_union', 'output_fractal', 'stroke_check_break', 'stroke_fix_sure']
+        tmp_chan_config = {key: request.args.get(key, None, type=int) for key in tmp_chan_config_keys if request.args.get(key, None, type=int) is not None}
+        tmp_chan_config = config['chart']['chan'] | tmp_chan_config
+
+        for key, value in tmp_chan_config.items():
+            setattr(chan_config, key, value)
 
         chan_data = Chan(kline_list).output()
-        chan_data['output_ma'] = config['chart']['chan']['output_ma']
-        chan_data['output_text'] = config['chart']['chan']['output_text']
-        chan_data['output_debug'] = config['chart']['chan']['output_debug']
-        chan_data['output_union'] = config['chart']['chan']['output_union']
+        chan_data['show_ma'] = request.args.get('show_ma', tmp_chan_config['show_ma'], type=int)
+        chan_data['show_debug'] = request.args.get('show_debug', tmp_chan_config['show_debug'], type=int)
 
         template_var['chan_data'] = json.dumps(chan_data, default=lambda x: to_bool(x))
         template_var['request_args']['chart_engine'] = chart_engine
@@ -103,11 +105,11 @@ def stock_info(symbol):
 @blueprint.route('/limited_up_info/<symbol>')
 def limited_up_info(symbol):
     result = dict(limited_up_total_dict.get(symbol, {}))
+    if result:
+        result['plates_info'] = []
+        for item in result.get('plates', []):
+            result['plates_info'].append(f"【{item['plate_name']}({item['count']})】{item.get('plate_reason', '')}")
 
-    result['plates_info'] = []
-    for item in result.get('plates', []):
-        result['plates_info'].append(f"【{item['plate_name']}({item['count']})】{item.get('plate_reason', '')}")
-
-    result.pop('plates', None)
+        result.pop('plates', None)
 
     return result

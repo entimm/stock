@@ -1,9 +1,8 @@
 <script type="text/javascript" src="/static/klinecharts_overlay.js"></script>
 <script>
   let chan_data = {{ chan_data | safe }};
-  let output_ma = chan_data.output_ma;
-  let output_text = chan_data.output_text;
-  let output_debug = chan_data.output_debug;
+  let show_ma = chan_data.show_ma;
+  let show_debug = chan_data.show_debug;
   let overlayGroup = {};
 
   function addOverlay(item) {
@@ -23,9 +22,9 @@
 </script>
 
   <script>
-    if (output_ma) {
+    if (show_ma) {
       let chanIndicatorMaConfig = [
-        {size: 1, color: '#59de10', period: 15,},
+        {size: 1, color: '#b700ff', period: 15,},
         {size: 1, color: '#0066ff', period: 60,},
         {size: 1, color: '#E70F7C', period: 432,},
       ]

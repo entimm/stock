@@ -2,8 +2,13 @@ import os
 
 import yaml
 
-with open('config.yaml', 'r', encoding='utf-8') as f:
-    config = yaml.safe_load(f)
+config = {}
 
-for key, value in os.environ.items():
-    config[key] = value
+
+def load_config():
+    global config
+    with open('config.yaml', 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+
+
+load_config()
