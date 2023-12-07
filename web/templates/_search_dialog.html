@@ -132,6 +132,21 @@
         }
       }
       updateSelectedResult();
+      return;
     }
+
+    if (['ArrowUp', 'ArrowDown'].includes(event.code)) {
+      const selectIndex = default_show_items.findIndex(item => item.key === symbol);
+      
+      if (selectIndex !== -1) {
+        const offset = event.code === 'ArrowDown' ? 1 : -1;
+        const targetIndex = (selectIndex + offset) % default_show_items.length;
+        const targetItem = default_show_items[targetIndex];
+        
+        window.location.href = document.URL.replace(/\d{6}/, targetItem.key);
+      }
+    }
+
+
   });
 </script>
