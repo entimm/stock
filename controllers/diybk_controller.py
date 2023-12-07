@@ -86,9 +86,11 @@ def diybk_history():
     bk_key = request.args.get('bk_key', 'zxg', type=str).upper()
     symbols = read_bk(bk_key)
 
+    data_len = config.get('table_cols', 200)
+
     stock_data = {}
     for symbol in symbols:
-        one_df = fetch_local_daily(symbol=symbol).reset_index().tail(101)
+        one_df = fetch_local_daily(symbol=symbol).reset_index().tail(data_len)
 
         one_df = one_df.reset_index()
 
@@ -102,7 +104,7 @@ def diybk_history():
         stock_data[symbol] = one_df
 
     result_dict = {}
-    for date in trade_date_list.tail(config.get('table_cols', 200))['date'].to_list():
+    for date in trade_date_list.tail(data_len)['date'].to_list():
         temp_list = []
 
         for symbol, stock_df in stock_data.items():
