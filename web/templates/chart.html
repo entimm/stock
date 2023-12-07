@@ -78,15 +78,22 @@
       }
     }
 
-    document.addEventListener('keydown', function () {
-      if (!$('#search-dialog').hasClass('open')) {
-        if (['Space'].includes(event.code)) {
-          openSearchDialog();
-          return;
-        }
-        if (window.self !== window.top) {
-          communicateParent(event);
-        }
+    document.addEventListener('keydown', function (event) {
+      if ($('#search-dialog').hasClass('open')) return;
+
+      if (['Space'].includes(event.code)) {
+        openSearchDialog();
+        return;
+      }
+      if (window.self !== window.top) {
+        communicateParent(event);
+      }
+
+      const validKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      if (validKeys.includes(event.key)) {
+        const index = parseInt(event.key, 10) - 1;
+        const targetLink = $('#fixed-links-container .fixed-links a').eq(index)[0];
+        targetLink?.click();
       }
     });
   </script>
