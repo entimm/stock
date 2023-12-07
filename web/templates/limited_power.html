@@ -313,4 +313,42 @@
       });
     }
   </script>
+
+  <script>
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'ArrowUp' || event.code === 'ArrowDown' || event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
+        let cell = getAdjacentCell(selectedCell, event.code);
+        if (cell) {
+          let colName = table.rows[0].cells[cell.cellIndex].innerHTML;
+          focusMode = 'selected'
+          show_tooltip(cell);
+          setSelectedCell(cell);
+          show_stocks(cell.textContent, colName);
+        }
+        event.preventDefault();
+      }
+    });
+
+    function getAdjacentCell(cell, direction) {
+      if (!cell) return;
+      let row = cell.parentNode.rowIndex;
+      let col = cell.cellIndex;
+
+      let numRows = table.rows.length;
+      let numCols = table.rows[0].cells.length;
+
+      switch (direction) {
+        case "ArrowUp":
+          return row > 0 ? table.rows[row - 1].cells[col] : null;
+        case "ArrowRight":
+          return col < numCols - 1 ? table.rows[row].cells[col + 1] : null;
+        case "ArrowDown":
+          return row < numRows - 1 ? table.rows[row + 1].cells[col] : null;
+        case "ArrowLeft":
+          return col > 0 ? table.rows[row].cells[col - 1] : null;
+        default:
+          return null;
+      }
+    }
+  </script>
 {% endblock %}
