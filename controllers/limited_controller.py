@@ -19,7 +19,7 @@ def limited():
     direction_list = {
         1: {'name': '涨停'},
         2: {'name': '跌停'},
-        3: {'name': '大喜'},
+        3: {'name': '大肉'},
         4: {'name': '大面'},
     }
     direction = request.args.get('direction', 1, type=int)

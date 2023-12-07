@@ -185,9 +185,14 @@
       let cells = document.querySelectorAll('td');
       color = getRandomColor();
       for (let cell of cells) {
-        if (value && cell.textContent === value) {
-          cell.style.backgroundColor = cell.style.backgroundColor ? "" : color;
-          cell.style.color = '#fff';
+        if (cell.textContent === value) {
+          if (cell.style.backgroundColor) {
+            cell.style.backgroundColor = "";
+            cell.style.color = '#000';
+          } else {
+            cell.style.backgroundColor = color;
+            cell.style.color = '#fff';
+          }
         }
       }
     }
