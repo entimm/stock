@@ -22,13 +22,7 @@ window.addEventListener('message', function (event) {
 
 document.addEventListener('keydown', function (event) {
   if (event.code === 'ArrowUp' || event.code === 'ArrowDown' || event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
-    let cell = getAdjacentCell(selectedCell, event.code);
-    if (cell) {
-      focusMode = 'key'
-      setSelectedCell(cell);
-      show_tooltip(cell);
-      show_tooltip_trend(cell);
-    }
+    processMove(event.code);
     event.preventDefault();
     return;
   }
@@ -36,9 +30,10 @@ document.addEventListener('keydown', function (event) {
     if (selectedCell) {
       let symbol = selectedCell.getAttribute('symbol');
       if (symbol) {
-        openDialog(`/chart?symbol=${symbol}&period=F5`);
+        openDialog(`/chart?symbol=${symbol}&period=F5`, symbol);
       }
     }
+    event.preventDefault();
     return;
   }
   if (event.code === 'Escape') {
@@ -54,7 +49,7 @@ function renderGrid(data) {
   let container = document.createElement('div');
   container.classList.add('table-container');
   container.id = 'table-container'
-  
+
   let thead = document.createElement('thead');
   let headerRow = document.createElement('tr');
   for (let colName in data) {
@@ -115,7 +110,8 @@ function renderGrid(data) {
       } else {
         setSelectedCell(cell);
         if (focusMode === 'cursor') {
-          openDialog(`/chart?symbol=${cell.getAttribute('symbol')}&period=${KLINE_PERIOD}`);
+          let symbol = cell.getAttribute('symbol');
+          openDialog(`/chart?symbol=${symbol}&period=${KLINE_PERIOD}`, symbol);
         }
         if (tooltipTrend.style.display === 'none') {
           show_tooltip_trend(cell);
@@ -165,11 +161,14 @@ function renderCell(cell, value, i) {
   cell.setAttribute('symbol', value[1]);
 }
 
-function openDialog(url) {
+function openDialog(url, symbol) {
+  if (socket) {
+    socketEmit(symbol);
+    return;
+  }
+
   iframe.src = url;
-
   chartDialog.showModal();
-
   document.addEventListener('click', handleClickOutside);
 }
 
@@ -190,7 +189,9 @@ function getRowIndex(cell) {
 }
 
 function getAdjacentCell(cell, direction) {
-  if (!cell) return;
+  if (!cell) {
+    cell = table.querySelector('tbody tr').cells[0];
+  }
   let row = getRowIndex(cell);
   let col = cell.cellIndex;
 
@@ -337,4 +338,16 @@ function show_tooltip_trend(cell) {
         <p><strong>上市日期:</strong> ${jsonData['listed_date']}</p>
        </div>`;
     });
+}
+
+function processMove(direction) {
+  let cell = getAdjacentCell(selectedCell, direction);
+  if (cell) {
+    focusMode = 'key';
+    setSelectedCell(cell);
+    show_tooltip(cell);
+    show_tooltip_trend(cell);
+  }
+
+  return cell;
 }

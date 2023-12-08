@@ -71,6 +71,7 @@ def mode():
         'mode_list': [item[0] for item in mode_list],
         'request_args': {
             'mode': mode,
+            'socket_token': request.args.get('socket_token', '', str),
         }
     }
 

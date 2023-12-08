@@ -32,6 +32,7 @@ def chart():
     req_real = request.args.get('req_real', 0, type=int)
     chart_engine = request.args.get('chart_engine', 0, type=int)
     show_chan = request.args.get('show_chan', 0, type=int)
+    socket_token = request.args.get('socket_token', '', type=str)
 
     if not symbol or not period:
         return redirect(url_for('chart.chart', symbol='999999', period=PeriodEnum.D.name, req_real=0))
@@ -57,6 +58,7 @@ def chart():
             'req_real': req_real,
             'chart_engine': chart_engine,
             'show_chan': show_chan,
+            'socket_token': socket_token,
         },
         'indicator_config': config.get('indicator'),
     }

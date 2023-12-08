@@ -65,6 +65,7 @@ def limited():
         'direction_list': direction_list,
         'request_args': {
             'direction': direction,
+            'socket_token': request.args.get('socket_token', '', str),
         }
     }
 

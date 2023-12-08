@@ -63,7 +63,8 @@ def diybk():
 
     template_var = {
         'data': data,
-        'bk_key_dict': bk_key_dict
+        'bk_key_dict': bk_key_dict,
+        'socket_token': request.args.get('socket_token', '', str),
     }
 
     return render_template('diybk.html', **template_var)
@@ -136,6 +137,7 @@ def diybk_history():
             'bk_key': bk_key,
             'ma': ma,
             'direction': direction,
+            'socket_token': request.args.get('socket_token', '', str),
         }
     }
 

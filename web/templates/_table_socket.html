@@ -1,0 +1,54 @@
+<div class="fixed-action-btn z-depth-5" style="top: 0; right: 10px; height: 40px">
+  <a class="btn-floating btn waves-effect waves-light orange" onclick="openRelateKlineMode()">
+    K线
+  </a>
+</div>
+
+<script src="/static/third/socket.io.min.js"></script>
+<script>
+  let socket = null;
+  let socketToken = '{{ request.args.get('socket_token', '') }}';
+
+  if (socketToken) {
+    socket = io.connect(`http://${document.domain}:${location.port}`);
+    socket.on('message_from_client1', function (message) {
+      if (message.socketToken !== socketToken) return;
+      let cell = processMove(message.key);
+      if (cell) {
+        let symbol = cell.getAttribute('symbol') ?? '';
+        socketEmit(symbol)
+      }
+    });
+  }
+
+  function generateRandomString(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+  }
+
+  function openRelateKlineMode() {
+    socketToken = generateRandomString(6);
+    let currentUrl = new URL(window.location.href);
+    let searchParams = currentUrl.searchParams;
+    searchParams.set("socket_token", socketToken);
+
+    history.pushState({}, '', currentUrl.toString());
+    window.location.href = currentUrl.toString();
+  }
+
+  function socketEmit(symbol) {
+    if (!symbol) return;
+    socket.emit('message_from_client2', {
+      symbol: symbol,
+      socketToken: socketToken,
+    });
+  }
+
+</script>

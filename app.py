@@ -1,16 +1,18 @@
 import os
 
 from flask import Flask, render_template
+from flask_socketio import SocketIO
 
-from common.common import MENUS
-from common.config import load_config
-from common.utils import create_link
 from app_cache import cache
+from common.common import MENUS
+from common.utils import create_link
 
 app = Flask(__name__, template_folder='web/templates', static_folder='web/public/static')
 
 app.config['CACHE_TYPE'] = 'simple'
 cache.init_app(app)
+
+socketio = SocketIO(app)
 
 controllers = [
     'index_controller',
@@ -50,6 +52,18 @@ def internal_server_error(error):
     return render_template('500.html', **{'error': error}), 500
 
 
+@socketio.on('message_from_client1')
+def handle_client1_message(message):
+    print('Received message:', message)
+    socketio.emit('message_from_client1', message)
+
+
+@socketio.on('message_from_client2')
+def handle_client2_message(message):
+    print('Received message:', message)
+    socketio.emit('message_from_client2', message)
+
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8888))
-    app.run(debug=os.environ.get("DEBUG", True), host='0.0.0.0', port=port)
+    socketio.run(app, debug=os.environ.get("DEBUG", True), host='0.0.0.0', port=port)

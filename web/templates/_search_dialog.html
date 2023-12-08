@@ -17,11 +17,6 @@
     <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="closeSearchDialog()">关闭</a>
   </div>
 </div>
-
-  <!-- FAB Search Button -->
-  <div class="fixed-action-btn" style="top: 24px; right: 12px;">
-
-  </div>
 <script>
   let option_list = [];
   let default_show_items = [];
@@ -135,11 +130,12 @@
       return;
     }
 
-    if (['ArrowUp', 'ArrowDown'].includes(event.code)) {
-      const selectIndex = default_show_items.findIndex(item => item.key === symbol);
+    if (['-', '='].includes(event.key)) {
+      let selectIndex = default_show_items.findIndex(item => item.key === symbol);
+      selectIndex = (selectIndex === -1) ? 0 : selectIndex;
       
       if (selectIndex !== -1) {
-        const offset = event.code === 'ArrowDown' ? 1 : -1;
+        const offset = event.key === '=' ? 1 : -1;
         const targetIndex = (selectIndex + offset) % default_show_items.length;
         const targetItem = default_show_items[targetIndex];
         
