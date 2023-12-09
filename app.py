@@ -54,13 +54,13 @@ def internal_server_error(error):
 
 @socketio.on('message_from_client1')
 def handle_client1_message(message):
-    print('Received message:', message)
+    print('Received message from client1:', message)
     socketio.emit('message_from_client1', message)
 
 
 @socketio.on('message_from_client2')
 def handle_client2_message(message):
-    print('Received message:', message)
+    print('Received message from client2:', message)
     socketio.emit('message_from_client2', message)
 
 

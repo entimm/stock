@@ -22,7 +22,9 @@ window.addEventListener('message', function (event) {
 
 document.addEventListener('keydown', function (event) {
   if (event.code === 'ArrowUp' || event.code === 'ArrowDown' || event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
-    processMove(event.code);
+    let cell = processMove(event.code);
+    let symbol = cell.getAttribute('symbol');
+    openDialog(`/chart?symbol=${symbol}&period=F5`, symbol);
     event.preventDefault();
     return;
   }
@@ -30,7 +32,7 @@ document.addEventListener('keydown', function (event) {
     if (selectedCell) {
       let symbol = selectedCell.getAttribute('symbol');
       if (symbol) {
-        openDialog(`/chart?symbol=${symbol}&period=F5`, symbol);
+        openDialog(`/chart?symbol=${symbol}&period=F5`);
       }
     }
     event.preventDefault();
@@ -161,8 +163,8 @@ function renderCell(cell, value, i) {
   cell.setAttribute('symbol', value[1]);
 }
 
-function openDialog(url, symbol) {
-  if (socket) {
+function openDialog(url, symbol = '') {
+  if (socket && symbol) {
     socketEmit(symbol);
     return;
   }

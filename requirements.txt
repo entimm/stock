@@ -4,3 +4,12 @@ numpy
 mootdx
 pyyaml
 pytest
+tushare
+chan
+Flask-Caching
+Flask-SocketIO
+gunicorn
+pypinyin
+requests
+rich
+click
