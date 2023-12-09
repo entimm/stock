@@ -27,6 +27,7 @@ controllers = [
     'mode_controller',
     'limited_power_controller',
     'line2_controller',
+    'backtest_controller',
 ]
 
 for controller in controllers:

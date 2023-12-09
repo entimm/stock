@@ -1,0 +1,95 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>回测结果</title>
+  <style>
+    .text-red {
+      color: red;
+    }
+
+    .text-green {
+      color: green;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="chart"></div>
+{% endblock %}
+{% block footer %}
+  <script src="/static/third/echarts.min.js"></script>
+  <script>
+    fetch(document.URL.replace('backtest_result', 'backtest_result_data')).then(response => response.json())
+      .then(jsonData => {
+        let dates = Object.keys(jsonData);
+        let capitals = dates.map(date => (jsonData[date].capital / 10000.0).toFixed(2));
+
+        let chart = echarts.init(document.getElementById('chart'));
+        let option = {
+          grid: {
+            left: '1%',
+            right: '2%',
+            bottom: '1%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'category',
+            data: dates,
+          },
+          yAxis: {
+            position: 'right',
+          },
+          series: [{
+            data: capitals,
+            type: 'line',
+            showSymbol: false,
+            smooth: 0.3,
+            emphasis: {
+              focus: 'series',
+              lineStyle: {
+                width: 2,
+              },
+            },
+            itemStyle: {
+              color: 'rgb(246,119,119)'
+            },
+            areaStyle: {
+              color: 'rgb(246,119,119)'
+            },
+            lineStyle: {
+              color: 'rgba(245,91,91,0.5)'
+            },
+          }],
+          tooltip: {
+            stack: 'Total',
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross'
+            },
+            formatter: function (params) {
+              let date = params[0].name;
+              let color = jsonData[date].change_rate > 0 ? 'text-red' : 'text-green';
+              return '<bold>日期</bold>: ' + date + '<br/>' +
+                '<bold>代码</bold>: ' + jsonData[date].symbol + '<br/>' +
+                '<bold>名称</bold>: ' + jsonData[date].name + '<br/>' +
+                '<bold>股价</bold>: ' + jsonData[date].price + '<br/>' +
+                '<bold>时间</bold>: ' + jsonData[date].date_desc + '<br/>' +
+                '<bold>市值</bold>: ' + (jsonData[date].capital / 10000.0).toFixed(2) + '万</span>' + '<br/>' +
+                `<bold>盈亏</bold>: <span class="${color}">` + jsonData[date].change_rate + '% </span>' + '<br/>';
+            }
+          },
+          dataZoom: [
+            {
+              type: 'inside',
+              start: 80,
+              end: 100
+            }
+          ],
+        };
+
+        option && chart.setOption(option);
+
+        window.addEventListener('resize', function () {
+          chart.resize();
+        });
+      })
+  </script>
+{% endblock %}

@@ -34,6 +34,11 @@
   }
 
   function openRelateKlineMode() {
+    if (socketToken) {
+      window.open(`/chart?symbol=999999&period=D&socket_token=${socketToken}`, "_blank");
+      return;
+    }
+
     socketToken = generateRandomString(6);
     let currentUrl = new URL(window.location.href);
     let searchParams = currentUrl.searchParams;

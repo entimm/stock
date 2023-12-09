@@ -57,7 +57,7 @@ def ticker_name(symbol):
         case 'INDEX':
             return index_dict.get(symbol, symbol)
         case _:
-            return ticker_name_dict[symbol]
+            return ticker_name_dict.get(symbol, '')
 
 
 def symbol_all():
@@ -73,7 +73,7 @@ def row_to_kline(row):
         'low': row['low'],
         'close': row['close'],
         'volume': row['volume'],
-        'pct_change': row['pct_change'] if not math.isnan(row['pct_change']) else '',
+        'pct_change': row['pct_change'] if not math.isnan(row.get('pct_change', math.nan)) else '',
     }
 
 
