@@ -24,6 +24,7 @@
   </dialog>
 {% endblock %}
 {% block footer %}
+  {% include "_table_socket.html" %}
   <script src="/static/data_table.js"></script>
   <script>
     let data = {{ data | safe }};
@@ -48,5 +49,4 @@
       });
     }
   </script>
-  {% include "_table_socket.html" %}
 {% endblock %}

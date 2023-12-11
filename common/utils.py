@@ -99,7 +99,7 @@ def send_request(url):
     return json.loads(response.text)
 
 
-def select_start_and_end(data_list, target_date):
+def start_and_end_in_range(data_list, target_date):
     target_date = datetime.strptime(target_date, '%Y-%m-%d')
 
     filtered_data = [item for item in data_list if datetime.strptime(item['time'], '%Y-%m-%d %H:%M:%S').date() == target_date.date()]
@@ -110,4 +110,4 @@ def select_start_and_end(data_list, target_date):
     first_data = min(filtered_data, key=lambda x: datetime.strptime(x['time'], '%Y-%m-%d %H:%M:%S'))['time']
     last_data = max(filtered_data, key=lambda x: datetime.strptime(x['time'], '%Y-%m-%d %H:%M:%S'))['time']
 
-    return first_data, last_data
+    return [first_data, last_data]

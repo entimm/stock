@@ -130,7 +130,7 @@
       return;
     }
 
-    if (['-', '='].includes(event.key)) {
+    if (['[', ']'].includes(event.key)) {
       let selectIndex = default_show_items.findIndex(item => item.key === symbol);
       selectIndex = (selectIndex === -1) ? 0 : selectIndex;
       

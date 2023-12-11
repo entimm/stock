@@ -28,8 +28,8 @@ def backtest_result():
     })
 
 
-@blueprint.route('/backtest_kline')
-def backtest_kline0123456():
+@blueprint.route('/backtest_kline_ma')
+def backtest_kline_ma():
     symbol = request.args.get('symbol', '', type=str)
     result_json_file = os.path.join(RESOURCES_PATH, f'back_test_{symbol}.json' if symbol else 'back_test.json')
     if not symbol or not os.path.exists(result_json_file):

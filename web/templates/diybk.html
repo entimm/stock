@@ -16,7 +16,7 @@
   </dialog>
 {% endblock %}
 {% block footer %}
-  <script src="/static/third/jquery-3.7.1.min.js"></script>
+  {% include "_table_socket.html" %}
   <script src="/static/data_table.js"></script>
   <script>
     let data = {{ data | safe }};
@@ -42,12 +42,13 @@
       });
     }
 
-    $('#grid th').on('click', function () {
-      let bk_key = bk_key_dict[this.innerHTML];
-      if (bk_key) {
-        window.location.href = `/diybk_history?bk_key=${bk_key}`
-      }
-    })
+    document.querySelectorAll('#grid th').forEach(function (header) {
+      header.addEventListener('click', function () {
+        let bk_key = bk_key_dict[this.innerHTML];
+        if (bk_key) {
+          window.location.href = `/diybk_history?bk_key=${bk_key}`
+        }
+      });
+    });
   </script>
-  {% include "_table_socket.html" %}
 {% endblock %}

@@ -24,7 +24,9 @@ document.addEventListener('keydown', function (event) {
   if (event.code === 'ArrowUp' || event.code === 'ArrowDown' || event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
     let cell = processMove(event.code);
     let symbol = cell.getAttribute('symbol');
-    openDialog(`/chart?symbol=${symbol}&period=F5`, symbol);
+    if (symbol) {
+      openDialog(`/chart?symbol=${symbol}&period=F5`, symbol);
+    }
     event.preventDefault();
     return;
   }
