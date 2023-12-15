@@ -44,11 +44,12 @@ def backtest_kline_ma():
         'backtest_trades': trades,
         'indicator_config': {
             'ma': [
-            {'period': 15, 'color':'#930606', 'size': 1},
-            {'period': 60, 'color':'#ECAB07', 'size': 1},
-            {'period': 432, 'color':'#EF15DE', 'size': 1},
-        ]
-        }
+                {'period': 15, 'color': '#930606', 'size': 1},
+                {'period': 60, 'color': '#ECAB07', 'size': 1},
+                {'period': 432, 'color': '#EF15DE', 'size': 1},
+            ]
+        },
+        'request_args': request.args.to_dict(),
     }
 
     return render_template('backtest_kline.html', **template_var)

@@ -62,7 +62,7 @@ def chart():
     }
 
     if show_chan:
-        chart_engine = 1
+        chart_engine = 0
 
         tmp_chan_config_keys = ['force_stroke_vertex', 'force_segment_vertex', 'output_union', 'output_fractal', 'stroke_check_break', 'stroke_fix_sure']
         tmp_chan_config = {key: request.args.get(key, None, type=int) for key in tmp_chan_config_keys if request.args.get(key, None, type=int) is not None}
