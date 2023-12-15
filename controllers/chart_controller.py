@@ -13,7 +13,7 @@ from common.data import limited_up_total_dict
 from common.price_calculate import pct_change
 from common.quotes import fetch_local_plus_real
 from common.tdx import stock_info_df
-from common.utils import ticker_name, symbol_all, row_to_kline
+from common.utils import ticker_name, symbol_all, row_to_kline, start_and_end_in_range
 from controllers import make_cache_key
 
 blueprint = Blueprint('chart', __name__)
@@ -33,6 +33,8 @@ def chart():
     chart_engine = request.args.get('chart_engine', 0, type=int)
     show_chan = request.args.get('show_chan', 0, type=int)
     socket_token = request.args.get('socket_token', '', type=str)
+
+    date = request.args.get('date', '', type=str)
 
     if not symbol or not period:
         return redirect(url_for('chart.chart', symbol='999999', period=PeriodEnum.D.name, req_real=0))
@@ -59,9 +61,13 @@ def chart():
             'chart_engine': chart_engine,
             'show_chan': show_chan,
             'socket_token': socket_token,
+            'date': date,
         },
         'indicator_config': config.get('indicator'),
     }
+
+    if date:
+        template_var['time_range'] = start_and_end_in_range(kline_list, date)
 
     if show_chan:
         chart_engine = 1

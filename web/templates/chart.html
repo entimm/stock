@@ -29,7 +29,7 @@
         {{ create_link(request_args, {'period': period_key}, request_args.period == period_key, period_name) | safe }}
       {% endfor %}
       {{ create_link(request_args, {'req_real': (not request_args.req_real)}, request_args.req_real == 1, '实时') | safe }}
-      {{ create_link(request_args, {'chart_engine': (not request_args.chart_engine), 'show_chan': 0}, request_args.chart_engine == 0, 'TV') | safe }}
+      {{ create_link(request_args, {'chart_engine': (not request_args.chart_engine), 'show_chan': 0}, request_args.chart_engine == 1, 'TV') | safe }}
       {{ create_link(request_args, {'show_chan': (not request_args.show_chan)}, request_args.show_chan == 1, '缠论') | safe }}
       <a href="https://basic.10jqka.com.cn/{{ request_args.symbol }}/" target="_blank">同花顺F10</a>
       <a href="#" target="_blank">新窗口</a>
@@ -58,9 +58,9 @@
   </script>
 
   {% if request_args.chart_engine == 0 %}
-    {% include "_chart_tradingview.html" %}
-  {% else %}
     {% include "_chart_kline.html" %}
+  {% else %}
+    {% include "_chart_tradingview.html" %}
   {% endif %}
 
   {% include "_search_dialog.html" %}
@@ -172,7 +172,10 @@
       socket.on('message_from_client2', function (message) {
         if (message.socketToken !== socketToken) return;
         if (message.symbol) {
-          window.location.href = document.URL.replace(/\d{6}/, message.symbol);
+          let currentUrl = new URL(document.URL.replace(/\d{6}/, message.symbol));
+          let searchParams = currentUrl.searchParams;
+          searchParams.set("date", message.date);
+          window.location.href = currentUrl.toString();
         }
       });
 

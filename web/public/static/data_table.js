@@ -23,18 +23,22 @@ window.addEventListener('message', function (event) {
 document.addEventListener('keydown', function (event) {
   if (event.code === 'ArrowUp' || event.code === 'ArrowDown' || event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
     let cell = processMove(event.code);
+    let headName = getCellHeadName(cell);
+    let date = /^\d{4}-\d{2}-\d{2}$/.test(headName) ? headName : '';
     let symbol = cell.getAttribute('symbol');
     if (symbol) {
-      openDialog(`/chart?symbol=${symbol}&period=F5`, symbol);
+      openDialog(symbol, date);
     }
     event.preventDefault();
     return;
   }
   if (event.code === 'Space') {
     if (selectedCell) {
+      let headName = getCellHeadName(selectedCell);
+      let date = /^\d{4}-\d{2}-\d{2}$/.test(headName) ? headName : '';
       let symbol = selectedCell.getAttribute('symbol');
       if (symbol) {
-        openDialog(`/chart?symbol=${symbol}&period=F5`);
+        openDialog(symbol, date, true);
       }
     }
     event.preventDefault();
@@ -115,7 +119,9 @@ function renderGrid(data) {
         setSelectedCell(cell);
         if (focusMode === 'cursor') {
           let symbol = cell.getAttribute('symbol');
-          openDialog(`/chart?symbol=${symbol}&period=${KLINE_PERIOD}`, symbol);
+          let headName = getCellHeadName(cell);
+          let date = /^\d{4}-\d{2}-\d{2}$/.test(headName) ? headName : '';
+          openDialog(symbol, date);
         }
         if (tooltipTrend.style.display === 'none') {
           show_tooltip_trend(cell);
@@ -165,13 +171,13 @@ function renderCell(cell, value, i) {
   cell.setAttribute('symbol', value[1]);
 }
 
-function openDialog(url, symbol = '') {
-  if (socket && symbol) {
-    socketEmit(symbol);
+function openDialog(symbol = '', date = '', useDialog = false) {
+  if (!useDialog && socket && symbol) {
+    socketEmit(symbol, date);
     return;
   }
 
-  iframe.src = url;
+  iframe.src = `/chart?symbol=${symbol}&period=${KLINE_PERIOD}&date=${date}`;
   chartDialog.showModal();
   document.addEventListener('click', handleClickOutside);
 }
@@ -214,6 +220,12 @@ function getAdjacentCell(cell, direction) {
     default:
       return null;
   }
+}
+
+function getCellHeadName(cell) {
+  let col = cell.cellIndex;
+
+  return table.querySelector('thead tr').cells[col].innerHTML;
 }
 
 function setSelectedCell(cell) {

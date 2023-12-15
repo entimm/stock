@@ -61,6 +61,11 @@
     }
   });
 
+  chart.setPaneOptions({
+    id: 'candle_pane',
+    gap: {top: 0, bottom: 0},
+  })
+
   chart._chartStore.getTimeScaleStore().zoom(1000)
 
   let kline_list = {{ kline_list | safe }};
@@ -84,6 +89,42 @@
 
   window.addEventListener('resize', resizeChart);
   window.addEventListener('load', resizeChart);
+
+  {% if time_range %}
+    let timeRange = {{ time_range | safe }};
+    chart.createOverlay({
+      name: 'verticalSegment',
+      points: [{timestamp: timeRange[0], value: 0}, {timestamp: timeRange[0], value: 9999}],
+      groupId: 'rang',
+      lock: true,
+      styles: {
+        line: {
+          color: 'rgb(241,4,237)',
+          style: 'dashed',
+          dashedValue: [5, 10],
+          zLevel: 0,
+        }
+      },
+    });
+    chart.createOverlay({
+      name: 'verticalSegment',
+      points: [{timestamp: timeRange[1], value: 0}, {timestamp: timeRange[1], value: 9999}],
+      groupId: 'rang',
+      lock: true,
+      styles: {
+        line: {
+          color: 'rgb(0,89,255)',
+          style: 'dashed',
+          dashedValue: [5, 10],
+          zLevel: -100,
+        }
+      },
+    });
+
+    const index = kline_list.findIndex(item => item.timestamp === timeRange[1]);
+    chart.scrollToDataIndex(index + 100);
+  {% endif %}
+
 </script>
 {% if request_args is defined and request_args.show_chan %}
   {% include "_chart_kline_chan.html" %}
@@ -94,7 +135,7 @@
       precision: 3,
       calcParams: indicator_ma_config.map(item => item.period),
       styles: {
-        lines: indicator_ma_config.map(item => ({ style: 'solid', size: item.size, color: item.color })),
+        lines: indicator_ma_config.map(item => ({style: 'solid', size: item.size * 0.8, color: item.color})),
       }
     }, false, {id: 'candle_pane'})
   </script>

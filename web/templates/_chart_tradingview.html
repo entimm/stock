@@ -45,14 +45,15 @@
     }
   });
 
-  chart.addCandlestickSeries({
+  let mainSeries = chart.addCandlestickSeries({
     upColor: '#F23644',
     downColor: '#0A9981',
     borderUpColor: '#F23644',
     borderDownColor: '#0A9981',
     wickUpColor: '#F23644',
     wickDownColor: '#0A9981',
-  }).setData(klineList);
+  });
+  mainSeries.setData(klineList);
 
   chart.addHistogramSeries({
     color: '#333',
