@@ -1,8 +1,12 @@
+import os.path
+from datetime import datetime
+
 import pandas as pd
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
 
 from common.common import TDX_FREQUENCY_MAP, PeriodEnum, TDX_PATH
+from common.config import config
 from common.price_calculate import resample_kline
 from common.utils import symbol_type, minutes_since_open
 
@@ -60,6 +64,39 @@ def fetch_local_plus_real(symbol, period_enum, req_real=1):
             df = pd.concat([df, real_time_df[['open', 'high', 'low', 'close', 'amount', 'volume']]], axis=0)
 
     if period_enum in [PeriodEnum.F15, PeriodEnum.F30]:
+        df = resample_kline(df, period_enum)
+
+    return df
+
+
+def read_local_csv(csv_file):
+    df = pd.read_csv(csv_file, parse_dates=['datetime'], index_col='datetime')
+    df.rename(columns={
+        'datetime': 'time',
+        'vol': 'volume',
+    }, inplace=True)
+
+    return df
+
+
+def fetch_local_history(date_str, symbol, period_enum):
+    date_object = datetime.strptime(date_str, "%Y-%m-%d")
+    if period_enum == PeriodEnum.D or date_object >= datetime(2023, 9, 1):
+        return fetch_local_plus_real(symbol, period_enum)
+
+    csv_file = f"{config['local_kline_1min_path']}/{date_object.year}_yssj/{symbol}.csv"
+    if not os.path.exists(csv_file):
+        return fetch_local_plus_real(symbol, period_enum)
+
+    df = read_local_csv(csv_file)
+    if date_object.month <= 3:
+        csv_file = f"{config['local_kline_1min_path']}/{date_object.year - 1}_yssj/{symbol}.csv"
+        if os.path.exists(csv_file):
+            df_last_year = read_local_csv(csv_file)
+
+            df = pd.concat([df_last_year, df])
+
+    if period_enum in [PeriodEnum.F5, PeriodEnum.F15, PeriodEnum.F30]:
         df = resample_kline(df, period_enum)
 
     return df

@@ -63,7 +63,7 @@
 
   chart.setPaneOptions({
     id: 'candle_pane',
-    gap: {top: 0, bottom: 0},
+    gap: {top: 0.02, bottom: 0.02},
   })
 
   chart._chartStore.getTimeScaleStore().zoom(1000)
@@ -129,7 +129,6 @@
     })();
 
     function timeCompare(timeString1, timeString2) {
-      console.log(timeString1, timeString2);
       let time1 = new Date(timeString1);
       let time2 = new Date(timeString2);
 
