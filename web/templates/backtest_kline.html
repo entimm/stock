@@ -34,25 +34,58 @@
 {% endblock %}
 {% block footer %}
   <script>
-    const backtest_trades = {{ backtest_trades | safe }}
-    function markPointOverlayData(item) {
-      return {
-        name: 'simpleAnnotation',
-        groupId: 'mark_point',
-        extendData: item.action.charAt(0).toUpperCase(),
-        lock: true,
-        points: [{timestamp: item.date, value: item.price}],
-        styles: {
-          text: {
-            backgroundColor: '#1677FF',
-            size: 20,
+    klinecharts.registerOverlay({
+      name: 'myAnnotation',
+      totalStep: 2,
+      createPointFigures: ({overlay, coordinates}) => {
+        return [
+          {
+            type: 'text',
+            attrs: {
+              x: coordinates[0].x,
+              y: coordinates[0].y,
+              text: overlay.extendData.direction ? '⬇' : '⬆',
+              align: 'center',
+              baseline: overlay.extendData.direction ? 'bottom' : 'top',
+            },
+            ignoreEvent: true
+          },
+          {
+            type: 'text',
+            attrs: {
+              x: coordinates[0].x,
+              y: coordinates[0].y + 16 * (overlay.extendData.direction ? -1 : 1),
+              text: overlay.extendData.text ?? '',
+              align: 'center',
+              baseline: overlay.extendData.direction ? 'bottom' : 'top',
+            },
+            ignoreEvent: true,
           }
-        },
+        ]
+      },
+    });
+
+    const backtest_trades = {{ backtest_trades | safe }}
+      function markPointOverlayData(item) {
+        return {
+          name: 'myAnnotation',
+          groupId: 'mark_point',
+          extendData: {
+            direction: item.action === 'BUY',
+            text: item.action.charAt(0).toUpperCase(),
+          },
+          lock: true,
+          points: [{timestamp: item.date, value: item.price}],
+          styles: {
+            text: {
+              color: item.action === 'BUY' ? '#ff00b7' : '#6e28e5',
+              size: 16,
+            }
+          },
+        }
       }
-    }
 
     backtest_trades.forEach(function (item) {
-      console.log(item, markPointOverlayData(item))
       chart.createOverlay(markPointOverlayData(item));
     });
   </script>

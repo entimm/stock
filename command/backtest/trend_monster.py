@@ -85,12 +85,12 @@ class Strategy:
             self.plan.to_buy_stock = target_symbol
 
     def exec_sell_plan(self, ts):
-        df_hold = get_hfq_kline(self.hold.stock)
+        df_hold = get_hfq_kline(self.hold.stock, ts)
         if ts in df_hold.index:
             self.sell(ts, df_hold.loc[ts].open)
 
     def exec_buy_plan(self, ts):
-        df_buy = get_hfq_kline(self.plan.to_buy_stock)
+        df_buy = get_hfq_kline(self.plan.to_buy_stock, ts)
         df_buy = df_buy[df_buy.index <= ts]
         if ts in df_buy.index:
             # 排除一字板 排除开盘就是最高价的
@@ -100,13 +100,13 @@ class Strategy:
                     self.buy(ts, df_buy.loc[ts].open)
 
     def sell_in_end(self, ts):
-        df_hold = get_hfq_kline(self.hold.stock)
+        df_hold = get_hfq_kline(self.hold.stock, ts)
         if ts in df_hold.index:
             self.sell(ts, df_hold.loc[ts].close)
 
     @staticmethod
     def is_ok(symbol, ts):
-        df = get_hfq_kline(symbol)
+        df = get_hfq_kline(symbol, ts)
         df = df[df.index <= ts]
         if ts in df.index:
             # 当天的收盘价低于前一天的收盘价就是不行

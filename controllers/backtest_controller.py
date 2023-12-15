@@ -28,6 +28,13 @@ def backtest_result():
     })
 
 
+@blueprint.route('/backtest_result_table')
+def backtest_result_table():
+    return render_template('backtest_result_table.html', **{
+        'symbol': request.args.get('symbol', '', type=str)
+    })
+
+
 @blueprint.route('/backtest_kline_ma')
 def backtest_kline_ma():
     symbol = request.args.get('symbol', '', type=str)
@@ -86,5 +93,16 @@ def generate_order(trades, initial_capital=100000):
                 'price': round(trade["price"], 2),
                 'date_desc': f'{buy_date} - {trade["date"]}'
             }
+
+    if trades[-1]['action'] == 'BUY':
+        last_trade = trades[-1]
+        order[last_trade["date"]] = {
+            'capital': round(capital + buy_price * hold_vol, 2),
+            'symbol': last_trade.get('symbol', ''),
+            'name': ticker_name(last_trade.get('symbol', '')),
+            'change_rate': 0,
+            'price': round(buy_price, 2),
+            'date_desc': f'{buy_date} - '
+        }
 
     return order
