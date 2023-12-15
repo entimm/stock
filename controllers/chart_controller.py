@@ -9,7 +9,7 @@ from common.common import PeriodEnum
 from common.config import config
 from common.price_calculate import pct_change
 from common.quotes import fetch_local_plus_real
-from common.utils import ticker_name, row_to_kline, start_and_end_in_range
+from common.utils import ticker_name, row_to_kline
 
 blueprint = Blueprint('chart', __name__)
 
@@ -60,9 +60,6 @@ def chart():
         },
         'indicator_config': config.get('indicator'),
     }
-
-    if date:
-        template_var['time_range'] = start_and_end_in_range(kline_list, date)
 
     if show_chan:
         chart_engine = 1

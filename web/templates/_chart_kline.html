@@ -90,39 +90,55 @@
   window.addEventListener('resize', resizeChart);
   window.addEventListener('load', resizeChart);
 
-  {% if time_range %}
-    let timeRange = {{ time_range | safe }};
-    chart.createOverlay({
-      name: 'verticalSegment',
-      points: [{timestamp: timeRange[0], value: 0}, {timestamp: timeRange[0], value: 9999}],
-      groupId: 'rang',
-      lock: true,
-      styles: {
-        line: {
-          color: 'rgb(241,4,237)',
-          style: 'dashed',
-          dashedValue: [5, 10],
-          zLevel: 0,
-        }
-      },
-    });
-    chart.createOverlay({
-      name: 'verticalSegment',
-      points: [{timestamp: timeRange[1], value: 0}, {timestamp: timeRange[1], value: 9999}],
-      groupId: 'rang',
-      lock: true,
-      styles: {
-        line: {
-          color: 'rgb(0,89,255)',
-          style: 'dashed',
-          dashedValue: [5, 10],
-          zLevel: -100,
-        }
-      },
-    });
+  {% if request_args.date %}
+    (function() {
+      let date = '{{ request_args.date }}';
+      if (! /^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+      let dateRage = getStartAndEndTime(date);
+      chart.createOverlay({
+        name: 'verticalSegment',
+        points: [{timestamp: dateRage.startTime, value: 0}, {timestamp: dateRage.startTime, value: 9999}],
+        groupId: 'range',
+        lock: true,
+        styles: {
+          line: {
+            color: 'rgb(241,4,237)',
+            style: 'dashed',
+            dashedValue: [5, 10],
+            zLevel: 0,
+          }
+        },
+      });
+      chart.createOverlay({
+        name: 'verticalSegment',
+        points: [{timestamp: dateRage.endTime, value: 0}, {timestamp: dateRage.endTime, value: 9999}],
+        groupId: 'range',
+        lock: true,
+        styles: {
+          line: {
+            color: 'rgb(0,89,255)',
+            style: 'dashed',
+            dashedValue: [5, 10],
+            zLevel: -100,
+          }
+        },
+      });
 
-    const index = kline_list.findIndex(item => item.timestamp === timeRange[1]);
-    chart.scrollToDataIndex(index + 100);
+      const index = kline_list.findIndex(item => timeCompare(dateRage.endTime, item.timestamp));
+      chart.scrollToDataIndex(index + 160);
+    })();
+
+    function timeCompare(timeString1, timeString2) {
+      console.log(timeString1, timeString2);
+      let time1 = new Date(timeString1);
+      let time2 = new Date(timeString2);
+
+      return time2 >= time1;
+    }
+
+    function getStartAndEndTime(date) {
+      return {startTime: `${date} 09:35:00`, endTime: `${date} 15:00:00`};
+    }
   {% endif %}
 
 </script>
