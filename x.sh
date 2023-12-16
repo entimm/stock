@@ -14,7 +14,11 @@ python cmd convert-gnbk-trend-up
 echo 'convert-gnbk-trend-down'
 python cmd convert-gnbk-trend-down
 
+echo 'download-xuangubao-detail'
 python cmd  download-xuangubao-detail
+echo 'download-xuangubao-plates'
 python cmd  download-xuangubao-plates
+echo 'download-xuangubao-stock'
 python cmd  download-xuangubao-stock
+echo 'arrange-xuangubao-detail'
 python cmd  arrange-xuangubao-detail

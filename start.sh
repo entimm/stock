@@ -1,0 +1,1 @@
+gunicorn -w 1 -k "geventwebsocket.gunicorn.workers.GeventWebSocketWorker" -b 0.0.0.0:8888 app:app

@@ -8,7 +8,7 @@
       }
     }
   })
-  chart._chartStore._timeScaleStore.setBarSpaceLimitConfig(0.01, 20)
+  chart._chartStore._timeScaleStore.setBarSpaceLimitConfig(0.01, 200)
   chart.createIndicator('VOL')
   chart.createIndicator('MACD')
   chart.setStyles({
@@ -94,49 +94,61 @@
     (function() {
       let date = '{{ request_args.date }}';
       if (! /^\d{4}-\d{2}-\d{2}$/.test(date)) return;
-      let dateRage = getStartAndEndTime(date);
+      let dateRage = findEndPointByDate(date);
       chart.createOverlay({
         name: 'verticalSegment',
-        points: [{timestamp: dateRage.startTime, value: 0}, {timestamp: dateRage.startTime, value: 9999}],
+        points: [{timestamp: dateRage.start, value: -9999}, {timestamp: dateRage.start, value: 9999}],
         groupId: 'range',
         lock: true,
         styles: {
           line: {
             color: 'rgb(241,4,237)',
             style: 'dashed',
-            dashedValue: [5, 10],
+            dashedValue: [3, 6],
             zLevel: 0,
           }
         },
       });
       chart.createOverlay({
         name: 'verticalSegment',
-        points: [{timestamp: dateRage.endTime, value: 0}, {timestamp: dateRage.endTime, value: 9999}],
+        points: [{timestamp: dateRage.end, value: -9999}, {timestamp: dateRage.end, value: 9999}],
         groupId: 'range',
         lock: true,
         styles: {
           line: {
             color: 'rgb(0,89,255)',
             style: 'dashed',
-            dashedValue: [5, 10],
-            zLevel: -100,
+            dashedValue: [3, 6],
+            zLevel: 0,
           }
         },
       });
 
-      const index = kline_list.findIndex(item => timeCompare(dateRage.endTime, item.timestamp));
-      chart.scrollToDataIndex(index + 160);
+      let index = kline_list.findIndex(item => timeCompare(dateRage.end, item.timestamp));
+      index = index === -1 ? kline_list.length : index;
+      chart.scrollToDataIndex(Math.min(index + 160, kline_list.length));
     })();
+
+    function findEndPointByDate(targetDate) {
+      const result = { start: null, end: null };
+
+      for (const kline of kline_list) {
+        if (kline.timestamp.startsWith(targetDate)) {
+          if (!result.start) {
+            result.start = kline.timestamp;
+          }
+          result.end = kline.timestamp;
+        }
+      }
+
+      return result;
+    }
 
     function timeCompare(timeString1, timeString2) {
       let time1 = new Date(timeString1);
       let time2 = new Date(timeString2);
 
       return time2 >= time1;
-    }
-
-    function getStartAndEndTime(date) {
-      return {startTime: `${date} 09:35:00`, endTime: `${date} 15:00:00`};
     }
   {% endif %}
 
