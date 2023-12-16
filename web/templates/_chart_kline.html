@@ -22,7 +22,7 @@
         style: 'solid',
       },
       vertical: {
-        show: true,
+        show: false,
         size: 1,
         color: '#F0F0F0',
         style: 'solid',
@@ -91,9 +91,9 @@
   window.addEventListener('load', resizeChart);
 
   {% if request_args.date %}
-    (function() {
+    (function () {
       let date = '{{ request_args.date }}';
-      if (! /^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
       let dateRage = findEndPointByDate(date);
       chart.createOverlay({
         name: 'verticalSegment',
@@ -130,7 +130,7 @@
     })();
 
     function findEndPointByDate(targetDate) {
-      const result = { start: null, end: null };
+      const result = {start: null, end: null};
 
       for (const kline of kline_list) {
         if (kline.timestamp.startsWith(targetDate)) {
@@ -151,6 +151,74 @@
       return time2 >= time1;
     }
   {% endif %}
+
+
+  let verticalGapKlines = {};
+  {% if request_args is defined and request_args.period in ['F1', 'F5', 'F15', 'F30'] %}
+    verticalGapKlines = kline_list.reduce((result, entry) => {
+      let date = entry.timestamp.split(' ')[0];
+      if (!result[date]) {
+        result[date] = entry;
+      }
+
+      return result;
+    }, {});
+  {% else %}
+    verticalGapKlines = kline_list.reduce((result, entry) => {
+      let month = entry.timestamp.slice(0, 7);
+      if (!result[month]) {
+        result[month] = entry;
+      }
+
+      return result;
+    }, {});
+  {% endif %}
+  Object.entries(verticalGapKlines).forEach(function (item) {
+    chart.createOverlay({
+      name: 'verticalSegment',
+      groupId: 'verticalGap',
+      lock: true,
+      points: [{timestamp: item[1].timestamp, value: -9999}, {timestamp: item[1].timestamp, value: 9999}],
+      styles: {
+        line: {
+          color: '#000000',
+          size: 0.05,
+        }
+      },
+    });
+  });
+
+
+  const periodZoomData = {
+    'F1': 240,
+    'F5': 48,
+    'F15': 16,
+    'F30': 8,
+    'D': 20,
+  };
+  const curPeriod = '{{ request_args.period }}';
+  let verticalGapVisible = true;
+  chart.subscribeAction('onZoom', function (evnet) {
+    let n = periodZoomData[curPeriod];
+    if (chart.getBarSpace() <= 30 / n) {
+      if (verticalGapVisible) {
+        verticalGapVisible = false;
+        chart.overrideOverlay({
+          groupId: 'verticalGap',
+          visible: false,
+        });
+      }
+
+    } else {
+      if (!verticalGapVisible) {
+        verticalGapVisible = true;
+        chart.overrideOverlay({
+          groupId: 'verticalGap',
+          visible: true,
+        });
+      }
+    }
+  });
 
 </script>
 {% if request_args is defined and request_args.show_chan %}
