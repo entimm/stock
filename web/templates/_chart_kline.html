@@ -42,6 +42,19 @@
         downWickColor: '#0A9981',
         noChangeWickColor: '#888888'
       },
+      tooltip: {
+        showType: 'standard',
+        custom: function (args) {
+          return [
+            {title: 'Time: ', value: args.current.timestamp},
+            {title: 'Open: ', value: args.prev.close.toFixed(2).toString()},
+            {title: 'High: ', value: args.prev.close.toFixed(2).toString()},
+            {title: 'Low: ', value: args.prev.close.toFixed(2).toString()},
+            {title: 'Close: ', value: args.prev.close.toFixed(2).toString()},
+            {title: 'Pct: ', value: ((args.current.close / args.prev.close - 1) * 100).toFixed(2).toString()},
+          ];
+        },
+      }
     },
     indicator: {
       bars: [{
@@ -58,7 +71,7 @@
       lastValueMark: {
         show: true,
       },
-    }
+    },
   });
 
   chart.setPaneOptions({
