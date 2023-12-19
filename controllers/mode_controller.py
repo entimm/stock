@@ -9,7 +9,7 @@ from common.utils import filter_files_by_date
 blueprint = Blueprint('follow_bull', __name__)
 
 
-def mode_follow_bull_front(df):
+def mode_shrink_adj(df):
     df = df[df['上次涨停'] <= 10]
     df = df[df['连缩量'] >= 1]
     df = df[df['涨幅%'] < 0]
@@ -42,7 +42,7 @@ def mode_first_limited_up(df):
 def mode():
     mode_list: list = [
         ('次阳', mode_follow_bull,),
-        ('次阳前', mode_follow_bull_front,),
+        ('缩调', mode_shrink_adj,),
         ('连板', mode_cont_limited_up,),
         ('首板', mode_first_limited_up,),
     ]
@@ -52,7 +52,7 @@ def mode():
     file_pattern = f'全部Ａ股({file_pattern}).txt'
 
     file_list = filter_files_by_date(directory_path, file_pattern)
-    file_list = sorted(file_list, key=lambda x: x[0], reverse=False)
+    file_list = sorted(file_list, key=lambda x: x[1], reverse=True)
     file_list = file_list[0:30]
 
     result_dict = {}
@@ -67,7 +67,7 @@ def mode():
         result_dict[f"{date[:4]}-{date[4:6]}-{date[6:]}"] = df['show'].to_list()
 
     template_var = {
-        'data': dict(reversed(result_dict.items())),
+        'data': dict(result_dict.items()),
         'mode_list': [item[0] for item in mode_list],
         'request_args': {
             'mode': mode,

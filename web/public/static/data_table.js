@@ -26,7 +26,7 @@ document.addEventListener('keydown', function (event) {
     let headName = getCellHeadName(cell);
     let date = /^\d{4}-\d{2}-\d{2}$/.test(headName) ? headName : '';
     let symbol = cell.getAttribute('symbol');
-    if (symbol) {
+    if (symbol && socket) {
       openDialog(symbol, date);
     }
     event.preventDefault();
@@ -90,7 +90,7 @@ function renderGrid(data) {
 
   container.style.overflowX = 'auto';
   container.style.overflowY = 'hidden';
-  container.style.maxHeight = '2400px'; // 设置最大高度，根据实际情况调整
+  container.style.maxHeight = maxRows * 25 + 'px'; // 设置最大高度，根据实际情况调整
   container.style.position = 'relative';
 
   thead.addEventListener('click', function (event) {
