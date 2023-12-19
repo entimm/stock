@@ -133,12 +133,12 @@
     if (['[', ']'].includes(event.key)) {
       let selectIndex = default_show_items.findIndex(item => item.key === symbol);
       selectIndex = (selectIndex === -1) ? 0 : selectIndex;
-      
+
       if (selectIndex !== -1) {
-        const offset = event.key === '=' ? 1 : -1;
-        const targetIndex = (selectIndex + offset) % default_show_items.length;
+        const offset = event.key === ']' ? 1 : -1;
+        const targetIndex = ((selectIndex + offset) % default_show_items.length + default_show_items.length) % default_show_items.length;
         const targetItem = default_show_items[targetIndex];
-        
+
         window.location.href = document.URL.replace(/\d{6}/, targetItem.key);
       }
     }

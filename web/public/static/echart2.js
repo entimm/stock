@@ -39,9 +39,9 @@ function generateChartConfig(data) {
     }],
     tooltip: {
       trigger: 'axis',
-      position: function (pt) {
-        return [pt[0], '10%'];
-      }
+      axisPointer: {
+        type: 'cross'
+      },
     },
   };
 }
