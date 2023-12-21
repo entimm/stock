@@ -8,7 +8,7 @@ import click
 from common.common import TDX_EXPORT_PATH, RAW_V2_PATH
 
 
-def is_recently_created(file_path, threshold_minutes=120):
+def is_recently_created(file_path, threshold_minutes=360):
     creation_time = os.path.getctime(file_path)
     creation_time_datetime = datetime.datetime.fromtimestamp(creation_time)
     current_time = datetime.datetime.now()
