@@ -9,8 +9,8 @@
     }
   })
   chart._chartStore._timeScaleStore.setBarSpaceLimitConfig(0.01, 200)
-  chart.createIndicator('VOL')
-  chart.createIndicator('MACD')
+  chart.createIndicator('VOL', true, {'id': 'VOL-PANEL'})
+  chart.createIndicator('MACD', true, {'id': 'MACD-PANEL'})
   chart.setStyles({
     // 网格线
     grid: {

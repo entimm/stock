@@ -3,8 +3,8 @@ import os
 
 from flask import Blueprint, render_template, request
 
-from common.cmd_utils import get_hfq_kline
-from common.common import RESOURCES_PATH
+from common.common import RESOURCES_PATH, PeriodEnum
+from common.quotes import fetch_local_plus_real
 from common.utils import ticker_name, row_to_kline
 
 blueprint = Blueprint('backtest', __name__)
@@ -23,28 +23,19 @@ def backtest_result_data():
 
 @blueprint.route('/backtest_result')
 def backtest_result():
-    return render_template('backtest_result.html', **{
-        'symbol': request.args.get('symbol', '', type=str)
-    })
-
-
-@blueprint.route('/backtest_result_table')
-def backtest_result_table():
-    return render_template('backtest_result_table.html', **{
-        'symbol': request.args.get('symbol', '', type=str)
-    })
-
-
-@blueprint.route('/backtest_kline_ma')
-def backtest_kline_ma():
     symbol = request.args.get('symbol', '', type=str)
-    result_json_file = os.path.join(RESOURCES_PATH, f'back_test_{symbol}.json' if symbol else 'back_test.json')
-    if not symbol or not os.path.exists(result_json_file):
+    period = request.args.get('period', 'D', type=str)
+    result_json_file = os.path.join(RESOURCES_PATH, f'back_test.json' if symbol else 'back_test.json')
+    kline_list = []
+    if symbol:
+        result_json_file = os.path.join(RESOURCES_PATH, f'back_test_{symbol}.json' if symbol else 'back_test.json')
+
+        df = fetch_local_plus_real(symbol, PeriodEnum[period])
+        kline_list = df.apply(row_to_kline, axis=1).to_list()
+    if not os.path.exists(result_json_file):
         return '没有数据'
     with open(result_json_file, 'r') as file:
         trades = json.load(file)
-    df = get_hfq_kline(symbol)
-    kline_list = df.apply(row_to_kline, axis=1).to_list()
 
     template_var = {
         'kline_list': kline_list,
@@ -59,7 +50,7 @@ def backtest_kline_ma():
         'request_args': request.args.to_dict(),
     }
 
-    return render_template('backtest_kline.html', **template_var)
+    return render_template('backtest_result.html', **template_var)
 
 
 def generate_order(trades, initial_capital=100000):
