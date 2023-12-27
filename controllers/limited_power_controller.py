@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 
 import pandas as pd
 from flask import Blueprint, render_template
@@ -43,8 +44,8 @@ def limited():
             stock_list.append(stock_data)
 
         result_plate_list[date2] = [{'plate_name': name, 'plate_reason': item['plate_reason'], 'stock_list': item['stock_list']} for name, item in plate_dict.items()]
-        result_plate_list[date2] = sorted(result_plate_list[date2], key=custom_sort)
-        result_stock_list[date2] = sorted(stock_list, key=lambda x: -x['m_days_n_boards_boards'])
+        result_plate_list[date2] = sorted(result_plate_list[date2], key=custom_sort_plate)
+        result_stock_list[date2] = sorted(stock_list, key=lambda x: (-x["m_days_n_boards_boards"], datetime.strptime(x["first_limit_up"], "%H:%M:%S")))
 
     template_var = {
         'result_plate_list': dict(reversed(result_plate_list.items())),
@@ -54,7 +55,7 @@ def limited():
     return render_template('limited_power.html', **template_var)
 
 
-def custom_sort(item):
+def custom_sort_plate(item):
     plate_priority = {
         '其他': 1000,
         '公告': 999,
