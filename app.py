@@ -29,6 +29,7 @@ controllers = [
     'line2_controller',
     'backtest_controller',
     'info_controller',
+    'market_mood_controller',
 ]
 
 for controller in controllers:

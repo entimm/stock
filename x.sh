@@ -22,3 +22,9 @@ echo 'download-xuangubao-stock'
 python cmd  download-xuangubao-stock
 echo 'arrange-xuangubao-detail'
 python cmd  arrange-xuangubao-detail
+
+echo 'download-kaipanla-data'
+python cmd download-kaipanla-data
+
+echo 'backtest-trend-monster'
+python cmd backtest-trend-monster
