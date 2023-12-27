@@ -61,7 +61,8 @@ class Strategy:
 
             # 执行卖出计划
             if self.buy_ts and self.is_plan_sell:
-                self.sell(row['date'], row['open'])
+                if self.buy_ts.date() < row['date'].date():
+                    self.sell(row['date'], row['open'])
 
             if (not self.buy_ts) and self.is_plan_buy:
                 # 当天最低价高于基准价就执行买入计划
