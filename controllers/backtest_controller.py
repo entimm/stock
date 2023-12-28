@@ -4,13 +4,12 @@ import os
 from flask import Blueprint, render_template, request
 
 from common.cmd_utils import get_forex_kline
-from common.common import RESOURCES_PATH, PeriodEnum
+from common.common import RESOURCES_PATH, PeriodEnum, FOREX_SYMBOLS
 from common.quotes import fetch_local_plus_real
 from common.utils import ticker_name, row_to_kline
 
 blueprint = Blueprint('backtest', __name__)
 
-forex_symbols = ['XAUUSD']
 
 @blueprint.route('/backtest_result_data')
 def backtest_result_data():
@@ -19,7 +18,7 @@ def backtest_result_data():
     with open(result_json_file, 'r') as file:
         trades = json.load(file)
 
-    if symbol in forex_symbols:
+    if symbol in FOREX_SYMBOLS:
         result_list = generate_order_leverage(trades)
     else:
         result_list = generate_order(trades)
@@ -34,7 +33,7 @@ def backtest_result():
     result_json_file = os.path.join(RESOURCES_PATH, 'backtest', f'back_test_{symbol}.json' if symbol else 'back_test.json')
     kline_list = []
     if symbol:
-        if symbol in forex_symbols:
+        if symbol in FOREX_SYMBOLS:
             df = get_forex_kline(symbol, PeriodEnum[period])
         else:
             df = fetch_local_plus_real(symbol, PeriodEnum[period])

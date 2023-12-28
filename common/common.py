@@ -31,6 +31,8 @@ DEFAULT_SELECT_OPTIONS = config['default_select_options']
 
 YEAR = datetime.datetime.now().year
 
+FOREX_SYMBOLS = ['XAUUSD']
+
 
 class PeriodEnum(Enum):
     F1 = auto()
