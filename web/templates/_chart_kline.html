@@ -47,10 +47,10 @@
         custom: function (args) {
           return [
             {title: 'Time: ', value: args.current.timestamp},
-            {title: 'Open: ', value: args.prev.close.toFixed(2).toString()},
-            {title: 'High: ', value: args.prev.close.toFixed(2).toString()},
-            {title: 'Low: ', value: args.prev.close.toFixed(2).toString()},
-            {title: 'Close: ', value: args.prev.close.toFixed(2).toString()},
+            {title: 'Open: ', value: args.current.open.toFixed(2).toString()},
+            {title: 'High: ', value: args.current.high.toFixed(2).toString()},
+            {title: 'Low: ', value: args.current.low.toFixed(2).toString()},
+            {title: 'Close: ', value: args.current.close.toFixed(2).toString()},
             {title: 'Pct: ', value: ((args.current.close / args.prev.close - 1) * 100).toFixed(2).toString()},
           ];
         },

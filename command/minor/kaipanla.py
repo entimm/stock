@@ -28,7 +28,7 @@ def download_kaipanla_data():
     market_mood_list = {entry["Day"]: entry for entry in data_dict['info']}
 
     cur_day = datetime.now().strftime("%Y-%m-%d")
-    del market_mood_list[cur_day]
+    market_mood_list.pop(cur_day, None)
     for day in list(market_mood_list.keys())[::-1]:
         if day in df.index:
             continue
