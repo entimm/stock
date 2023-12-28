@@ -29,6 +29,8 @@ def chart():
     show_chan = request.args.get('show_chan', 0, type=int)
     socket_token = request.args.get('socket_token', '', type=str)
 
+    limit = request.args.get('n', 0, type=int)
+
     date = request.args.get('date', '', type=str)
 
     if not symbol or not period:
@@ -41,6 +43,10 @@ def chart():
         df = fetch_local_history(date, symbol, period_enum)
     else:
         df = fetch_local_plus_real(symbol, period_enum, req_real)
+
+    if limit:
+        df = df.tail(limit)
+
     df['last_close'] = df['close'].shift(1)
     kline_list = df.apply(row_to_kline, axis=1).to_list()
 
@@ -62,6 +68,7 @@ def chart():
             'show_chan': show_chan,
             'socket_token': socket_token,
             'date': date,
+            'n': limit,
         },
         'indicator_config': config.get('indicator'),
     }
