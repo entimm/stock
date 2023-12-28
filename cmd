@@ -17,6 +17,7 @@ from command.minor.xuangubao import download_xuangubao_plates, download_xuanguba
 from command.mv_raw import mv_raw
 from command.backtest.trend_monster import backtest_trend_monster
 from command.backtest.three_ma import backtest_three_ma
+from command.backtest.three_ma_forex import backtest_three_ma_forex
 
 
 @click.group()
@@ -51,6 +52,7 @@ main.add_command(arrange_xuangubao_detail)
 
 main.add_command(backtest_trend_monster)
 main.add_command(backtest_three_ma)
+main.add_command(backtest_three_ma_forex)
 
 if __name__ == '__main__':
     main()
