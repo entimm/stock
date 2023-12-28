@@ -7,7 +7,6 @@ from numpy import bool_
 
 from common.common import PeriodEnum
 from common.config import config
-from common.price_calculate import pct_change
 from common.quotes import fetch_local_plus_real,fetch_local_history
 from common.utils import ticker_name, row_to_kline
 
@@ -39,7 +38,7 @@ def chart():
         df = fetch_local_history(date, symbol, period_enum)
     else:
         df = fetch_local_plus_real(symbol, period_enum, req_real)
-    df['pct_change'] = round(pct_change(df), 2)
+    df['last_close'] = df['close'].shift(1)
     kline_list = df.apply(row_to_kline, axis=1).to_list()
 
     template_var = {

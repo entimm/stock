@@ -53,6 +53,7 @@
   <script src="/static/third/jquery-3.7.1.min.js"></script>
   <script src="/static/third/materialize.min.js"></script>
   <script>
+    const symbol = '{{ request_args.symbol }}';
     const indicator_ma_config = {{ indicator_config.get('ma') | safe }};
     const indicator_macd_config = {{ indicator_config.get('macd') | safe }};
   </script>
@@ -99,7 +100,6 @@
   </script>
 
   <script>
-    let symbol = '{{ request_args.symbol }}'
     let tooltipStockInfo = document.getElementById('tooltip-stock-info');
     fetch(`/stock_info/${symbol}`).then(response => response.json())
       .then(jsonData => {

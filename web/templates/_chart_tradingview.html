@@ -10,10 +10,28 @@
       low: item.low,
       close: item.close,
       volume: item.volume,
-      pct_change: item.pct_change,
+      last_close: item.last_close,
     }
-    if (item.pct_change >= 9.6) data.color = '#f500ff';
-    if (item.pct_change <= -9.6) data.color = '#00ff2a';
+
+    // 最大涨幅
+    const maxp = symbol.slice(0, 2) in ['68', '30'] ? 0.2 : 0.1;
+    // 涨停色
+    if (item.close >= Math.round(item.last_close * (1 + maxp))) {
+      data.color = '#F500FF';
+    }
+    // 跌停色
+    if (item.close <= Math.round(item.last_close * (1 - maxp))) {
+      data.color = '#00FF2A';
+    }
+    // 炸板-涨
+    if (item.high !== item.close && item.open <= item.close && item.high >= Math.round(item.last_close * (1 + maxp))) {
+      data.color = '#ECAB07';
+    }
+    // 炸板-跌
+    if (item.high !== item.close && item.open > item.close && item.high >= Math.round(item.last_close * (1 + maxp))) {
+      data.color = '#25FFEC';
+    }
+
     return data;
   });
   const chart = LightweightCharts.createChart(document.getElementById('chart'), {
