@@ -84,7 +84,7 @@ def kaipanla_mood():
 
 @click.command()
 def kaipanla_limit_up():
-    for ts in trade_date_list.tail(1000)['date'].to_list()[::-1]:
+    for ts in trade_date_list.tail(100)['date'].to_list():
         day = ts.strftime('%Y-%m-%d')
         file_path = os.path.join(RESOURCES_PATH, 'kaipanla', 'limit_up', f'{day}.csv')
         if os.path.exists(file_path):
@@ -116,7 +116,7 @@ def kaipanla_limit_up():
 
 @click.command()
 def kaipanla_limit_down():
-    for ts in trade_date_list.tail(2000)['date'].to_list()[::-1]:
+    for ts in trade_date_list.tail(100)['date'].to_list():
         day = ts.strftime('%Y-%m-%d')
         file_path = os.path.join(RESOURCES_PATH, 'kaipanla', 'limit_down', f'{day}.csv')
         if os.path.exists(file_path):
