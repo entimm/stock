@@ -3,15 +3,19 @@ from datetime import datetime
 
 import click
 import pandas as pd
+import urllib3
 
 from common.common import RESOURCES_PATH
+from common.quotes import trade_date_list
 from common.utils import send_request
 
 kaipanla_url = 'https://apphis.longhuvip.com/w1/api/index.php'
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 @click.command()
-def download_kaipanla_data():
+def kaipanla_mood():
     result_list = {}
 
     file_path = os.path.join(RESOURCES_PATH, f'kaipanla.csv')
@@ -76,3 +80,81 @@ def download_kaipanla_data():
     df_append = pd.DataFrame(list(result_list.values()))
     df = pd.concat([df.reset_index(), df_append], axis=0)
     df.to_csv(file_path, index=False)
+
+
+@click.command()
+def kaipanla_limit_up():
+    for ts in trade_date_list.tail(1000)['date'].to_list()[::-1]:
+        day = ts.strftime('%Y-%m-%d')
+        file_path = os.path.join(RESOURCES_PATH, 'kaipanla', 'limit_up', f'{day}.csv')
+        if os.path.exists(file_path):
+            continue
+
+        url = '{}?Day={}&Filter=0&FilterGem=0&FilterMotherboard=0&FilterTIB=0&Index={}&Is_st=1&Order=1&PhoneOSNew=2&PidType=1&Type=9&VerSion=5.12.0.9&a=HisDaBanList&apiv=w34&c=HisHomeDingPan&st={}'
+        stock_list = request_kaipanla_daban(url, day, 0, 50)
+        stock_list = [{
+            'symbol': item[0],  # 股票代码
+            'name': item[1],  # 股票名称
+            'limit_ts': item[6],  # 封停时间戳
+            'limit_amount': item[8],  # 封单
+            'const_desc': item[9],  # 连板描述
+            'const_num': item[10],  # 连板数
+            'block': item[11],  # 板块
+            'master_net amount': item[12],  # 主力净额
+            'amount': item[13],  # 成交额
+            'act_turnover': item[14],  # 实际换手
+            'act_flow_amount': item[15],  # 实际流通
+            'reason': item[16],  # 涨停原因
+            'max_limit_amount': item[23],  # 最大封单
+            'last_limit_ts': item[25],  # 最后封停时间戳
+            'together_num': item[27],  # 一起涨停数
+        } for item in stock_list]
+
+        df = pd.json_normalize(stock_list)
+        df.to_csv(file_path, index=False)
+
+
+@click.command()
+def kaipanla_limit_down():
+    for ts in trade_date_list.tail(2000)['date'].to_list()[::-1]:
+        day = ts.strftime('%Y-%m-%d')
+        file_path = os.path.join(RESOURCES_PATH, 'kaipanla', 'limit_down', f'{day}.csv')
+        if os.path.exists(file_path):
+            continue
+
+        url = '{}?Day={}&Filter=0&FilterGem=0&FilterMotherboard=0&FilterTIB=0&Index={}&Is_st=1&Order=1&PhoneOSNew=2&PidType=3&Type=6&VerSion=5.12.0.9&a=HisDaBanList&apiv=w34&c=HisHomeDingPan&st={}'
+        stock_list = request_kaipanla_daban(url, day, 0, 50)
+        stock_list = [{
+            'symbol': item[0],  # 股票代码
+            'name': item[1],  # 股票名称
+            'limit_ts': item[6],  # 封停时间戳
+            'limit_amount': item[8],  # 封单
+            'block': item[11],  # 板块
+            'master_net amount': item[12],  # 主力净额
+            'amount': item[13],  # 成交额
+            'act_turnover': item[14],  # 实际换手
+            'act_flow_amount': item[15],  # 实际流通
+        } for item in stock_list]
+
+        df = pd.json_normalize(stock_list)
+        df.to_csv(file_path, index=False)
+
+
+def request_kaipanla_daban(url_template, day, index, page_size):
+    url = url_template.format(kaipanla_url, day, index, page_size)
+    print(url)
+    data_dict = send_request(url)
+    if data_dict['errcode'] != '0':
+        print(f'HisDaBanList接口请求错误, day={day}')
+        exit()
+
+    data_list = data_dict['list']
+
+    if len(data_dict['list']) == page_size:
+        data_list.extend(request_kaipanla_daban(url_template, day, index + 50, page_size))
+
+    return data_list
+
+
+def parse_kaipanla_daban_item(item):
+    return

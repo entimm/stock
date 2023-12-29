@@ -5,7 +5,7 @@ import click
 import pandas as pd
 
 from common.common import RESOURCES_PATH
-from common.quotes import fetch_local_daily, trade_date_list
+from common.quotes import trade_date_list
 from common.utils import send_request
 from common.xuangubao import row2info
 
@@ -27,6 +27,7 @@ def download_xuangubao_plates():
         if 'items' not in data_dict['data']:
             print('空数据')
             continue
+
         items = data_dict['data']['items']
         df = pd.DataFrame(items, columns=['id', 'name', 'description'])
 
