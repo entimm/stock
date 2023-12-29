@@ -26,6 +26,7 @@ controllers = [
     'turnover_controller',
     'mode_controller',
     'limited_power_controller',
+    'limited_power2_controller',
     'line2_controller',
     'backtest_controller',
     'info_controller',

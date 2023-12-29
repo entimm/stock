@@ -1,0 +1,469 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>涨停动力</title>
+  <link rel="stylesheet" href="/static/data_table.css">
+  <style>
+    .red-dot1::after {
+      background-color: #ff8a80;
+    }
+
+    .red-dot2::after {
+      background-color: #f50057;
+    }
+
+    .red-dot3::after {
+      background-color: #d500f9;
+    }
+
+    .green-dot1::after {
+      background-color: #40c4ff;
+    }
+
+    .green-dot2::after {
+      background-color: #00e676;
+    }
+
+    .green-dot3::after {
+      background-color: #ffee58;
+    }
+
+    #tooltip {
+      color: #f1f8e9;
+      background-color: #5E00B2FF;
+    }
+
+    #tooltip-trend {
+      width: 100%;
+      height: 400px;
+    }
+
+    #tooltip-trend > div {
+      height: 400px;
+      width: 25%;
+    }
+
+    #tooltip-trend > img {
+      height: 400px;
+      width: 25%;
+    }
+
+    #stock-grid {
+      position: fixed;
+      overflow-y: scroll;
+      min-height: 600px;
+      max-height: 600px;
+      width: 100%;
+      left: 0;
+      bottom: 0;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+
+  <div id="grid-container">
+    <table id="main-grid" class="striped centered"></table>
+    <table id="stock-grid" class="striped centered" style="display: none;">
+      <thead>
+      <tr>
+        <th data-k="symbol">股票代码</th>
+        <th data-k="name">股票名称</th>
+        <th data-k="limit_ts">封停时间</th>
+        <th data-k="last_limit_ts">最后封停时间</th>
+        <th data-k="limit_amount">封单</th>
+        <th data-k="const_desc">连板描述</th>
+        <th data-k="const_num">连板数</th>
+        <th data-k="block">板块</th>
+        <th data-k="master_net_amount">主力净额</th>
+        <th data-k="amount">成交额</th>
+        <th data-k="act_turnover">实际换手</th>
+        <th data-k="act_flow_amount">实际流通</th>
+        <th data-k="reason">涨停原因</th>
+        <th data-k="max_limit_amount">最大封单</th>
+        <th data-k="together_num">板块涨停数</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div id="tooltip" style="display:none;"></div>
+    <div id="tooltip-trend" style="display:none;"></div>
+    <div id="stock-container"></div>
+  </div>
+
+  <div class="fixed-action-btn z-depth-5" style="top: 0; right: 10px; height: 40px">
+    <a class="btn-floating btn waves-effect waves-light orange" onclick="switchTable()">
+      切换
+    </a>
+  </div>
+
+{% endblock %}
+{% block footer %}
+  <script src="/static/third/jquery-3.7.1.min.js"></script>
+  <script>
+    let focusMode = 'free';
+    let table = document.getElementById('main-grid');
+    let tooltipTrend = document.getElementById('tooltip-trend');
+    let selectedCell = null;
+    let stockTable = document.getElementById('stock-grid');
+
+    let total_stock_list = {}
+    let stockListInTable = []
+
+    fetch(`/limited_power2_data`).then(response => response.json())
+      .then(dataList => {
+        total_stock_list = dataList;
+        renderGrid(groupDataByReason(total_stock_list));
+      });
+
+    let mode = 'reason'
+
+    function switchTable() {
+      if (mode === 'reason') {
+        renderGrid(groupDataByConstNum(total_stock_list));
+        mode = 'const_num';
+      } else {
+        renderGrid(groupDataByReason(total_stock_list));
+        mode = 'reason';
+      }
+    }
+
+    function groupDataByReason(dataList) {
+      let groupData = {}
+      Object.keys(dataList).reverse().forEach(function (date) {
+        groupData[date] = Object.values(dataList[date].reduce((acc, {reason, symbol}) => {
+          acc[reason] ||= {name: reason, num: 0, stock_list: []};
+          acc[reason].num += 1;
+          acc[reason].stock_list.push(symbol);
+          return acc;
+        }, {}));
+        groupData[date].sort((a, b) => b.num - a.num);
+      });
+
+      return groupData;
+    }
+
+    function groupDataByConstNum(dataList) {
+      let groupData = {}
+      Object.keys(dataList).reverse().forEach(function (date) {
+        groupData[date] = Object.values(dataList[date].reduce((acc, {const_num, symbol}) => {
+          let name = `B${const_num}`
+          acc[name] ||= {name: const_num, num: 0, stock_list: []};
+          acc[name].num += 1;
+          acc[name].stock_list.push(symbol);
+          return acc;
+        }, {}));
+        groupData[date].sort((a, b) => a.name - b.name);
+      });
+
+      console.log(groupData)
+
+      return groupData;
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'Escape') {
+        tooltip.style.display = 'none';
+        tooltipTrend.style.display = 'none';
+        stockTable.style.display = 'none';
+        focusMode = 'free'
+      }
+    });
+
+    function renderGrid(data) {
+      table.innerHTML = '';
+
+      let thead = document.createElement('thead');
+      let headerRow = document.createElement('tr');
+      for (let colName in data) {
+        let headerCell = document.createElement('th');
+        headerCell.textContent = colName;
+        headerRow.appendChild(headerCell);
+      }
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      let tbody = document.createElement('tbody');
+
+      let maxRows = Math.max(...Object.values(data).map(col => col.length));
+      for (let i = 0; i < maxRows; i++) {
+        let row = document.createElement('tr');
+        for (let colName in data) {
+          let cell = document.createElement('td');
+          row.appendChild(cell);
+          renderCell(cell, data[colName][i] || {})
+        }
+        tbody.appendChild(row);
+      }
+      table.appendChild(tbody);
+
+      thead.addEventListener('click', function (event) {
+        if (event.target.tagName === 'TH') {
+          let colName = event.target.textContent;
+
+          stockListInTable = total_stock_list[colName];
+          show_stocks_table();
+        }
+      });
+
+      tbody.addEventListener('click', function (event) {
+        if (event.target.tagName === 'TD') {
+          let cell = event.target;
+          let stock_num = cell.getAttribute('stock_num');
+          if (!stock_num) return;
+          let cellRect = cell.getBoundingClientRect();
+          let clickX = event.clientX - cellRect.left;
+
+          if (clickX < cellRect.width / 2) {
+            highlightCells(cell.textContent);
+          } else {
+            let colName = table.rows[0].cells[event.target.cellIndex].innerHTML;
+            focusMode = 'selected'
+            show_tooltip(cell);
+            setSelectedCell(cell);
+
+            stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.textContent);
+            show_stocks_table();
+          }
+        }
+      });
+      tbody.addEventListener('mouseover', function (event) {
+        if (event.target.tagName === 'TD') {
+          let cell = event.target;
+          let stock_num = cell.getAttribute('stock_num');
+          if (focusMode === 'selected') return;
+          if (!stock_num) return;
+          show_tooltip(cell);
+          setSelectedCell(cell);
+        }
+      });
+    }
+
+    function renderCell(cell, value) {
+      if (Object.entries(value).length === 0) return;
+      cell.textContent = value['name'];
+      cell.setAttribute('stock_num', value['num']);
+      addDotClass(cell, value['num']);
+    }
+
+    function setSelectedCell(cell) {
+      if (selectedCell) {
+        selectedCell.classList.remove('select-cell')
+      }
+      selectedCell = cell
+      cell.classList.add('select-cell')
+    }
+
+    function getRandomColor() {
+      let letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 3; i++) {
+        color += letters[Math.floor(Math.random() * 10)]; // 从0到9中选择暗色
+      }
+      return color;
+    }
+
+    function highlightCells(value) {
+      if (/^\d+$/.test(value)) return;
+      let cells = document.querySelectorAll('td');
+      color = getRandomColor();
+      for (let cell of cells) {
+        if (cell.textContent === value) {
+          if (cell.style.backgroundColor) {
+            cell.style.backgroundColor = "";
+            cell.style.color = '#000';
+          } else {
+            cell.style.backgroundColor = color;
+            cell.style.color = '#fff';
+          }
+        }
+      }
+    }
+
+    function getExchangeCode(symbol) {
+      let exchangeCode = symbol.slice(0, 2);
+
+      if (exchangeCode === "60" || exchangeCode === "68") {
+        return `sh${symbol}`;
+      } else if (exchangeCode === "00" || exchangeCode === "30") {
+        return `sz${symbol}`;
+      } else if (exchangeCode === "43" || exchangeCode === "83" || exchangeCode === "87") {
+        return `bj${symbol}`;
+      } else {
+        return '';
+      }
+    }
+
+    function show_tooltip(cell) {
+      tooltip.textContent = [cell.getAttribute('stock_num')].join(' | ');
+
+      // 计算tooltip的位置
+      let boundingRect = cell.getBoundingClientRect();
+      let tooltipX = boundingRect.right + window.pageXOffset;
+      let tooltipY = boundingRect.bottom + window.pageYOffset - 30;
+
+      tooltip.style.display = 'block';
+      tooltip.style.left = tooltipX + 'px';
+      tooltip.style.top = tooltipY + 'px';
+    }
+
+    function show_tooltip_trend(symbol) {
+      let code = getExchangeCode(`${symbol}`);
+      tooltipTrend.textContent = '';
+      if (!code) {
+        tooltipTrend.style.display = 'none';
+        return
+      }
+
+      let timestamp = new Date().getTime();
+
+      let img1 = document.createElement("img");
+      img1.src = `https://image2.sinajs.cn/newchart/min/n/${code}.gif?t=${timestamp}`;
+      tooltipTrend.appendChild(img1);
+      let img2 = document.createElement("img");
+      img2.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif?t=${timestamp}`;
+      tooltipTrend.appendChild(img2);
+      let img3 = document.createElement("img");
+      img3.src = `https://image2.sinajs.cn/newchart/weekly/n/${code}.gif?t=${timestamp}`;
+      tooltipTrend.appendChild(img3);
+
+      tooltipTrend.classList.add('right-top');
+
+      tooltipTrend.style.display = 'block';
+
+      let infoCardDiv = document.createElement("div");
+      infoCardDiv.classList.add('stock-info', 'card-panel', 'teal');
+      tooltipTrend.prepend(infoCardDiv);
+      fetch(`/stock_info/${symbol}`).then(response => response.json())
+        .then(jsonData => {
+          infoCardDiv.innerHTML = `
+        <div class="card-content compact-content">
+          <p><strong>主题投资:</strong> ${jsonData['主题投资']}</p>
+          <p><strong>主营业务:</strong> ${jsonData['主营业务']}</p>
+          <p><strong>公司亮点:</strong> ${jsonData['公司亮点']}</p>
+          <p><strong>行业:</strong> ${jsonData['行业']}</p>
+          <p><strong>概念:</strong> ${jsonData['概念']}</p>
+          <p><strong>地域:</strong> ${jsonData['地域']}</p>
+          <p><strong>风格:</strong> ${jsonData['风格']}</p>
+          <p><strong>流通市值:</strong> ${jsonData['流通市值']}</p>
+        </div>
+    `;
+        });
+    }
+
+    function addDotClass(element, value) {
+      let num = value
+      const dotClasses = [
+        {'condition': num >= 30, 'className': 'red-dot3'},
+        {'condition': num >= 25, 'className': 'red-dot2'},
+        {'condition': num >= 20, 'className': 'red-dot1'},
+        {'condition': num >= 15, 'className': 'green-dot3'},
+        {'condition': num >= 10, 'className': 'green-dot2'},
+        {'condition': num >= 5, 'className': 'green-dot1'},
+      ];
+      dotClasses.forEach((dotClass) => {
+        if (dotClass.condition) {
+          element.classList.add('dot', dotClass.className);
+        }
+      });
+    }
+
+    function show_stocks_table() {
+      stockTable.style.display = 'block';
+      let tbody = stockTable.getElementsByTagName('tbody')[0];
+      tbody.innerHTML = '';
+      stockListInTable.forEach(function (jsonData) {
+        const tr = document.createElement('tr')
+        tr.innerHTML = `
+          <td>${jsonData['symbol']}</td>
+          <td>${jsonData['name']}</td>
+          <td>${formatTimestamp(jsonData['limit_ts'])}</td>
+          <td>${formatTimestamp(jsonData['last_limit_ts'])}</td>
+          <td>${(jsonData['limit_amount'] / 10 ** 8).toFixed(2)}亿</td>
+          <td>${jsonData['const_desc']}</td>
+          <td>${jsonData['const_num']}</td>
+          <td>${jsonData['block']}</td>
+          <td>${(jsonData['master_net_amount'] / 10 ** 8).toFixed(2)}亿</td>
+          <td>${(jsonData['amount'] / 10 ** 8).toFixed(2)}亿</td>
+          <td>${jsonData['act_turnover']}%</td>
+          <td>${(jsonData['act_flow_amount'] / 10 ** 8).toFixed(2)}亿</td>
+          <td>${jsonData['reason']}</td>
+          <td>${(jsonData['max_limit_amount'] / 10 ** 8).toFixed(2)}亿</td>
+          <td>${jsonData['together_num']}</td>
+      `;
+        tbody.appendChild(tr);
+        $(tr).hover(function () {
+          show_tooltip_trend(jsonData['symbol'])
+        });
+        $(stockTable).mouseleave(function () {
+          tooltipTrend.style.display = 'none';
+        });
+      });
+    }
+
+    const sortingOrder = {};
+    stockTable.getElementsByTagName('thead')[0].addEventListener('click', function (event) {
+      if (event.target.tagName === 'TH') {
+        let colName = event.target.getAttribute('data-k');
+        sortingOrder[colName] = sortingOrder[colName] === 'asc' ? 'desc' : 'asc';
+        stockListInTable.sort(function (a, b) {
+          const sortOrder = sortingOrder[colName] === 'asc' ? 1 : -1;
+          return sortOrder * (a[colName] - b[colName]);
+        });
+        show_stocks_table();
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'ArrowUp' || event.code === 'ArrowDown' || event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
+        let cell = getAdjacentCell(selectedCell, event.code);
+        if (cell) {
+          let colName = table.rows[0].cells[cell.cellIndex].innerHTML;
+          focusMode = 'selected'
+          show_tooltip(cell);
+          setSelectedCell(cell);
+
+          stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.textContent);
+          show_stocks_table();
+        }
+        event.preventDefault();
+      }
+    });
+
+    function getAdjacentCell(cell, direction) {
+      if (!cell) return;
+      let row = cell.parentNode.rowIndex;
+      let col = cell.cellIndex;
+
+      let numRows = table.rows.length;
+      let numCols = table.rows[0].cells.length;
+
+      switch (direction) {
+        case "ArrowUp":
+          return row > 0 ? table.rows[row - 1].cells[col] : null;
+        case "ArrowRight":
+          return col < numCols - 1 ? table.rows[row].cells[col + 1] : null;
+        case "ArrowDown":
+          return row < numRows - 1 ? table.rows[row + 1].cells[col] : null;
+        case "ArrowLeft":
+          return col > 0 ? table.rows[row].cells[col - 1] : null;
+        default:
+          return null;
+      }
+    }
+
+    function formatTimestamp(timestamp) {
+      var date = new Date(timestamp * 1000);
+
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var seconds = date.getSeconds();
+
+      hours = (hours < 10) ? '0' + hours : hours;
+      minutes = (minutes < 10) ? '0' + minutes : minutes;
+      seconds = (seconds < 10) ? '0' + seconds : seconds;
+
+      return hours + ':' + minutes + ':' + seconds;
+    }
+  </script>
+{% endblock %}

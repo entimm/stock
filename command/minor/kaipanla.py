@@ -100,7 +100,7 @@ def kaipanla_limit_up():
             'const_desc': item[9],  # 连板描述
             'const_num': item[10],  # 连板数
             'block': item[11],  # 板块
-            'master_net amount': item[12],  # 主力净额
+            'master_net_amount': item[12],  # 主力净额
             'amount': item[13],  # 成交额
             'act_turnover': item[14],  # 实际换手
             'act_flow_amount': item[15],  # 实际流通
@@ -130,7 +130,7 @@ def kaipanla_limit_down():
             'limit_ts': item[6],  # 封停时间戳
             'limit_amount': item[8],  # 封单
             'block': item[11],  # 板块
-            'master_net amount': item[12],  # 主力净额
+            'master_net_amount': item[12],  # 主力净额
             'amount': item[13],  # 成交额
             'act_turnover': item[14],  # 实际换手
             'act_flow_amount': item[15],  # 实际流通
