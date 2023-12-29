@@ -95,14 +95,13 @@ class Strategy:
             if not self.lower_fractal:
                 self.lower_fractal = fractal
 
+            if self.lower_fractal.fractal_value > fractal.fractal_value:
+                self.lower_fractal = fractal
+
             # 死叉卖，维护基准价格
             if not self.buy_ts and (not row['cross']) and self.can_buy(row):
                 self.is_plan_buy = True
-                self.buy_base_price = fractal.fractal_value
-                if self.lower_fractal.fractal_value < fractal.fractal_value:
-                    self.buy_base_price = self.lower_fractal.fractal_value
-                else:
-                    self.lower_fractal = fractal
+                self.buy_base_price = self.lower_fractal.fractal_value
 
         if self.buy_ts:
             # 金叉后遇到顶分型
