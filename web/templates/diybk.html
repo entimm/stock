@@ -35,11 +35,12 @@
         {'condition': price <= -9.6, 'className': 'green-dot2'},
         {'condition': price <= -5, 'className': 'green-dot1'},
       ];
-      dotClasses.forEach((dotClass) => {
-        if (dotClass.condition) {
-          element.classList.add('dot', dotClass.className);
+      for (dotClass in dotClasses) {
+        if (dotClasses[dotClass].condition) {
+          element.classList.add('dot', dotClasses[dotClass].className);
+          return
         }
-      });
+      }
     }
 
     document.querySelectorAll('#grid th').forEach(function (header) {

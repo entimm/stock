@@ -278,11 +278,12 @@
         {'condition': num >= 10, 'className': 'green-dot2'},
         {'condition': num >= 5, 'className': 'green-dot1'},
       ];
-      dotClasses.forEach((dotClass) => {
-        if (dotClass.condition) {
-          element.classList.add('dot', dotClass.className);
+      for (dotClass in dotClasses) {
+        if (dotClasses[dotClass].condition) {
+          element.classList.add('dot', dotClasses[dotClass].className);
+          return
         }
-      });
+      }
     }
 
     function show_stocks(plate_name, colName) {
