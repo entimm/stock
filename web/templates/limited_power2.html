@@ -1,6 +1,6 @@
 {% extends '_layout.html' %}
 {% block head %}
-  <title>涨停动力</title>
+  <title>连板梯队</title>
   <link rel="stylesheet" href="/static/data_table.css">
   <style>
     .red-dot1::after {
@@ -47,14 +47,37 @@
       width: 25%;
     }
 
+    #main-grid td span {
+      font-style: italic;
+      font-size: 8px;
+      color: #b0b080;
+    }
+
     #stock-grid {
       position: fixed;
       overflow-y: scroll;
       min-height: 600px;
       max-height: 600px;
-      width: 100%;
-      left: 0;
       bottom: 0;
+      background-color: rgb(238, 239, 255);
+      transform: translateX(-50%);
+      left: 50%;
+    }
+
+    #stock-grid tr:hover {
+      background-color: rgba(0, 139, 125, 0.5);
+    }
+
+    #main-grid tr:nth-child(3) {
+      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
+    }
+
+    #main-grid tr:nth-child(6) {
+      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
+    }
+
+    #main-grid tr:nth-child(9) {
+      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
     }
   </style>
 {% endblock %}
@@ -62,7 +85,7 @@
 
   <div id="grid-container">
     <table id="main-grid" class="striped centered"></table>
-    <table id="stock-grid" class="striped centered" style="display: none;">
+    <table id="stock-grid" class="striped centered z-depth-5" style="display: none;">
       <thead>
       <tr>
         <th data-k="symbol">股票代码</th>
@@ -86,7 +109,6 @@
     </table>
     <div id="tooltip" style="display:none;"></div>
     <div id="tooltip-trend" style="display:none;"></div>
-    <div id="stock-container"></div>
   </div>
 
   <div class="fixed-action-btn z-depth-5" style="top: 0; right: 10px; height: 40px">
@@ -111,28 +133,27 @@
     fetch(`/limited_power2_data`).then(response => response.json())
       .then(dataList => {
         total_stock_list = dataList;
-        renderGrid(groupDataByReason(total_stock_list));
+        renderGrid(groupDataByHeight(total_stock_list));
       });
 
     let mode = 'reason'
 
     function switchTable() {
       if (mode === 'reason') {
-        renderGrid(groupDataByConstNum(total_stock_list));
-        mode = 'const_num';
+        renderGrid(groupDataByHeight(total_stock_list));
       } else {
         renderGrid(groupDataByReason(total_stock_list));
-        mode = 'reason';
       }
     }
 
     function groupDataByReason(dataList) {
+      mode = 'reason';
       let groupData = {}
       Object.keys(dataList).reverse().forEach(function (date) {
-        groupData[date] = Object.values(dataList[date].reduce((acc, {reason, symbol}) => {
-          acc[reason] ||= {name: reason, num: 0, stock_list: []};
+        groupData[date] = Object.values(dataList[date].reduce((acc, {reason, name}) => {
+          acc[reason] ||= {name: reason, content: reason, num: 0, stock_list: []};
           acc[reason].num += 1;
-          acc[reason].stock_list.push(symbol);
+          acc[reason].stock_list.push(name);
           return acc;
         }, {}));
         groupData[date].sort((a, b) => b.num - a.num);
@@ -141,16 +162,33 @@
       return groupData;
     }
 
-    function groupDataByConstNum(dataList) {
+    function groupDataByHeight(dataList) {
+      mode = 'const_num';
       let groupData = {}
+
       Object.keys(dataList).reverse().forEach(function (date) {
-        groupData[date] = Object.values(dataList[date].reduce((acc, {const_num, symbol}) => {
-          let name = `B${const_num}`
-          acc[name] ||= {name: const_num, num: 0, stock_list: []};
-          acc[name].num += 1;
-          acc[name].stock_list.push(symbol);
+        let maxHeight = 0;
+        let tmpList = dataList[date].reduce((acc, {const_num, name}) => {
+          maxHeight = Math.max(maxHeight, const_num);
+          acc[const_num] ||= {name: const_num, content: 0, num: 0, stock_list: []};
+          acc[const_num].num += 1;
+          acc[const_num].stock_list.push(name);
           return acc;
-        }, {}));
+        }, {});
+        for (i = 1; i <= maxHeight + 1; i++) {
+          if (!tmpList[i]) {
+            tmpList[i] = {name: i, content: `<span>${i}<span>`, num: 0, stock_list: []};
+          } else {
+            tmpList[i].content = tmpList[i].num;
+            if (tmpList[i].num <= 3) {
+              tmpList[i].content = tmpList[i].stock_list.join('<br/>')
+            }
+          }
+        }
+        if (0 in tmpList) {
+          delete tmpList[0];
+        }
+        groupData[date] = Object.values(tmpList);
         groupData[date].sort((a, b) => a.name - b.name);
       });
 
@@ -213,14 +251,14 @@
           let clickX = event.clientX - cellRect.left;
 
           if (clickX < cellRect.width / 2) {
-            highlightCells(cell.textContent);
+            highlightCells(cell.getAttribute('name'));
           } else {
             let colName = table.rows[0].cells[event.target.cellIndex].innerHTML;
             focusMode = 'selected'
             show_tooltip(cell);
             setSelectedCell(cell);
 
-            stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.textContent);
+            stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.getAttribute('name'));
             show_stocks_table();
           }
         }
@@ -239,7 +277,8 @@
 
     function renderCell(cell, value) {
       if (Object.entries(value).length === 0) return;
-      cell.textContent = value['name'];
+      cell.innerHTML = value['content'];
+      cell.setAttribute('name', value['name']);
       cell.setAttribute('stock_num', value['num']);
       addDotClass(cell, value['num']);
     }
@@ -262,11 +301,10 @@
     }
 
     function highlightCells(value) {
-      if (/^\d+$/.test(value)) return;
       let cells = document.querySelectorAll('td');
       color = getRandomColor();
       for (let cell of cells) {
-        if (cell.textContent === value) {
+        if (cell.getAttribute('name') === value) {
           if (cell.style.backgroundColor) {
             cell.style.backgroundColor = "";
             cell.style.color = '#000';
@@ -377,7 +415,7 @@
         tr.innerHTML = `
           <td>${jsonData['symbol']}</td>
           <td>${jsonData['name']}</td>
-          <td>${formatTimestamp(jsonData['limit_ts'])}</td>
+          <td data-v=${jsonData['limit_ts']}>${formatTimestamp(jsonData['limit_ts'])}</td>
           <td>${formatTimestamp(jsonData['last_limit_ts'])}</td>
           <td>${(jsonData['limit_amount'] / 10 ** 8).toFixed(2)}亿</td>
           <td>${jsonData['const_desc']}</td>
@@ -408,9 +446,25 @@
         sortingOrder[colName] = sortingOrder[colName] === 'asc' ? 'desc' : 'asc';
         stockListInTable.sort(function (a, b) {
           const sortOrder = sortingOrder[colName] === 'asc' ? 1 : -1;
-          return sortOrder * (a[colName] - b[colName]);
+          if (isNaN(a[colName]) || isNaN(b[colName])) {
+            return sortOrder * a[colName].localeCompare(b[colName]);
+          } else {
+            // 如果是数字则直接比较
+            return sortOrder * (a[colName] - b[colName]);
+          }
         });
         show_stocks_table();
+      }
+    });
+
+    stockTable.getElementsByTagName('tbody')[0].addEventListener('click', (event) => {
+      if (event.target.tagName === 'TD') {
+        let tr = event.target.parentElement;
+        let trList = tr.querySelectorAll('td');
+        let symbol = trList[0].textContent;
+        let ts = trList[2].getAttribute('data-v');
+        let date = getFormattedDate(ts);
+        window.open(`/chart?date=${date}&period=F5&symbol=${symbol}`, "_blank");
       }
     });
   </script>
@@ -425,7 +479,7 @@
           show_tooltip(cell);
           setSelectedCell(cell);
 
-          stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.textContent);
+          stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.getAttribute('name'));
           show_stocks_table();
         }
         event.preventDefault();
@@ -466,6 +520,16 @@
       seconds = (seconds < 10) ? '0' + seconds : seconds;
 
       return hours + ':' + minutes + ':' + seconds;
+    }
+
+    function getFormattedDate(timestamp) {
+      const date = new Date(timestamp * 1000);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
     }
   </script>
 {% endblock %}
