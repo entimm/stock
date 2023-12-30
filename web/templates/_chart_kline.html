@@ -103,70 +103,77 @@
   window.addEventListener('resize', resizeChart);
   window.addEventListener('load', resizeChart);
 
+////////////////////
+
   {% if request_args.date %}
     (function () {
       let date = '{{ request_args.date }}';
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
-      let dateRage = findEndPointByDate(date);
-      chart.createOverlay({
-        name: 'verticalSegment',
-        points: [{timestamp: dateRage.start, value: -9999}, {timestamp: dateRage.start, value: 9999}],
-        groupId: 'range',
-        lock: true,
-        styles: {
-          line: {
-            color: 'rgba(241,4,4,0.25)',
-            style: 'solid',
-            size: 3,
-            dashedValue: [3, 6],
-            zLevel: 0,
-          }
-        },
-      });
-      chart.createOverlay({
-        name: 'verticalSegment',
-        points: [{timestamp: dateRage.end, value: -9999}, {timestamp: dateRage.end, value: 9999}],
-        groupId: 'range',
-        lock: true,
-        styles: {
-          line: {
-            color: 'rgba(0,255,119,0.25)',
-            style: 'solid',
-            size: 3,
-            dashedValue: [3, 6],
-            zLevel: 0,
-          }
-        },
-      });
-
-      let index = kline_list.findIndex(item => timeCompare(dateRage.end, item.timestamp));
-      index = index === -1 ? kline_list.length : index;
-      chart.scrollToDataIndex(Math.min(index + 160, kline_list.length));
+      scrollToDateRange(date);
     })();
-
-    function findEndPointByDate(targetDate) {
-      const result = {start: null, end: null};
-
-      for (const kline of kline_list) {
-        if (kline.timestamp.startsWith(targetDate)) {
-          if (!result.start) {
-            result.start = kline.timestamp;
-          }
-          result.end = kline.timestamp;
-        }
-      }
-
-      return result;
-    }
-
-    function timeCompare(timeString1, timeString2) {
-      let time1 = new Date(timeString1);
-      let time2 = new Date(timeString2);
-
-      return time2 >= time1;
-    }
   {% endif %}
 
+  function scrollToDateRange(date) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+    let dateRage = findEndPointByDate(date);
+    chart.createOverlay({
+      name: 'verticalSegment',
+      points: [{timestamp: dateRage.start, value: -9999}, {timestamp: dateRage.start, value: 9999}],
+      groupId: 'range',
+      lock: true,
+      styles: {
+        line: {
+          color: 'rgba(241,4,4,0.25)',
+          style: 'solid',
+          size: 3,
+          dashedValue: [3, 6],
+          zLevel: 0,
+        }
+      },
+    });
+    chart.createOverlay({
+      name: 'verticalSegment',
+      points: [{timestamp: dateRage.end, value: -9999}, {timestamp: dateRage.end, value: 9999}],
+      groupId: 'range',
+      lock: true,
+      styles: {
+        line: {
+          color: 'rgba(0,255,119,0.25)',
+          style: 'solid',
+          size: 3,
+          dashedValue: [3, 6],
+          zLevel: 0,
+        }
+      },
+    });
+
+    let index = kline_list.findIndex(item => timeCompare(dateRage.end, item.timestamp));
+    index = index === -1 ? kline_list.length : index;
+    chart.scrollToDataIndex(Math.min(index + 160, kline_list.length));
+  }
+
+  function findEndPointByDate(targetDate) {
+    const result = {start: null, end: null};
+
+    for (const kline of kline_list) {
+      if (kline.timestamp.startsWith(targetDate)) {
+        if (!result.start) {
+          result.start = kline.timestamp;
+        }
+        result.end = kline.timestamp;
+      }
+    }
+
+    return result;
+  }
+
+  function timeCompare(timeString1, timeString2) {
+    let time1 = new Date(timeString1);
+    let time2 = new Date(timeString2);
+
+    return time2 >= time1;
+  }
+
+////////////////////
 
   let verticalGapKlines = {};
   {% if request_args is defined and request_args.period in ['F1', 'F5', 'F15', 'F30'] %}
@@ -203,6 +210,7 @@
     });
   });
 
+////////////////////
 
   const periodZoomData = {
     'F1': 240,
