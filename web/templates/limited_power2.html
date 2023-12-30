@@ -168,11 +168,14 @@
 
       Object.keys(dataList).reverse().forEach(function (date) {
         let maxHeight = 0;
-        let tmpList = dataList[date].reduce((acc, {const_num, name}) => {
+        let tmpList = dataList[date].reduce((acc, {const_num, name, last_limit_ts}) => {
           maxHeight = Math.max(maxHeight, const_num);
-          acc[const_num] ||= {name: const_num, content: 0, num: 0, stock_list: []};
+          acc[const_num] ||= {name: const_num, content: 0, num: 0, stock_list: [], lock_stock_list: []};
           acc[const_num].num += 1;
           acc[const_num].stock_list.push(name);
+          if (formatTimestamp(last_limit_ts).slice(0, 5) === '09:25') {
+            acc[const_num].lock_stock_list.push(name);
+          }
           return acc;
         }, {});
         for (i = 1; i <= maxHeight + 1; i++) {
@@ -181,7 +184,12 @@
           } else {
             tmpList[i].content = tmpList[i].num;
             if (tmpList[i].num <= 3) {
-              tmpList[i].content = tmpList[i].stock_list.join('<br/>')
+              tmpList[i].content = tmpList[i].stock_list.map(function (item) {
+                if (tmpList[i].lock_stock_list.includes(item)) {
+                  return `_${item}_`;
+                }
+                return item;
+              }).join('<br/>')
             }
           }
         }
@@ -191,8 +199,6 @@
         groupData[date] = Object.values(tmpList);
         groupData[date].sort((a, b) => a.name - b.name);
       });
-
-      console.log(groupData)
 
       return groupData;
     }
