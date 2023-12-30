@@ -70,4 +70,4 @@ def handle_client2_message(message):
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8888))
-    socketio.run(app, debug=os.environ.get("DEBUG", True), host='0.0.0.0', port=port)
+    socketio.run(app, debug=os.environ.get("DEBUG", True), host='0.0.0.0', port=port, allow_unsafe_werkzeug=True)
