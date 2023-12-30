@@ -37,6 +37,8 @@ class Strategy:
 
         self.order_list = []
 
+        self.last_buy_ma5 = None
+
     def run(self, symbol, period_enum: PeriodEnum):
         self.symbol = symbol
         self.period_enum = period_enum
@@ -46,6 +48,7 @@ class Strategy:
         df['ma5'] = ma(df, 5)
         df['ma15'] = ma(df, 15)
         df['ma60'] = ma(df, 60)
+        df['ma60_angle'] = ma_angle(df, 'ma60')
         df['ma432'] = ma(df, 432)
         df['ma432_angle'] = ma_angle(df, 'ma432')
         df['cross'] = df['ma15'] > df['ma60']
@@ -83,6 +86,7 @@ class Strategy:
     def make_plan(self, row, fractal):
         # 金叉后底分型重置
         if row['cross']:
+            self.last_buy_ma5 = None
             self.lower_fractal = None
 
         if fractal and fractal.fractal_type == FractalType.BOTTOM:
@@ -94,12 +98,14 @@ class Strategy:
 
             # 死叉卖，维护基准价格
             if not self.buy_ts and (not row['cross']) and self.can_buy(row):
-                self.is_plan_buy = True
-                self.buy_base_price = self.lower_fractal.fractal_value
+                if self.last_buy_ma5 is None or (self.last_buy_ma5 is not None and row['ma5'] >= self.last_buy_ma5):
+                    self.is_plan_buy = True
+                    self.buy_base_price = self.lower_fractal.fractal_value
+                self.last_buy_ma5 = row['ma5']
 
         if self.buy_ts:
             # 金叉后遇到顶分型
-            if row['cross'] and row['high'] < row['ma15']:
+            if row['cross'] and row['high'] < row['ma60']:
                 self.is_plan_sell = True
                 self.sell_flag = 1
             # 60均线跌破432均线
@@ -113,7 +119,7 @@ class Strategy:
 
     @staticmethod
     def can_buy(row):
-        return row['ma432_angle'] > 0 and row['ma60'] >= row['ma432'] and row['low'] >= row['ma5']
+        return row['ma432_angle'] > 0 and row['ma60_angle'] > 0.06 and row['ma60'] >= row['ma432'] and row['ma15'] >= row['ma432']
 
     @staticmethod
     def can_sell1(row):
@@ -124,6 +130,8 @@ class Strategy:
         return row['ma432_angle'] < 0
 
     def buy(self, ts, price):
+        if (1 - self.buy_base_price / price) * 100 > 0.8:
+            return
         buy_info = {
             'date': ts.strftime('%Y-%m-%d %H:%M:%S'),
             'symbol': self.symbol,

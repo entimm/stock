@@ -48,6 +48,7 @@ def backtest_result():
         'backtest_trades': trades,
         'indicator_config': {
             'ma': [
+                {'period': 5, 'color': 'red', 'size': 1},
                 {'period': 15, 'color': '#930606', 'size': 1},
                 {'period': 60, 'color': '#ECAB07', 'size': 1},
                 {'period': 432, 'color': '#EF15DE', 'size': 1},
@@ -107,7 +108,7 @@ def generate_order(trades, initial_capital=100000):
 
 def generate_order_leverage(trades, initial_capital=100000):
     leverage = 150
-    bet_percentage = 0.01
+    bet_percentage = 0.1
 
     order = {}
     capital = initial_capital
