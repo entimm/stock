@@ -22,7 +22,9 @@ def backtest_three_ma_forex(period: str, symbol):
 
 class Strategy:
     def __init__(self):
+        self.symbol = None
         self.period_enum = None
+
         self.bar_union_manager = BarUnionManager()
 
         self.is_plan_sell = False
@@ -40,52 +42,71 @@ class Strategy:
         self.last_buy_ma5 = None
 
     def run(self, symbol, period_enum: PeriodEnum):
+        """
+        主控制
+        """
         self.symbol = symbol
         self.period_enum = period_enum
 
-        df = get_forex_kline(self.symbol, self.period_enum)
+        df = self.prepare_data_df()
 
-        df['ma5'] = ma(df, 5)
-        df['ma15'] = ma(df, 15)
-        df['ma60'] = ma(df, 60)
-        df['ma60_angle'] = ma_angle(df, 'ma60')
-        df['ma432'] = ma(df, 432)
-        df['ma432_angle'] = ma_angle(df, 'ma432')
-        df['cross'] = df['ma15'] > df['ma60']
-        df = df.reset_index(names='date')
-        df['time'] = df['date'].dt.strftime('%Y-%m-%d %H:%M:%S')
         for index, row in df.iterrows():
             row = row.to_dict()
-
-            # 执行卖出计划
-            if self.buy_ts and self.is_plan_sell:
-                self.sell(row['date'], row['open'])
-
-            if (not self.buy_ts) and self.is_plan_buy:
-                # 当天最低价高于基准价就执行买入计划
-                if row['low'] >= self.buy_base_price:
-                    self.buy(row['date'], row['close'])
-                    self.sell_base_price = self.buy_base_price
-
-            if self.buy_ts:
-                # 盘中跌破基准价就卖出
-                if row['low'] < self.sell_base_price:
-                    self.sell(row['date'], min(self.sell_base_price, row['high']))
-
-            # 做计划
-            fractal = self.bar_union_manager.add_bar(Bar(index, Kline(row)))
-            self.make_plan(row, fractal)
+            self.run_step(index, row)
 
         # 结果输出
         result_json_file = os.path.join(RESOURCES_PATH, 'backtest', f'back_test_{self.symbol}.json')
         with open(result_json_file, 'w') as json_file:
             json.dump(self.order_list, json_file)
 
-        print(f'打开浏览器查看回测结果 http://127.0.0.1:8888/backtest_result?symbol={self.symbol}&period={self.period_enum.name}')
+        print('打开浏览器查看回测结果 http://127.0.0.1:8888/backtest_result?symbol={}&period={}'.format(self.symbol, self.period_enum.name))
+
+    def prepare_data_df(self):
+        """
+        准备数据
+        """
+        df = get_forex_kline(self.symbol, self.period_enum)
+
+        df['ma5'] = ma(df, 5)
+        df['ma15'] = ma(df, 15)
+        df['ma15_angle'] = ma_angle(df, 'ma15')
+        df['ma60'] = ma(df, 60)
+        df['ma60_angle'] = ma_angle(df, 'ma60')
+        df['ma432'] = ma(df, 432)
+        df['ma432_angle'] = ma_angle(df, 'ma432')
+        df['cross_ma15_ma60'] = df['ma15'] > df['ma60']
+
+        df = df.reset_index(names='date')
+        df['time'] = df['date'].dt.strftime('%Y-%m-%d %H:%M:%S')
+
+        return df
+
+    def run_step(self, index, row):
+        """
+        逐根K线判断
+        """
+        # 执行卖出计划
+        if self.buy_ts and self.is_plan_sell:
+            self.sell(row['date'], row['open'])
+
+        if (not self.buy_ts) and self.is_plan_buy:
+            # 当天最低价高于基准价就执行买入计划
+            if row['low'] >= self.buy_base_price:
+                self.buy(row['date'], row['close'])
+                self.sell_base_price = self.buy_base_price
+
+        if self.buy_ts:
+            # 盘中跌破基准价就卖出
+            if row['low'] < self.sell_base_price:
+                self.sell(row['date'], min(self.sell_base_price, row['high']))
+
+        # 做计划
+        fractal = self.bar_union_manager.add_bar(Bar(index, Kline(row)))
+        self.make_plan(row, fractal)
 
     def make_plan(self, row, fractal):
         # 金叉后底分型重置
-        if row['cross']:
+        if row['cross_ma15_ma60']:
             self.last_buy_ma5 = None
             self.lower_fractal = None
 
@@ -97,15 +118,15 @@ class Strategy:
                 self.lower_fractal = fractal
 
             # 死叉卖，维护基准价格
-            if not self.buy_ts and (not row['cross']) and self.can_buy(row):
-                if self.last_buy_ma5 is None or (self.last_buy_ma5 is not None and row['ma5'] >= self.last_buy_ma5):
+            if not self.buy_ts and self.can_buy(row):
+                if self.can_buy1(row):
                     self.is_plan_buy = True
                     self.buy_base_price = self.lower_fractal.fractal_value
                 self.last_buy_ma5 = row['ma5']
 
         if self.buy_ts:
             # 金叉后遇到顶分型
-            if row['cross'] and row['high'] < row['ma60']:
+            if self.can_sell(row):
                 self.is_plan_sell = True
                 self.sell_flag = 1
             # 60均线跌破432均线
@@ -119,19 +140,40 @@ class Strategy:
 
     @staticmethod
     def can_buy(row):
-        return row['ma432_angle'] > 0 and row['ma60_angle'] > 0.06 and row['ma60'] >= row['ma432'] and row['ma15'] >= row['ma432']
+        # 基础买入必要条件
+        return (not row['cross_ma15_ma60']) \
+            and row['ma432_angle'] > 0 \
+            and row['ma60_angle'] > 0.06 \
+            and row['ma15_angle'] > 0.1 \
+            and row['ma60'] >= row['ma432'] \
+            and row['ma15'] >= row['ma432']
+
+    def can_buy1(self, row):
+        # 买入必要条件1
+        return self.last_buy_ma5 is None \
+            or (self.last_buy_ma5 is not None and row['ma5'] >= self.last_buy_ma5)
+
+    @staticmethod
+    def can_sell(row):
+        # 卖出时机
+        return row['cross_ma15_ma60'] \
+            and row['high'] < row['ma60']
 
     @staticmethod
     def can_sell1(row):
+        # 卖出时机1
         return row['ma60'] < row['ma432']
 
     @staticmethod
     def can_sell2(row):
+        # 卖出时机2
         return row['ma432_angle'] < 0
 
     def buy(self, ts, price):
+        # 损大小判断
         if (1 - self.buy_base_price / price) * 100 > 0.8:
             return
+
         buy_info = {
             'date': ts.strftime('%Y-%m-%d %H:%M:%S'),
             'symbol': self.symbol,

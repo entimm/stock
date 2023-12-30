@@ -92,17 +92,17 @@
         <th data-k="name">股票名称</th>
         <th data-k="limit_ts">封停时间</th>
         <th data-k="last_limit_ts">最后封停时间</th>
-        <th data-k="limit_amount">封单</th>
         <th data-k="const_desc">连板描述</th>
         <th data-k="const_num">连板数</th>
-        <th data-k="block">板块</th>
         <th data-k="master_net_amount">主力净额</th>
         <th data-k="amount">成交额</th>
         <th data-k="act_turnover">实际换手</th>
         <th data-k="act_flow_amount">实际流通</th>
+        <th data-k="block">板块</th>
         <th data-k="reason">涨停原因</th>
+        <th data-k="limit_amount">封单</th>
         <th data-k="max_limit_amount">最大封单</th>
-        <th data-k="together_num">板块涨停数</th>
+        <th data-k="together_num">同涨停数</th>
       </tr>
       </thead>
       <tbody></tbody>
@@ -423,15 +423,15 @@
           <td>${jsonData['name']}</td>
           <td data-v=${jsonData['limit_ts']}>${formatTimestamp(jsonData['limit_ts'])}</td>
           <td>${formatTimestamp(jsonData['last_limit_ts'])}</td>
-          <td>${(jsonData['limit_amount'] / 10 ** 8).toFixed(2)}亿</td>
           <td>${jsonData['const_desc']}</td>
           <td>${jsonData['const_num']}</td>
-          <td>${jsonData['block']}</td>
           <td>${(jsonData['master_net_amount'] / 10 ** 8).toFixed(2)}亿</td>
           <td>${(jsonData['amount'] / 10 ** 8).toFixed(2)}亿</td>
           <td>${jsonData['act_turnover']}%</td>
           <td>${(jsonData['act_flow_amount'] / 10 ** 8).toFixed(2)}亿</td>
+          <td>${jsonData['block']}</td>
           <td>${jsonData['reason']}</td>
+          <td>${(jsonData['limit_amount'] / 10 ** 8).toFixed(2)}亿</td>
           <td>${(jsonData['max_limit_amount'] / 10 ** 8).toFixed(2)}亿</td>
           <td>${jsonData['together_num']}</td>
       `;
