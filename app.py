@@ -15,26 +15,27 @@ cache.init_app(app)
 socketio = SocketIO(app)
 
 controllers = [
-    'index_controller',
-    'chart_controller',
-    'line_controller',
-    'table_controller',
-    'diybk_controller',
-    'limited_controller',
-    'ipo_controller',
-    'north_funds_controller',
-    'turnover_controller',
-    'mode_controller',
-    'limited_power_controller',
-    'limited_power2_controller',
-    'line2_controller',
-    'backtest_controller',
-    'info_controller',
-    'market_mood_controller',
+    'index',
+    'chart',
+    'line',
+    'table',
+    'diybk',
+    'limited',
+    'ipo',
+    'north_funds',
+    'turnover',
+    'mode',
+    'limited_power',
+    'limited_power2',
+    'line2',
+    'backtest',
+    'info',
+    'market_mood',
+    'trade_history',
 ]
 
 for controller in controllers:
-    blueprint = __import__(f'controllers.{controller}', fromlist=['blueprint']).blueprint
+    blueprint = __import__(f'controllers.{controller}_controller', fromlist=['blueprint']).blueprint
     app.register_blueprint(blueprint)
 
 

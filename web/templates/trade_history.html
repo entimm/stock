@@ -1,0 +1,86 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>历史交割单</title>
+  <style>
+    #grid-container {
+      width: 1800px;
+      margin: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    th {
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    td, th {
+      padding: 0;
+      white-space: nowrap;
+      width: 100px;
+      position: relative;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    #grid tr:hover {
+      background-color: rgba(0, 139, 125, 0.5);
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="grid-container">
+    <table id="grid" class="striped centered z-depth-5">
+      <thead>
+      <tr>
+        <th>序号</th>
+        <th>成交日期</th>
+        <th>证券代码</th>
+        <th>证券名称</th>
+        <th>操作</th>
+        <th>成交数量</th>
+        <th>成交价格</th>
+        <th>盈亏额</th>
+      </tr>
+      </thead>
+      <tbody id="json-table"></tbody>
+    </table>
+  </div>
+{% endblock %}
+{% block footer %}
+  <script>
+    const period = '{{ request_args.get('period', 'F5') }}';
+    fetch(document.URL.replace('trade_history', 'trade_history_data')).then(response => response.json())
+      .then(jsonData => {
+        const reversedKeys = Object.keys(jsonData).reverse();
+        const jsonTable = document.getElementById('json-table');
+        reversedKeys.forEach(key => {
+          const item = jsonData[key];
+          const row = jsonTable.insertRow();
+
+          row.insertCell(0).innerHTML = key;
+          row.insertCell(1).innerHTML = item['成交日期'];
+          row.insertCell(2).innerHTML = item['证券代码'];
+          row.insertCell(3).innerHTML = item['证券名称'];
+          row.insertCell(4).innerHTML = item['操作'];
+          row.insertCell(5).innerHTML = item['成交数量'];
+          row.insertCell(6).innerHTML = item['成交价格'].toFixed(2);
+          row.insertCell(7).innerHTML = item['profit_amount'].toFixed(2);
+
+          row.addEventListener('click', () => {
+            let dateNumber = String(item['成交日期']);
+            if (/\d{8}/.test(dateNumber)) {
+              date = dateNumber.substring(0, 4) + '-' + dateNumber.substring(4, 6) + '-' + dateNumber.substring(6, 8);
+            } else {
+              date = dateNumber.substring(0, 4) + '-' + dateNumber.substring(5, 7) + '-' + dateNumber.substring(8, 10);
+            }
+
+            window.open(`/chart?date=${date}&period=${period}&symbol=${item['证券代码']}`, "_blank");
+          });
+        });
+      });
+  </script>
+{% endblock %}
