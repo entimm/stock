@@ -310,7 +310,7 @@
       let cells = document.querySelectorAll('td');
       color = getRandomColor();
       for (let cell of cells) {
-        if (cell.getAttribute('name') === value) {
+        if (cell.getAttribute('name') === value && cell.getAttribute('stock_num') > 0) {
           if (cell.style.backgroundColor) {
             cell.style.backgroundColor = "";
             cell.style.color = '#000';

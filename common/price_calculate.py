@@ -3,14 +3,14 @@ import numpy as np
 from common.common import PeriodEnum
 
 
-def _bars_last_count(condition):
+def cont_len(condition):
     rt = np.zeros(len(condition) + 1, dtype=int)
     for i in range(len(condition)):
         rt[i + 1] = rt[i] + 1 if condition[i] else rt[i + 1]
     return rt[1:]
 
 
-def bars_last_count2(condition):
+def cont_len2(condition):
     values = np.where(condition, 1, -1)
     rt = np.zeros_like(values)
 
@@ -46,7 +46,7 @@ def ma_angle(df, ma_field):
 
 
 def ma_trend(df, condition):
-    df['match_k_num'] = _bars_last_count(condition)
+    df['match_k_num'] = cont_len(condition)
     df['ma_trend_base_price'] = _ma_trend_base_price1(df)
 
     return (df['close'] / df['ma_trend_base_price'] - 1) * 100

@@ -1,6 +1,6 @@
 import click
 
-from common.price_calculate import ma_trend, ma, ma_angle
+from common.price_calculate import ma_trend, ma, ma_angle, cont_len2
 from common.quotes import fetch_local_daily
 
 
@@ -13,5 +13,6 @@ def cal_trend_ptg(ticker):
     df['ma5'] = ma(df, 5)
     df['ma_angle'] = ma_angle(df, 'ma5')
     df['ma5_trend'] = ma_trend(df, df['ma_angle'] >= 0)
+    df['cont_len'] = cont_len2(df['ma_angle'] >= 0)
 
     print(df.tail(50))

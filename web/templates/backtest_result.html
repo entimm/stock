@@ -135,25 +135,26 @@
         },
       });
 
-      const backtest_trades = {{ backtest_trades | safe }}
-        function markPointOverlayData(item) {
-          return {
-            name: 'myAnnotation',
-            groupId: 'mark_point',
-            extendData: {
-              direction: item.action === 'BUY',
-              text: item.action.charAt(0).toUpperCase(),
-            },
-            lock: true,
-            points: [{timestamp: item.date, value: item.price}],
-            styles: {
-              text: {
-                color: item.action === 'BUY' ? '#ff00b7' : '#6e28e5',
-                size: 16,
-              }
-            },
-          }
+      const backtest_trades = {{ backtest_trades | safe }};
+
+      function markPointOverlayData(item) {
+        return {
+          name: 'myAnnotation',
+          groupId: 'mark_point',
+          extendData: {
+            direction: item.action === 'BUY',
+            text: item.action.charAt(0).toUpperCase(),
+          },
+          lock: true,
+          points: [{timestamp: item.date, value: item.price}],
+          styles: {
+            text: {
+              color: item.action === 'BUY' ? '#ff00b7' : '#6e28e5',
+              size: 16,
+            }
+          },
         }
+      }
 
       backtest_trades.forEach(function (item) {
         chart.createOverlay(markPointOverlayData(item));
