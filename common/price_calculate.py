@@ -10,6 +10,20 @@ def _bars_last_count(condition):
     return rt[1:]
 
 
+def bars_last_count2(condition):
+    values = np.where(condition, 1, -1)
+    rt = np.zeros_like(values)
+
+    count = 0
+
+    for i in range(len(values)):
+        count = 0 if i == 0 or values[i - 1] != values[i] else count
+        count += values[i]
+        rt[i] = count
+
+    return rt
+
+
 def _ma_trend_base_price1(df):
     index = df.index - df['match_k_num']
     return df.loc[index, 'close'].values
