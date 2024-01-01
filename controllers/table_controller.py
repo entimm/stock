@@ -6,7 +6,7 @@ import pandas as pd
 from flask import render_template, request, Blueprint
 
 from app_cache import cache
-from common.common import PROCESSED_PATH, YEAR
+from common.common import PROCESSED_PATH
 from common.config import config
 from common.data import gnbk_dict, ticker_name_dict
 from controllers import make_cache_key
@@ -40,7 +40,8 @@ def read_table_data(file_path: str, is_gnbk: bool = False) -> Dict[str, List[str
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def astock_table():
     ma_list = ['MA5', 'MA10', 'MA20', 'MA60']
-    year_list = list(range(YEAR, 2010, -1))
+    year_range = config.get('tdx_processed_astock')
+    year_list = list(range(year_range[0], year_range[1] - 1, -1))
 
     ma = request.args.get('ma', ma_list[0])
     year = request.args.get('year', year_list[0], type=int)
@@ -81,7 +82,8 @@ def gnbk_table():
     }
     data_type = request.args.get('data_type', 'ANGLE', type=str)
 
-    year_list = list(range(YEAR, 2017, -1))
+    year_range = config.get('tdx_processed_gnbk')
+    year_list = list(range(year_range[0], year_range[1] - 1, -1))
     year = request.args.get('year', year_list[0], type=int)
 
     file_path = os.path.join(PROCESSED_PATH, f'GNBK-{data_type}{year}.csv')

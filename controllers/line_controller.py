@@ -5,7 +5,8 @@ import pandas as pd
 from flask import render_template, request, Blueprint
 
 from app_cache import cache
-from common.common import PROCESSED_PATH, YEAR
+from common.common import PROCESSED_PATH
+from common.config import config
 from common.data import ticker_name_dict, gnbk_dict
 from controllers import make_cache_key
 
@@ -33,7 +34,9 @@ def read_data(file_path: str, row_numbers: List[int], type_val: int = 0, is_gnbk
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def astock():
     ma_list = ['MA5', 'MA10', 'MA20', 'MA60']
-    year_list = list(range(YEAR, 2010, -1))
+
+    year_range = config.get('tdx_processed_astock')
+    year_list = list(range(year_range[0], year_range[1] - 1, -1))
     line_list = [
         '1,2,3,4,5,10,20,30,40',
         '1,2,3,4,5,6,7,8,9,10',
@@ -81,7 +84,8 @@ def gnbk():
         'TREND-UP': {'name': '趋势涨', 'values': ['MA5↖', 'MA10↖', 'MA20↖', 'MA60↖']},
         'TREND-DOWN': {'name': '趋势跌', 'values': ['MA5↘', 'MA10↘', 'MA20↘', 'MA60↘']},
     }
-    year_list = list(range(YEAR, 2017, -1))
+    year_range = config.get('tdx_processed_gnbk')
+    year_list = list(range(year_range[0], year_range[1] - 1, -1))
     line_list = [
         '1,2,3,4,5',
         '5,10,15,20',
