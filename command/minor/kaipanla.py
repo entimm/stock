@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import datetime
 
@@ -25,6 +26,7 @@ def kaipanla_mood():
         df = pd.DataFrame()
 
     url = f'{kaipanla_url}?Index=0&PhoneOSNew=2&VerSion=5.12.0.9&a=ChangeStatistics&apiv=w34&c=HisHomeDingPan&st=1000'
+    print(url)
     data_dict = send_request(url)
     if data_dict['errcode'] != '0':
         print('ChangeStatistics接口请求错误')
@@ -38,6 +40,7 @@ def kaipanla_mood():
             continue
         info = {}
         url = f'{kaipanla_url}?Day={day}&PhoneOSNew=2&VerSion=5.12.0.9&a=HisZhangFuDetail&apiv=w34&c=HisHomeDingPan'
+        print(url)
         data_dict = send_request(url)
         if data_dict['errcode'] != '0':
             print(f'HisZhangFuDetail接口请求错误, day={day}')
@@ -57,6 +60,7 @@ def kaipanla_mood():
         info['total_amount'] = data_dict['info']['qscln']
 
         url = f'{kaipanla_url}?Day={day}&PhoneOSNew=2&VerSion=5.12.0.9&a=ZhangTingExpression&apiv=w34&c=HisHomeDingPan'
+        print(url)
         data_dict = send_request(url)
         if data_dict['errcode'] != '0':
             print(f'ZhangTingExpression接口请求错误, day={day}')
@@ -91,7 +95,7 @@ def kaipanla_limit_up():
             continue
 
         url = '{}?Day={}&Filter=0&FilterGem=0&FilterMotherboard=0&FilterTIB=0&Index={}&Is_st=1&Order=1&PhoneOSNew=2&PidType=1&Type=9&VerSion=5.12.0.9&a=HisDaBanList&apiv=w34&c=HisHomeDingPan&st={}'
-        stock_list = request_kaipanla_daban(url, day, 0, 50)
+        stock_list = request_kaipanla_page_data(url, day, 0, 50, 'list')
         stock_list = [{
             'symbol': item[0],  # 股票代码
             'name': item[1],  # 股票名称
@@ -123,7 +127,7 @@ def kaipanla_limit_down():
             continue
 
         url = '{}?Day={}&Filter=0&FilterGem=0&FilterMotherboard=0&FilterTIB=0&Index={}&Is_st=1&Order=1&PhoneOSNew=2&PidType=3&Type=6&VerSion=5.12.0.9&a=HisDaBanList&apiv=w34&c=HisHomeDingPan&st={}'
-        stock_list = request_kaipanla_daban(url, day, 0, 50)
+        stock_list = request_kaipanla_page_data(url, day, 0, 50, 'list')
         stock_list = [{
             'symbol': item[0],  # 股票代码
             'name': item[1],  # 股票名称
@@ -140,7 +144,7 @@ def kaipanla_limit_down():
         df.to_csv(file_path, index=False)
 
 
-def request_kaipanla_daban(url_template, day, index, page_size):
+def request_kaipanla_page_data(url_template, day, index, page_size, list_field):
     url = url_template.format(kaipanla_url, day, index, page_size)
     print(url)
     data_dict = send_request(url)
@@ -148,13 +152,25 @@ def request_kaipanla_daban(url_template, day, index, page_size):
         print(f'HisDaBanList接口请求错误, day={day}')
         exit()
 
-    data_list = data_dict['list']
+    data_list = data_dict[list_field]
 
-    if len(data_dict['list']) == page_size:
-        data_list.extend(request_kaipanla_daban(url_template, day, index + 50, page_size))
+    if len(data_dict[list_field]) == page_size:
+        data_list.extend(request_kaipanla_page_data(url_template, day, index + 50, page_size, list_field))
 
     return data_list
 
 
-def parse_kaipanla_daban_item(item):
-    return
+@click.command()
+def kaipanla_notice():
+    for ts in trade_date_list.tail(100)['date'].to_list():
+        day = ts.strftime('%Y-%m-%d')
+
+        file_path = os.path.join(RESOURCES_PATH, 'kaipanla/notice', f'notice_{day}.json')
+        if os.path.exists(file_path):
+            continue
+
+        url = '{}/w1/api/index.php?Date={}&Index={}&PhoneOSNew=2&VerSion=5.12.0.9&a=GetPMSL_PMLD&apiv=w34&c=FuPanLa&st={}'
+        data_list = request_kaipanla_page_data(url, day, 0, 50, 'List')
+
+        with open(file_path, 'w') as json_file:
+            json.dump(data_list, json_file)

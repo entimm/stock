@@ -32,6 +32,7 @@ controllers = [
     'info',
     'market_mood',
     'trade_history',
+    'notice',
 ]
 
 for controller in controllers:
