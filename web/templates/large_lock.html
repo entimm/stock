@@ -1,0 +1,152 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>大单一字</title>
+  <style>
+    #grid-container {
+      width: 1600px;
+      margin: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    th {
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    td, th {
+      padding: 0;
+      white-space: nowrap;
+      width: 100px;
+      position: relative;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    #grid tr:hover {
+      background-color: rgba(0, 139, 125, 0.5);
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="grid-container">
+    <table id="grid" class="striped centered z-depth-5">
+      <thead>
+      <tr>
+        <th data-k="date">日期</th>
+        <th data-k="symbol">股票代码</th>
+        <th data-k="name">股票名称</th>
+        <th data-k="limit_ts">封停时间</th>
+        <th data-k="last_limit_ts">最后封停时间</th>
+        <th data-k="const_desc">连板描述</th>
+        <th data-k="const_num">连板数</th>
+        <th data-k="master_net_amount">主力净额</th>
+        <th data-k="amount">成交额</th>
+        <th data-k="act_turnover">实际换手</th>
+        <th data-k="act_flow_amount">实际流通</th>
+        <th data-k="block">板块</th>
+        <th data-k="reason">涨停原因</th>
+        <th data-k="limit_amount">封单</th>
+        <th data-k="max_limit_amount">最大封单</th>
+        <th data-k="together_num">同涨停数</th>
+      </tr>
+      </thead>
+      <tbody id="json-table"></tbody>
+    </table>
+  </div>
+{% endblock %}
+{% block footer %}
+  <script src="/static/third/jquery-3.7.1.min.js"></script>
+  <script>
+    let stockTable = document.getElementById('grid');
+    let stockListInTable = [];
+    fetch(`/large_lock_data`).then(response => response.json())
+      .then(dataList => {
+        stockListInTable = dataList;
+        show_stocks_table()
+      });
+
+    function show_stocks_table() {
+      stockTable.style.display = 'block';
+      let tbody = stockTable.getElementsByTagName('tbody')[0];
+      tbody.innerHTML = '';
+      stockListInTable.forEach(function (jsonData) {
+        const tr = document.createElement('tr')
+        tr.innerHTML = `
+          <td>${jsonData['date']}</td>
+          <td>${jsonData['symbol']}</td>
+          <td>${jsonData['name']}</td>
+          <td data-v=${jsonData['limit_ts']}>${formatTimestamp(jsonData['limit_ts'])}</td>
+          <td>${formatTimestamp(jsonData['last_limit_ts'])}</td>
+          <td>${jsonData['const_desc']}</td>
+          <td>${jsonData['const_num']}</td>
+          <td>${(jsonData['master_net_amount'] / 10 ** 8).toFixed(2)}亿</td>
+          <td>${(jsonData['amount'] / 10 ** 8).toFixed(2)}亿</td>
+          <td>${jsonData['act_turnover']}%</td>
+          <td>${(jsonData['act_flow_amount'] / 10 ** 8).toFixed(2)}亿</td>
+          <td>${jsonData['block']}</td>
+          <td>${jsonData['reason']}</td>
+          <td>${(jsonData['limit_amount'] / 10 ** 8).toFixed(2)}亿</td>
+          <td>${(jsonData['max_limit_amount'] / 10 ** 8).toFixed(2)}亿</td>
+          <td>${jsonData['together_num']}</td>
+      `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function formatTimestamp(timestamp) {
+      var date = new Date(timestamp * 1000);
+
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var seconds = date.getSeconds();
+
+      hours = (hours < 10) ? '0' + hours : hours;
+      minutes = (minutes < 10) ? '0' + minutes : minutes;
+      seconds = (seconds < 10) ? '0' + seconds : seconds;
+
+      return hours + ':' + minutes + ':' + seconds;
+    }
+
+    const sortingOrder = {};
+    stockTable.getElementsByTagName('thead')[0].addEventListener('click', function (event) {
+      if (event.target.tagName === 'TH') {
+        let colName = event.target.getAttribute('data-k');
+        sortingOrder[colName] = sortingOrder[colName] === 'asc' ? 'desc' : 'asc';
+        stockListInTable.sort(function (a, b) {
+          const sortOrder = sortingOrder[colName] === 'asc' ? 1 : -1;
+          if (isNaN(a[colName]) || isNaN(b[colName])) {
+            return sortOrder * a[colName].localeCompare(b[colName]);
+          } else {
+            // 如果是数字则直接比较
+            return sortOrder * (a[colName] - b[colName]);
+          }
+        });
+        show_stocks_table();
+      }
+    });
+
+    stockTable.getElementsByTagName('tbody')[0].addEventListener('click', (event) => {
+      if (event.target.tagName === 'TD') {
+        let tr = event.target.parentElement;
+        let trList = tr.querySelectorAll('td');
+        let symbol = trList[1].textContent;
+        let date = trList[0].textContent;
+        window.open(`/chart?date=${date}&period=F5&symbol=${symbol}`, "_blank");
+      }
+    });
+
+    function getFormattedDate(timestamp) {
+      const date = new Date(timestamp * 1000);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
+    }
+  </script>
+{% endblock %}

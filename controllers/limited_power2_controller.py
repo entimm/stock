@@ -32,3 +32,4 @@ def limited_power2_data():
 @blueprint.route('/limited_power2')
 def limited_power2():
     return render_template('limited_power2.html', **{})
+
