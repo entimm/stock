@@ -274,9 +274,12 @@
           let cell = event.target;
           let stock_num = cell.getAttribute('stock_num');
           if (focusMode === 'selected') return;
-          if (!stock_num) return;
           show_tooltip(cell);
           setSelectedCell(cell);
+
+          // let colName = table.rows[0].cells[event.target.cellIndex].innerHTML;
+          // stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.getAttribute('name'));
+          // show_stocks_table();
         }
       });
     }

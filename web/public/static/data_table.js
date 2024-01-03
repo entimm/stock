@@ -116,11 +116,13 @@ function renderGrid(data) {
       if (clickX < cellRect.width / 2) {
         highlightCells(cell.textContent);
       } else {
+        let symbol = cell.getAttribute('symbol');
+        if (!symbol) return;
+
         setSelectedCell(cell);
         show_tooltip_trend(cell);
         show_tooltip(cell);
 
-        let symbol = cell.getAttribute('symbol');
         let headName = getCellHeadName(cell);
         let date = /^\d{4}-\d{2}-\d{2}$/.test(headName) ? headName : '';
         openDialog(symbol, date);

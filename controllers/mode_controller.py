@@ -37,6 +37,11 @@ def mode_first_limited_up(df):
 
     return df
 
+def mode_bomb_limit(df):
+    df = df[df['炸板'] == 1]
+
+    return df
+
 
 @blueprint.route('/mode')
 def mode():
@@ -45,6 +50,7 @@ def mode():
         ('缩调', mode_shrink_adj,),
         ('连板', mode_cont_limited_up,),
         ('首板', mode_first_limited_up,),
+        ('炸板', mode_bomb_limit,),
     ]
     mode = request.args.get('mode', 0, type=int)
     directory_path = os.path.join(RAW_V2_PATH, '全部Ａ股')

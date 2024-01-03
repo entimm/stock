@@ -11,8 +11,16 @@
       display: block;
       padding: 20px;
       font-size: 1.5rem;
-      border-bottom: 3px solid #f32c2c;
+
       color: #000;
+    }
+
+    .card .system {
+      border-bottom: 3px solid #f32c2c;
+    }
+
+    .card .system2 {
+      border-bottom: 3px solid #d9ff67;
     }
 
     .card .external {
@@ -30,7 +38,7 @@
             <div class="card hoverable">
               <div class="card-content">
                 <span class="card-title">
-                  <a href="{{ menu.url }}" target="_blank" {% if menu.type == 'external' %}class="external"{% endif %}>
+                  <a href="{{ menu.url }}" target="_blank" class="{{ menu.type }}">
                     {{ menu.name }}
                   </a>
                 </span>

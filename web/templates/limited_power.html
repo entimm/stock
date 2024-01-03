@@ -146,7 +146,6 @@
           let cell = event.target;
           let stock_num = cell.getAttribute('stock_num');
           if (focusMode === 'selected') return;
-          if (!stock_num) return;
           show_tooltip(cell);
           setSelectedCell(cell);
         }
