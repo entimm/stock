@@ -30,7 +30,7 @@ class Hold:
 
 
 # 常量
-RESULT_JSON_FILE = os.path.join(RESOURCES_PATH, 'back_test.json')
+RESULT_JSON_FILE = os.path.join(RESOURCES_PATH, 'backtest', 'back_test.json')
 START_DATE = pd.Timestamp('2011-01-01 00:00:00')
 
 class Strategy:
