@@ -47,9 +47,29 @@
       width: 25%;
     }
 
+    #main-grid td span {
+      font-style: italic;
+      font-size: 8px;
+      color: #b0b080;
+    }
+
+    #main-grid tr:nth-child(3) {
+      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
+    }
+
+    #main-grid tr:nth-child(6) {
+      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
+    }
+
+    #main-grid tr:nth-child(9) {
+      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
+    }
+
     #stock-grid {
       position: relative;
       overflow-y: scroll;
+      min-height: 600px;
+      max-height: 600px;
       bottom: 0;
       background-color: rgba(0, 139, 125, 0.2);
       transform: translateX(-50%);
@@ -65,30 +85,28 @@
       max-width: 400px;
       white-space: break-spaces;
     }
-
-
   </style>
 {% endblock %}
 {% block content %}
 
   <div id="grid-container">
-    <table id="grid" class="striped centered"></table>
+    <table id="main-grid" class="striped centered"></table>
     <table id="stock-grid" class="striped centered z-depth-5" style="display: none;">
       <thead>
       <tr>
         <th data-k="date">日期</th>
         <th data-k="symbol">代码</th>
-        <th data-k="name">名称</th>
-        <th data-k="plate_names">题材</th>
-        <th data-k="limited_freq">连板</th>
+        <th data-k="stock_chi_name">名称</th>
+        <th data-k="plates">题材</th>
+        <th data-k="m_days_n_boards_boards">连板</th>
         <th data-k="first_limit_up">首次上板时间</th>
         <th data-k="last_limit_up">最后上板时间</th>
         <th data-k="buy_lock_volume_ratio">封单比</th>
-        <th data-k="flow_capital">流通市值</th>
+        <th data-k="non_restricted_capital">流通市值</th>
         <th data-k="turnover_ratio">换手</th>
-        <th data-k="break_times">开板次数</th>
+        <th data-k="break_limit_up_times">开板次数</th>
         <th data-k="listed_date">上市日期</th>
-        <th data-k="reason">涨停原因</th>
+        <th data-k="surge_reason.stock_reason">涨停原因</th>
       </tr>
       </thead>
       <tbody></tbody>
@@ -100,19 +118,116 @@
     <div id="tooltip-trend" style="display:none;"></div>
   </div>
 
+  <div class="fixed-action-btn z-depth-5" style="top: 0; right: 10px; height: 40px">
+    <a class="btn-floating btn waves-effect waves-light orange" onclick="switchTable()">
+      切换
+    </a>
+  </div>
+
 {% endblock %}
 {% block footer %}
   <script src="/static/third/jquery-3.7.1.min.js"></script>
   <script>
     let focusMode = 'free';
-    let total_plate_list = {{ result_plate_list | safe }};
-    let total_stock_list = {{ result_stock_list | safe }};
-    let table = document.getElementById('grid');
+    let table = document.getElementById('main-grid');
     let tooltipTrend = document.getElementById('tooltip-trend');
     let selectedCell = null;
     let stockTable = document.getElementById('stock-grid');
+
+    let total_stock_list = {};
     let stockListInTable = []
-    renderGrid(total_plate_list);
+
+    fetch(`/limited_power_data`).then(response => response.json())
+      .then(dataList => {
+        total_stock_list = {}
+        Object.keys(dataList).reverse().forEach(function (date) {
+          total_stock_list[date] = Object.values(dataList[date].reduce((acc, item) => {
+            item['related_plates'] = [];
+            item['plates'] = '';
+            if (item['surge_reason.related_plates']) {
+              item['related_plates'] = JSON.parse(item['surge_reason.related_plates'].replaceAll("'", '"'));
+              item['plates'] = item['related_plates'].map(item => item['plate_name']).join(', ');
+            }
+            item['date'] = date;
+            item['symbol'] = item['symbol'].slice(0, 6);
+            acc.push(item);
+
+            return acc;
+          }, []));
+        });
+        renderGrid(groupDataByBk(total_stock_list));
+      });
+
+    let mode = 'plate_name'
+
+    function switchTable() {
+      if (mode === 'plate_name') {
+        renderGrid(groupDataByHeight(total_stock_list));
+      } else {
+        renderGrid(groupDataByBk(total_stock_list));
+      }
+    }
+
+    function groupDataByBk(dataList) {
+      mode = 'plate_name';
+      let groupData = {}
+      Object.keys(dataList).forEach(function (date) {
+        groupData[date] = Object.values(dataList[date].reduce((acc, item) => {
+          let relatedPlates = item['related_plates'];
+          for (let relatedPlate of relatedPlates) {
+            acc[relatedPlate['plate_name']] ||= {name: relatedPlate['plate_name'], content: relatedPlate['plate_name'], num: 0, stock_list: [], desc: relatedPlate['plate_reason'] ?? '空'};
+            acc[relatedPlate['plate_name']].num += 1;
+            acc[relatedPlate['plate_name']].stock_list.push(item['stock_chi_name']);
+          }
+          return acc;
+        }, {}));
+        groupData[date].sort((a, b) => b.num - a.num);
+      });
+
+      return groupData;
+    }
+
+    function groupDataByHeight(dataList) {
+      mode = 'limit_up_days';
+      let groupData = {}
+
+      Object.keys(dataList).forEach(function (date) {
+        let maxHeight = 0;
+        let tmpList = dataList[date].reduce((acc, item) => {
+          if (item['stock_chi_name'].includes('ST')) return acc;
+          maxHeight = Math.max(maxHeight, item['limit_up_days']);
+          acc[item['limit_up_days']] ||= {name: item['limit_up_days'], content: 0, num: 0, stock_list: [], lock_stock_list: [], desc: '空'};
+          acc[item['limit_up_days']].num += 1;
+          acc[item['limit_up_days']].stock_list.push(item['stock_chi_name']);
+          if (formatTimestamp(item['last_limit_up']).slice(0, 5) === '09:25') {
+            acc[item['limit_up_days']].lock_stock_list.push(item['stock_chi_name']);
+          }
+          return acc;
+        }, {});
+        for (i = 1; i <= maxHeight + 1; i++) {
+          if (!tmpList[i]) {
+            tmpList[i] = {name: i, content: `<span>${i}<span>`, num: 0, stock_list: [], desc: '空'};
+          } else {
+            tmpList[i].content = tmpList[i].num;
+            if (tmpList[i].num <= 3) {
+              tmpList[i].content = tmpList[i].stock_list.map(function (item) {
+                if (tmpList[i].lock_stock_list.includes(item)) {
+                  return `_${item}_`;
+                }
+                return item;
+              }).join('<br/>')
+            }
+          }
+        }
+        if (0 in tmpList) {
+          delete tmpList[0];
+        }
+        groupData[date] = Object.values(tmpList);
+        groupData[date].sort((a, b) => a.name - b.name);
+      });
+
+      return groupData;
+    }
 
     document.addEventListener('keydown', function (event) {
       if (event.code === 'Escape') {
@@ -150,6 +265,15 @@
       }
       table.appendChild(tbody);
 
+      thead.addEventListener('click', function (event) {
+        if (event.target.tagName === 'TH') {
+          let colName = event.target.textContent;
+
+          stockListInTable = total_stock_list[colName];
+          show_stocks_table();
+        }
+      });
+
       tbody.addEventListener('click', function (event) {
         if (event.target.tagName === 'TD') {
           let cell = event.target;
@@ -159,14 +283,15 @@
           let clickX = event.clientX - cellRect.left;
 
           if (clickX < cellRect.width / 2) {
-            highlightCells(cell.textContent);
+            highlightCells(cell.getAttribute('name'));
           } else {
             let colName = table.rows[0].cells[event.target.cellIndex].innerHTML;
             focusMode = 'selected'
             show_tooltip(cell);
             setSelectedCell(cell);
-            stockListInTable = total_stock_list[colName].filter(item => item['plate_names'].includes(cell.textContent));
-            show_stocks_table()
+
+            changeStockListInTable(colName, cell);
+            show_stocks_table();
           }
         }
       });
@@ -183,13 +308,11 @@
 
     function renderCell(cell, value) {
       if (Object.entries(value).length === 0) return;
-      let stock_num = value['stock_list']?.length;
-      if (stock_num) {
-        cell.textContent = value['plate_name'];
-      }
-      cell.setAttribute('plate_reason', value['plate_reason'] ?? '');
-      cell.setAttribute('stock_num', stock_num);
-      addDotClass(cell, stock_num)
+      cell.innerHTML = value['content'];
+      cell.setAttribute('name', value['name']);
+      cell.setAttribute('desc', value['desc']);
+      cell.setAttribute('stock_num', value['num']);
+      addDotClass(cell, value['num']);
     }
 
     function setSelectedCell(cell) {
@@ -240,7 +363,7 @@
     }
 
     function show_tooltip(cell) {
-      tooltip.textContent = [cell.textContent, cell.getAttribute('plate_reason'), cell.getAttribute('stock_num')].join(' | ');
+      tooltip.textContent = [cell.getAttribute('desc'), cell.getAttribute('stock_num')].join(' | ');
 
       // 计算tooltip的位置
       let boundingRect = cell.getBoundingClientRect();
@@ -299,13 +422,14 @@
     function addDotClass(element, value) {
       let num = value
       const dotClasses = [
-        {'condition': num >= 30, 'className': 'red-dot3'},
-        {'condition': num >= 25, 'className': 'red-dot2'},
-        {'condition': num >= 20, 'className': 'red-dot1'},
-        {'condition': num >= 15, 'className': 'green-dot3'},
+        {'condition': num >= 80, 'className': 'red-dot3'},
+        {'condition': num >= 50, 'className': 'red-dot2'},
+        {'condition': num >= 30, 'className': 'red-dot1'},
+        {'condition': num >= 20, 'className': 'green-dot3'},
         {'condition': num >= 10, 'className': 'green-dot2'},
         {'condition': num >= 5, 'className': 'green-dot1'},
       ];
+
       for (dotClass in dotClasses) {
         if (dotClasses[dotClass].condition) {
           element.classList.add('dot', dotClasses[dotClass].className);
@@ -319,21 +443,22 @@
       let tbody = stockTable.getElementsByTagName('tbody')[0];
       tbody.innerHTML = '';
       stockListInTable.forEach(function (jsonData) {
+        if (mode === 'limit_up_days' && jsonData['stock_chi_name'].includes('ST')) return;
         const tr = document.createElement('tr')
         tr.innerHTML = `
           <td>${jsonData['date']}</td>
           <td><a href="/chart?symbol=${jsonData['symbol']}&period=D&req_real=0&date=${jsonData['date']}" target="_blank">${jsonData['symbol']}</a></td>
-          <td>${jsonData['name']}</td>
-          <td>${jsonData['plate_names'].join('<br/>')}</td>
-          <td>${jsonData['limited_freq']}</td>
-          <td>${jsonData['first_limit_up']}</td>
-          <td> ${jsonData['last_limit_up']}</td>
-          <td>${jsonData['buy_lock_volume_ratio']}</td>
-          <td>${jsonData['flow_capital']}亿</td>
-          <td>${jsonData['turnover_ratio']}</td>
-          <td>${jsonData['break_times']}</td>
-          <td>${jsonData['listed_date']}</td>
-          <td class="reason">${jsonData['reason']}</td>
+          <td>${jsonData['stock_chi_name']}</td>
+          <td>${jsonData['related_plates'].map(item => item['plate_name']).join('<br/>')}</td>
+          <td>${jsonData['m_days_n_boards_boards'] > 0 ? jsonData['m_days_n_boards_days'] + '天' + jsonData['m_days_n_boards_boards'] + '板' : '首板'}</td>
+          <td>${formatTimestamp(jsonData['first_limit_up'])}</td>
+          <td> ${formatTimestamp(jsonData['last_limit_up'])}</td>
+          <td>${(jsonData['buy_lock_volume_ratio'] * 100).toFixed(2)}%</td>
+          <td>${(jsonData['non_restricted_capital'] / 1e8).toFixed(2)}亿</td>
+          <td>${(jsonData['turnover_ratio'] * 100).toFixed(2)}</td>
+          <td>${jsonData['break_limit_up_times']}</td>
+          <td>${getFormattedDate(jsonData['listed_date'])}</td>
+          <td class="reason">${jsonData['surge_reason.stock_reason']}</td>
       `;
         tbody.appendChild(tr);
         $(tr).hover(function () {
@@ -368,12 +493,13 @@
     document.addEventListener('keydown', function (event) {
       if (event.code === 'ArrowUp' || event.code === 'ArrowDown' || event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
         let cell = getAdjacentCell(selectedCell, event.code);
+        if (cell.tagName !== 'TD') return;
         if (cell) {
           let colName = table.rows[0].cells[cell.cellIndex].innerHTML;
           focusMode = 'selected'
           show_tooltip(cell);
           setSelectedCell(cell);
-          stockListInTable = total_stock_list[colName].filter(item => item['plate_names'].includes(cell.textContent));
+          changeStockListInTable(colName, cell);
           show_stocks_table();
         }
         event.preventDefault();
@@ -400,6 +526,37 @@
         default:
           return null;
       }
+    }
+
+    function formatTimestamp(timestamp) {
+      let date = new Date(timestamp * 1000);
+
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      let seconds = date.getSeconds();
+
+      hours = (hours < 10) ? '0' + hours : hours;
+      minutes = (minutes < 10) ? '0' + minutes : minutes;
+      seconds = (seconds < 10) ? '0' + seconds : seconds;
+
+      return hours + ':' + minutes + ':' + seconds;
+    }
+
+    function getFormattedDate(timestamp) {
+      const date = new Date(timestamp * 1000);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
+    }
+
+    function changeStockListInTable(colName, cell) {
+      stockListInTable = total_stock_list[colName].filter(item => {
+        if (mode === 'plate_name') return item['related_plates'].map(item => item['plate_name']).includes(cell.getAttribute('name'));
+        return String(item[mode]) === cell.getAttribute('name');
+      });
     }
   </script>
 {% endblock %}

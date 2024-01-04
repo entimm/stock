@@ -53,6 +53,18 @@
       color: #b0b080;
     }
 
+    #main-grid tr:nth-child(3) {
+      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
+    }
+
+    #main-grid tr:nth-child(6) {
+      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
+    }
+
+    #main-grid tr:nth-child(9) {
+      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
+    }
+
     #stock-grid {
       position: relative;
       overflow-y: scroll;
@@ -68,17 +80,6 @@
       background-color: rgba(0, 139, 125, 0.5);
     }
 
-    #main-grid tr:nth-child(3) {
-      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
-    }
-
-    #main-grid tr:nth-child(6) {
-      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
-    }
-
-    #main-grid tr:nth-child(9) {
-      border-bottom: 1px solid rgba(255, 0, 0, 0.5);
-    }
   </style>
 {% endblock %}
 {% block content %}
@@ -145,11 +146,11 @@
       if (mode === 'reason') {
         renderGrid(groupDataByHeight(total_stock_list));
       } else {
-        renderGrid(groupDataByReason(total_stock_list));
+        renderGrid(groupDataByBk(total_stock_list));
       }
     }
 
-    function groupDataByReason(dataList) {
+    function groupDataByBk(dataList) {
       mode = 'reason';
       let groupData = {}
       Object.keys(dataList).reverse().forEach(function (date) {
@@ -267,7 +268,7 @@
             show_tooltip(cell);
             setSelectedCell(cell);
 
-            stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.getAttribute('name'));
+            changeStockListInTable(colName, cell);
             show_stocks_table();
           }
         }
@@ -281,7 +282,7 @@
           setSelectedCell(cell);
 
           // let colName = table.rows[0].cells[event.target.cellIndex].innerHTML;
-          // stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.getAttribute('name'));
+          // changeStockListInTable(colName, cell);
           // show_stocks_table();
         }
       });
@@ -492,7 +493,7 @@
           show_tooltip(cell);
           setSelectedCell(cell);
 
-          stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.getAttribute('name'));
+          changeStockListInTable(colName, cell);
           show_stocks_table();
         }
         event.preventDefault();
@@ -543,6 +544,10 @@
       const day = String(date.getDate()).padStart(2, '0');
 
       return `${year}-${month}-${day}`;
+    }
+
+    function changeStockListInTable(colName, cell) {
+      stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.getAttribute('name'));
     }
   </script>
 {% endblock %}
