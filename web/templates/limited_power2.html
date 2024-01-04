@@ -130,8 +130,8 @@
     let selectedCell = null;
     let stockTable = document.getElementById('stock-grid');
 
-    let total_stock_list = {}
-    let stockListInTable = []
+    let total_stock_list = {};
+    let stockListInTable = [];
 
     fetch(`/limited_power2_data`).then(response => response.json())
       .then(dataList => {
@@ -485,6 +485,7 @@
     document.addEventListener('keydown', function (event) {
       if (event.code === 'ArrowUp' || event.code === 'ArrowDown' || event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
         let cell = getAdjacentCell(selectedCell, event.code);
+        if (cell.tagName !== 'TD') return;
         if (cell) {
           let colName = table.rows[0].cells[cell.cellIndex].innerHTML;
           focusMode = 'selected'
@@ -521,11 +522,11 @@
     }
 
     function formatTimestamp(timestamp) {
-      var date = new Date(timestamp * 1000);
+      let date = new Date(timestamp * 1000);
 
-      var hours = date.getHours();
-      var minutes = date.getMinutes();
-      var seconds = date.getSeconds();
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      let seconds = date.getSeconds();
 
       hours = (hours < 10) ? '0' + hours : hours;
       minutes = (minutes < 10) ? '0' + minutes : minutes;
