@@ -7,7 +7,7 @@ def format_timestamp(value: Union[str, int], formate: str) -> str:
 
 
 def format_flow_capital(value: Union[str, float]) -> str:
-    return '-' if value == '' else f"{round(float(value) / 1e8, 2)}亿"
+    return '-' if value == '' else round(float(value) / 1e8, 2)
 
 
 def row2info(row: Dict[str, Any]) -> Dict[str, Any]:

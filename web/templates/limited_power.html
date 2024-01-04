@@ -47,17 +47,23 @@
       width: 25%;
     }
 
-    #stock-container {
+    #stock-grid {
       position: relative;
       overflow-y: scroll;
-      width: 100%;
+      bottom: 0;
+      background-color: rgba(0, 139, 125, 0.2);
+      transform: translateX(-50%);
+      left: 50%;
     }
 
-    #stock-container .stock-info.card-panel {
-      height: 600px;
-      min-width: 200px;
-      width: 12.5%;
-      padding: 5px;
+    #stock-grid tr:hover {
+      background-color: rgba(0, 139, 125, 0.5);
+    }
+
+    #stock-grid tr td.reason {
+      text-align: left;
+      max-width: 400px;
+      white-space: break-spaces;
     }
 
 
@@ -67,9 +73,31 @@
 
   <div id="grid-container">
     <table id="grid" class="striped centered"></table>
+    <table id="stock-grid" class="striped centered z-depth-5" style="display: none;">
+      <thead>
+      <tr>
+        <th data-k="date">日期</th>
+        <th data-k="symbol">代码</th>
+        <th data-k="name">名称</th>
+        <th data-k="plate_names">题材</th>
+        <th data-k="limited_freq">连板</th>
+        <th data-k="first_limit_up">首次上板时间</th>
+        <th data-k="last_limit_up">最后上板时间</th>
+        <th data-k="buy_lock_volume_ratio">封单比</th>
+        <th data-k="flow_capital">流通市值</th>
+        <th data-k="turnover_ratio">换手</th>
+        <th data-k="break_times">开板次数</th>
+        <th data-k="listed_date">上市日期</th>
+        <th data-k="reason">涨停原因</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <br>
+    <br>
+    <br>
     <div id="tooltip" style="display:none;"></div>
     <div id="tooltip-trend" style="display:none;"></div>
-    <div id="stock-container"></div>
   </div>
 
 {% endblock %}
@@ -82,14 +110,15 @@
     let table = document.getElementById('grid');
     let tooltipTrend = document.getElementById('tooltip-trend');
     let selectedCell = null;
-    let stockContainer = document.getElementById('stock-container');
+    let stockTable = document.getElementById('stock-grid');
+    let stockListInTable = []
     renderGrid(total_plate_list);
 
     document.addEventListener('keydown', function (event) {
       if (event.code === 'Escape') {
         tooltip.style.display = 'none';
         tooltipTrend.style.display = 'none';
-        stockContainer.style.display = 'none';
+        stockTable.style.display = 'none';
         focusMode = 'free'
       }
     });
@@ -136,7 +165,8 @@
             focusMode = 'selected'
             show_tooltip(cell);
             setSelectedCell(cell);
-            show_stocks(cell.textContent, colName)
+            stockListInTable = total_stock_list[colName].filter(item => item['plate_names'].includes(cell.textContent));
+            show_stocks_table()
           }
         }
       });
@@ -284,38 +314,54 @@
       }
     }
 
-    function show_stocks(plate_name, colName) {
-      stockContainer.style.display = 'block';
-      stockContainer.innerHTML = '';
-      let stockList = total_stock_list[colName].filter(item => item['plate_names'].includes(plate_name));
-      stockList.forEach(function (jsonData) {
-        const card = document.createElement('div')
-        card.classList.add('stock-info', 'card-panel', 'teal', 'z-depth-5')
-        card.innerHTML = `
-          <div class="card-content compact-content">
-            <p><strong>日期:</strong> ${jsonData['date']}</p>
-            <p><strong>代码:</strong> <a href="/chart?symbol=${jsonData['symbol']}&period=D&req_real=0&date=${jsonData['date']}" target="_blank">${jsonData['symbol']}</a></p>
-            <p><strong>名称:</strong> ${jsonData['name']}</p>
-            <p><strong>题材:</strong> ${jsonData['plate_names'].join(' + ')}</p>
-            <p><strong>涨停原因:</strong> ${jsonData['reason']}</p>
-            <p><strong>连板:</strong>${jsonData['limited_freq']}</p>
-            <p><strong>上板时间:</strong> 首${jsonData['first_limit_up']} 末${jsonData['last_limit_up']}</p>
-            <p><strong>封单比:</strong> ${jsonData['buy_lock_volume_ratio']}</p>
-            <p><strong>流通市值:</strong> ${jsonData['flow_capital']}</p>
-            <p><strong>换手:</strong> ${jsonData['turnover_ratio']}</p>
-            <p><strong>开板次数:</strong> ${jsonData['break_times']}</p>
-            <p><strong>上市日期:</strong> ${jsonData['listed_date']}</p>
-          </div>
+    function show_stocks_table() {
+      stockTable.style.display = 'block';
+      let tbody = stockTable.getElementsByTagName('tbody')[0];
+      tbody.innerHTML = '';
+      stockListInTable.forEach(function (jsonData) {
+        const tr = document.createElement('tr')
+        tr.innerHTML = `
+          <td>${jsonData['date']}</td>
+          <td><a href="/chart?symbol=${jsonData['symbol']}&period=D&req_real=0&date=${jsonData['date']}" target="_blank">${jsonData['symbol']}</a></td>
+          <td>${jsonData['name']}</td>
+          <td>${jsonData['plate_names'].join('<br/>')}</td>
+          <td>${jsonData['limited_freq']}</td>
+          <td>${jsonData['first_limit_up']}</td>
+          <td> ${jsonData['last_limit_up']}</td>
+          <td>${jsonData['buy_lock_volume_ratio']}</td>
+          <td>${jsonData['flow_capital']}亿</td>
+          <td>${jsonData['turnover_ratio']}</td>
+          <td>${jsonData['break_times']}</td>
+          <td>${jsonData['listed_date']}</td>
+          <td class="reason">${jsonData['reason']}</td>
       `;
-        stockContainer.append(card);
-        $(card).hover(function () {
+        tbody.appendChild(tr);
+        $(tr).hover(function () {
           show_tooltip_trend(jsonData['symbol'])
         });
-        $(stockContainer).mouseleave(function () {
+        $(stockTable).mouseleave(function () {
           tooltipTrend.style.display = 'none';
         });
       });
     }
+
+    const sortingOrder = {};
+    stockTable.getElementsByTagName('thead')[0].addEventListener('click', function (event) {
+      if (event.target.tagName === 'TH') {
+        let colName = event.target.getAttribute('data-k');
+        sortingOrder[colName] = sortingOrder[colName] === 'asc' ? 'desc' : 'asc';
+        stockListInTable.sort(function (a, b) {
+          const sortOrder = sortingOrder[colName] === 'asc' ? 1 : -1;
+          if (isNaN(a[colName]) || isNaN(b[colName])) {
+            return sortOrder * a[colName].localeCompare(b[colName]);
+          } else {
+            // 如果是数字则直接比较
+            return sortOrder * (a[colName] - b[colName]);
+          }
+        });
+        show_stocks_table();
+      }
+    });
   </script>
 
   <script>
@@ -327,7 +373,8 @@
           focusMode = 'selected'
           show_tooltip(cell);
           setSelectedCell(cell);
-          show_stocks(cell.textContent, colName);
+          stockListInTable = total_stock_list[colName].filter(item => item['plate_names'].includes(cell.textContent));
+          show_stocks_table();
         }
         event.preventDefault();
       }
