@@ -53,6 +53,12 @@
       color: #b0b080;
     }
 
+    #main-grid td span.interrupt {
+      font-style: normal;
+      font-size: 10px;
+      color: #773fec;
+    }
+
     #main-grid tr:nth-child(3) {
       border-bottom: 1px solid rgba(255, 0, 0, 0.5);
     }
@@ -66,7 +72,7 @@
     }
 
     #stock-grid {
-      position: relative;
+      position: fixed;
       overflow-y: scroll;
       min-height: 600px;
       max-height: 600px;
@@ -162,7 +168,10 @@
 
     function switchTable() {
       if (mode === 'plate_name') {
-        renderGrid(groupDataByHeight(total_stock_list));
+        renderGrid(groupDataByHeight(total_stock_list, 'limit_up_days'));
+
+      } else if (mode === 'limit_up_days') {
+        renderGrid(groupDataByHeight(total_stock_list, 'm_days_n_boards_boards'));
       } else {
         renderGrid(groupDataByBk(total_stock_list));
       }
@@ -187,41 +196,55 @@
       return groupData;
     }
 
-    function groupDataByHeight(dataList) {
-      mode = 'limit_up_days';
+    function groupDataByHeight(dataList, field) {
+      mode = field;
       let groupData = {}
 
       Object.keys(dataList).forEach(function (date) {
         let maxHeight = 0;
         let tmpList = dataList[date].reduce((acc, item) => {
           if (item['stock_chi_name'].includes('ST')) return acc;
-          maxHeight = Math.max(maxHeight, item['limit_up_days']);
-          acc[item['limit_up_days']] ||= {name: item['limit_up_days'], content: 0, num: 0, stock_list: [], lock_stock_list: [], desc: '空'};
-          acc[item['limit_up_days']].num += 1;
-          acc[item['limit_up_days']].stock_list.push(item['stock_chi_name']);
+          maxHeight = Math.max(maxHeight, item[field]);
+          acc[item[field]] ||= {name: item[field], content: 0, num: 0, stock_list: [], desc: '空'};
+          acc[item[field]].num += 1;
+
+          let name = item['stock_chi_name'];
           if (getTimeStrFromTs(item['last_limit_up']).slice(0, 5) === '09:25') {
-            acc[item['limit_up_days']].lock_stock_list.push(item['stock_chi_name']);
+            name = `_${name}_`;
           }
+          if (item['limit_up_days'] !== item[field]) {
+            name = `*${name}*`;
+          }
+          acc[item[field]].stock_list.push(name);
+
           return acc;
         }, {});
-        for (i = 1; i <= maxHeight + 1; i++) {
-          if (!tmpList[i]) {
+        for (i = 0; i <= maxHeight + 1; i++) {
+          if (tmpList[i] === undefined) {
             tmpList[i] = {name: i, content: `<span>${i}<span>`, num: 0, stock_list: [], desc: '空'};
           } else {
             tmpList[i].content = tmpList[i].num;
             if (tmpList[i].num <= 3) {
               tmpList[i].content = tmpList[i].stock_list.map(function (item) {
-                if (tmpList[i].lock_stock_list.includes(item)) {
-                  return `_${item}_`;
+                if (/\*.*\*/.test(item)) {
+                  item = `<span class="interrupt">${item}</span>`
                 }
                 return item;
               }).join('<br/>')
             }
           }
         }
-        if (0 in tmpList) {
-          delete tmpList[0];
+
+        if (mode === 'm_days_n_boards_boards') {
+          if (1 in tmpList) {
+            delete tmpList[1];
+          }
+        } else {
+          if (0 in tmpList) {
+            delete tmpList[0];
+          }
         }
+
         groupData[date] = Object.values(tmpList);
         groupData[date].sort((a, b) => a.name - b.name);
       });
@@ -235,6 +258,16 @@
         tooltipTrend.style.display = 'none';
         stockTable.style.display = 'none';
         focusMode = 'free'
+      }
+
+      if (event.key === '1') {
+        renderGrid(groupDataByBk(total_stock_list));
+      }
+      if (event.key === '2') {
+        renderGrid(groupDataByHeight(total_stock_list, 'limit_up_days'));
+      }
+      if (event.key === '3') {
+        renderGrid(groupDataByHeight(total_stock_list, 'm_days_n_boards_boards'));
       }
     });
 
@@ -282,7 +315,7 @@
           let cellRect = cell.getBoundingClientRect();
           let clickX = event.clientX - cellRect.left;
 
-          if (clickX < cellRect.width / 2) {
+          if (clickX < cellRect.width / 2 && mode === 'plate_name') {
             highlightCells(cell.getAttribute('name'));
           } else {
             let colName = table.rows[0].cells[event.target.cellIndex].innerHTML;
@@ -420,7 +453,7 @@
       let tbody = stockTable.getElementsByTagName('tbody')[0];
       tbody.innerHTML = '';
       stockListInTable.forEach(function (jsonData) {
-        if (mode === 'limit_up_days' && jsonData['stock_chi_name'].includes('ST')) return;
+        if (['m_days_n_boards_boards', 'limit_up_days'].includes(mode) && jsonData['stock_chi_name'].includes('ST')) return;
         const tr = document.createElement('tr')
         tr.innerHTML = `
           <td>${jsonData['date']}</td>

@@ -53,6 +53,12 @@
       color: #b0b080;
     }
 
+    #main-grid td span.interrupt {
+      font-style: normal;
+      font-size: 10px;
+      color: #773fec;
+    }
+
     #main-grid tr:nth-child(3) {
       border-bottom: 1px solid rgba(255, 0, 0, 0.5);
     }
@@ -66,7 +72,7 @@
     }
 
     #stock-grid {
-      position: relative;
+      position: fixed;
       overflow-y: scroll;
       min-height: 600px;
       max-height: 600px;
@@ -172,14 +178,18 @@
 
       Object.keys(dataList).reverse().forEach(function (date) {
         let maxHeight = 0;
-        let tmpList = dataList[date].reduce((acc, {const_num, name, last_limit_ts}) => {
+        let tmpList = dataList[date].reduce((acc, {const_num, name, last_limit_ts, const_desc}) => {
           maxHeight = Math.max(maxHeight, const_num);
-          acc[const_num] ||= {name: const_num, content: 0, num: 0, stock_list: [], lock_stock_list: []};
+          acc[const_num] ||= {name: const_num, content: 0, num: 0, stock_list: []};
           acc[const_num].num += 1;
-          acc[const_num].stock_list.push(name);
+
           if (getTimeStrFromTs(last_limit_ts).slice(0, 5) === '09:25') {
-            acc[const_num].lock_stock_list.push(name);
+            name = `_${name}_`;
           }
+          if (const_desc.includes('天')) {
+            name = `*${name}*`;
+          }
+          acc[const_num].stock_list.push(name);
           return acc;
         }, {});
         for (i = 1; i <= maxHeight + 1; i++) {
@@ -189,8 +199,8 @@
             tmpList[i].content = tmpList[i].num;
             if (tmpList[i].num <= 3) {
               tmpList[i].content = tmpList[i].stock_list.map(function (item) {
-                if (tmpList[i].lock_stock_list.includes(item)) {
-                  return `_${item}_`;
+                if (/\*.*\*/.test(item)) {
+                  item = `<span class="interrupt">${item}</span>`
                 }
                 return item;
               }).join('<br/>')
@@ -213,6 +223,12 @@
         tooltipTrend.style.display = 'none';
         stockTable.style.display = 'none';
         focusMode = 'free'
+      }
+      if (event.key === '1') {
+        renderGrid(groupDataByBk(total_stock_list));
+      }
+      if (event.key === '2') {
+        renderGrid(groupDataByHeight(total_stock_list));
       }
     });
 
@@ -260,7 +276,7 @@
           let cellRect = cell.getBoundingClientRect();
           let clickX = event.clientX - cellRect.left;
 
-          if (clickX < cellRect.width / 2) {
+          if (clickX < cellRect.width / 2 && mode === 'reason') {
             highlightCells(cell.getAttribute('name'));
           } else {
             let colName = table.rows[0].cells[event.target.cellIndex].innerHTML;
