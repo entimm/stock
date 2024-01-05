@@ -177,7 +177,7 @@
           acc[const_num] ||= {name: const_num, content: 0, num: 0, stock_list: [], lock_stock_list: []};
           acc[const_num].num += 1;
           acc[const_num].stock_list.push(name);
-          if (formatTimestamp(last_limit_ts).slice(0, 5) === '09:25') {
+          if (getTimeStrFromTs(last_limit_ts).slice(0, 5) === '09:25') {
             acc[const_num].lock_stock_list.push(name);
           }
           return acc;
@@ -304,15 +304,6 @@
       cell.classList.add('select-cell')
     }
 
-    function getRandomColor() {
-      let letters = '0123456789ABCDEF';
-      let color = '#';
-      for (let i = 0; i < 3; i++) {
-        color += letters[Math.floor(Math.random() * 10)]; // 从0到9中选择暗色
-      }
-      return color;
-    }
-
     function highlightCells(value) {
       let cells = document.querySelectorAll('td');
       color = getRandomColor();
@@ -326,20 +317,6 @@
             cell.style.color = '#fff';
           }
         }
-      }
-    }
-
-    function getExchangeCode(symbol) {
-      let exchangeCode = symbol.slice(0, 2);
-
-      if (exchangeCode === "60" || exchangeCode === "68") {
-        return `sh${symbol}`;
-      } else if (exchangeCode === "00" || exchangeCode === "30") {
-        return `sz${symbol}`;
-      } else if (exchangeCode === "43" || exchangeCode === "83" || exchangeCode === "87") {
-        return `bj${symbol}`;
-      } else {
-        return '';
       }
     }
 
@@ -428,8 +405,8 @@
         tr.innerHTML = `
           <td>${jsonData['symbol']}</td>
           <td>${jsonData['name']}</td>
-          <td data-v=${jsonData['limit_ts']}>${formatTimestamp(jsonData['limit_ts'])}</td>
-          <td>${formatTimestamp(jsonData['last_limit_ts'])}</td>
+          <td data-v=${jsonData['limit_ts']}>${getTimeStrFromTs(jsonData['limit_ts'])}</td>
+          <td>${getTimeStrFromTs(jsonData['last_limit_ts'])}</td>
           <td>${jsonData['const_desc']}</td>
           <td>${jsonData['const_num']}</td>
           <td>${(jsonData['master_net_amount'] / 10 ** 8).toFixed(2)}亿</td>
@@ -476,7 +453,7 @@
         let trList = tr.querySelectorAll('td');
         let symbol = trList[0].textContent;
         let ts = trList[2].getAttribute('data-v');
-        let date = getFormattedDate(ts);
+        let date = getDateStrFromTs(ts);
         window.open(`/chart?date=${date}&period=F5&symbol=${symbol}`, "_blank");
       }
     });
@@ -520,30 +497,6 @@
         default:
           return null;
       }
-    }
-
-    function formatTimestamp(timestamp) {
-      let date = new Date(timestamp * 1000);
-
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
-      let seconds = date.getSeconds();
-
-      hours = (hours < 10) ? '0' + hours : hours;
-      minutes = (minutes < 10) ? '0' + minutes : minutes;
-      seconds = (seconds < 10) ? '0' + seconds : seconds;
-
-      return hours + ':' + minutes + ':' + seconds;
-    }
-
-    function getFormattedDate(timestamp) {
-      const date = new Date(timestamp * 1000);
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-
-      return `${year}-${month}-${day}`;
     }
 
     function changeStockListInTable(colName, cell) {

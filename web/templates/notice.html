@@ -142,7 +142,7 @@
     function renderCell(cell, value) {
       if (Object.entries(value).length === 0) return;
       cell.innerHTML = `
-<span class="badge time">${formatTimestamp(value['TimeMin'])}</span>
+<span class="badge time">${getTimeStrFromTs(value['TimeMin'])}</span>
 <span class="badge bk">${value['ZSName']}</span>
 <span class="badge tag">${value['TagName']}</span>
 ${value['StockList'].map(item => `<span class="stock" data-v="${item[0]}">${item[1]}</span>`).join(' | ')}<br/>
@@ -191,36 +191,6 @@ ${value['StockList'].map(item => `<span class="stock" data-v="${item[0]}">${item
         </div>
     `;
         });
-    }
-
-    function getExchangeCode(symbol) {
-      let exchangeCode = symbol.slice(0, 2);
-
-      if (exchangeCode === "60" || exchangeCode === "68") {
-        return `sh${symbol}`;
-      } else if (exchangeCode === "00" || exchangeCode === "30") {
-        return `sz${symbol}`;
-      } else if (exchangeCode === "43" || exchangeCode === "83" || exchangeCode === "87") {
-        return `bj${symbol}`;
-      } else {
-        return '';
-      }
-    }
-  </script>
-
-  <script>
-    function formatTimestamp(timestamp) {
-      let date = new Date(timestamp * 1000);
-
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
-      let seconds = date.getSeconds();
-
-      hours = (hours < 10) ? '0' + hours : hours;
-      minutes = (minutes < 10) ? '0' + minutes : minutes;
-      seconds = (seconds < 10) ? '0' + seconds : seconds;
-
-      return hours + ':' + minutes + ':' + seconds;
     }
   </script>
 {% endblock %}

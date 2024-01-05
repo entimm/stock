@@ -79,8 +79,8 @@
           <td>${jsonData['date']}</td>
           <td>${jsonData['symbol']}</td>
           <td>${jsonData['name']}</td>
-          <td data-v=${jsonData['limit_ts']}>${formatTimestamp(jsonData['limit_ts'])}</td>
-          <td>${formatTimestamp(jsonData['last_limit_ts'])}</td>
+          <td data-v=${jsonData['limit_ts']}>${getTimeStrFromTs(jsonData['limit_ts'])}</td>
+          <td>${getTimeStrFromTs(jsonData['last_limit_ts'])}</td>
           <td>${jsonData['const_desc']}</td>
           <td>${jsonData['const_num']}</td>
           <td>${(jsonData['master_net_amount'] / 10 ** 8).toFixed(2)}亿</td>
@@ -95,20 +95,6 @@
       `;
         tbody.appendChild(tr);
       });
-    }
-
-    function formatTimestamp(timestamp) {
-      let date = new Date(timestamp * 1000);
-
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
-      let seconds = date.getSeconds();
-
-      hours = (hours < 10) ? '0' + hours : hours;
-      minutes = (minutes < 10) ? '0' + minutes : minutes;
-      seconds = (seconds < 10) ? '0' + seconds : seconds;
-
-      return hours + ':' + minutes + ':' + seconds;
     }
 
     const sortingOrder = {};
@@ -138,15 +124,5 @@
         window.open(`/chart?date=${date}&period=F5&symbol=${symbol}`, "_blank");
       }
     });
-
-    function getFormattedDate(timestamp) {
-      const date = new Date(timestamp * 1000);
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-
-      return `${year}-${month}-${day}`;
-    }
   </script>
 {% endblock %}

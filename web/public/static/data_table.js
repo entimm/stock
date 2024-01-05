@@ -236,15 +236,6 @@ function setSelectedCell(cell) {
   cell.classList.add('select-cell')
 }
 
-function getRandomColor() {
-  let letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 3; i++) {
-    color += letters[Math.floor(Math.random() * 10)]; // 从0到9中选择暗色
-  }
-  return color;
-}
-
 function highlightCells(value) {
   let cells = document.querySelectorAll('td');
   color = getRandomColor();
@@ -258,20 +249,6 @@ function highlightCells(value) {
         cell.style.color = '#fff';
       }
     }
-  }
-}
-
-function getExchangeCode(symbol) {
-  let exchangeCode = symbol.slice(0, 2);
-
-  if (exchangeCode === "60" || exchangeCode === "68") {
-    return `sh${symbol}`;
-  } else if (exchangeCode === "00" || exchangeCode === "30") {
-    return `sz${symbol}`;
-  } else if (exchangeCode === "43" || exchangeCode === "83" || exchangeCode === "87") {
-    return `bj${symbol}`;
-  } else {
-    return '';
   }
 }
 

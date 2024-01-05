@@ -199,7 +199,7 @@
           acc[item['limit_up_days']] ||= {name: item['limit_up_days'], content: 0, num: 0, stock_list: [], lock_stock_list: [], desc: '空'};
           acc[item['limit_up_days']].num += 1;
           acc[item['limit_up_days']].stock_list.push(item['stock_chi_name']);
-          if (formatTimestamp(item['last_limit_up']).slice(0, 5) === '09:25') {
+          if (getTimeStrFromTs(item['last_limit_up']).slice(0, 5) === '09:25') {
             acc[item['limit_up_days']].lock_stock_list.push(item['stock_chi_name']);
           }
           return acc;
@@ -323,15 +323,6 @@
       cell.classList.add('select-cell')
     }
 
-    function getRandomColor() {
-      let letters = '0123456789ABCDEF';
-      let color = '#';
-      for (let i = 0; i < 3; i++) {
-        color += letters[Math.floor(Math.random() * 10)]; // 从0到9中选择暗色
-      }
-      return color;
-    }
-
     function highlightCells(value) {
       let cells = document.querySelectorAll('td');
       color = getRandomColor();
@@ -345,20 +336,6 @@
             cell.style.color = '#fff';
           }
         }
-      }
-    }
-
-    function getExchangeCode(symbol) {
-      let exchangeCode = symbol.slice(0, 2);
-
-      if (exchangeCode === "60" || exchangeCode === "68") {
-        return `sh${symbol}`;
-      } else if (exchangeCode === "00" || exchangeCode === "30") {
-        return `sz${symbol}`;
-      } else if (exchangeCode === "43" || exchangeCode === "83" || exchangeCode === "87") {
-        return `bj${symbol}`;
-      } else {
-        return '';
       }
     }
 
@@ -451,13 +428,13 @@
           <td>${jsonData['stock_chi_name']}</td>
           <td>${jsonData['related_plates'].map(item => item['plate_name']).join('<br/>')}</td>
           <td>${jsonData['m_days_n_boards_boards'] > 0 ? jsonData['m_days_n_boards_days'] + '天' + jsonData['m_days_n_boards_boards'] + '板' : '首板'}</td>
-          <td>${formatTimestamp(jsonData['first_limit_up'])}</td>
-          <td> ${formatTimestamp(jsonData['last_limit_up'])}</td>
+          <td>${getTimeStrFromTs(jsonData['first_limit_up'])}</td>
+          <td> ${getTimeStrFromTs(jsonData['last_limit_up'])}</td>
           <td>${(jsonData['buy_lock_volume_ratio'] * 100).toFixed(2)}%</td>
           <td>${(jsonData['non_restricted_capital'] / 1e8).toFixed(2)}亿</td>
           <td>${(jsonData['turnover_ratio'] * 100).toFixed(2)}</td>
           <td>${jsonData['break_limit_up_times']}</td>
-          <td>${getFormattedDate(jsonData['listed_date'])}</td>
+          <td>${getDateStrFromTs(jsonData['listed_date'])}</td>
           <td class="reason">${jsonData['surge_reason.stock_reason']}</td>
       `;
         tbody.appendChild(tr);
@@ -526,30 +503,6 @@
         default:
           return null;
       }
-    }
-
-    function formatTimestamp(timestamp) {
-      let date = new Date(timestamp * 1000);
-
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
-      let seconds = date.getSeconds();
-
-      hours = (hours < 10) ? '0' + hours : hours;
-      minutes = (minutes < 10) ? '0' + minutes : minutes;
-      seconds = (seconds < 10) ? '0' + seconds : seconds;
-
-      return hours + ':' + minutes + ':' + seconds;
-    }
-
-    function getFormattedDate(timestamp) {
-      const date = new Date(timestamp * 1000);
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-
-      return `${year}-${month}-${day}`;
     }
 
     function changeStockListInTable(colName, cell) {
