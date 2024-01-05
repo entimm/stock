@@ -37,8 +37,8 @@ def limited_power_data():
             'turnover_ratio',
             'break_limit_up_times',
             'listed_date',
-            'surge_reason.stock_reason',
-            'surge_reason.related_plates',
+            'reason_desc',
+            'related_plates',
         ]]
         df.fillna('', inplace=True)
         result_plate_list[date2] = df.to_dict(orient='records')

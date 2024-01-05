@@ -14,7 +14,7 @@ from command.minor.kaipanla import kaipanla_mood, kaipanla_limit_up, kaipanla_li
 from command.minor.north_funds import north_funds
 from command.minor.stock_meta import stock_meta
 from command.minor.test import test
-from command.minor.xuangubao import download_xuangubao_plates, download_xuangubao_stock, download_xuangubao_detail, arrange_xuangubao_detail
+from command.minor.xuangubao import download_xuangubao_detail, arrange_xuangubao_detail
 from command.mv_raw import mv_raw
 from command.backtest.trend_monster import backtest_trend_monster
 from command.backtest.three_ma import backtest_three_ma
@@ -49,8 +49,6 @@ main.add_command(kaipanla_limit_up)
 main.add_command(kaipanla_limit_down)
 main.add_command(kaipanla_notice)
 
-main.add_command(download_xuangubao_plates)
-main.add_command(download_xuangubao_stock)
 main.add_command(download_xuangubao_detail)
 main.add_command(arrange_xuangubao_detail)
 

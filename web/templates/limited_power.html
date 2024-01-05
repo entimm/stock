@@ -112,7 +112,7 @@
         <th data-k="turnover_ratio">换手</th>
         <th data-k="break_limit_up_times">开板次数</th>
         <th data-k="listed_date">上市日期</th>
-        <th data-k="surge_reason.stock_reason">涨停原因</th>
+        <th data-k="reason_desc">涨停原因</th>
       </tr>
       </thead>
       <tbody></tbody>
@@ -148,10 +148,12 @@
         total_stock_list = {}
         Object.keys(dataList).reverse().forEach(function (date) {
           total_stock_list[date] = Object.values(dataList[date].reduce((acc, item) => {
-            item['related_plates'] = [];
             item['plates'] = '';
-            if (item['surge_reason.related_plates']) {
-              item['related_plates'] = JSON.parse(item['surge_reason.related_plates'].replaceAll("'", '"'));
+            if (item['related_plates']) {
+              item['related_plates'] = item['related_plates'].split('##').map(item => {
+                let sub = item.split('||');
+                return {'plate_name': sub[0], 'plate_reason': sub[1]};
+              });
               item['plates'] = item['related_plates'].map(item => item['plate_name']).join(', ');
             }
             item['date'] = date;
@@ -468,7 +470,7 @@
           <td>${(jsonData['turnover_ratio'] * 100).toFixed(2)}</td>
           <td>${jsonData['break_limit_up_times']}</td>
           <td>${getDateStrFromTs(jsonData['listed_date'])}</td>
-          <td class="reason">${jsonData['surge_reason.stock_reason']}</td>
+          <td class="reason">${jsonData['reason_desc']}</td>
       `;
         tbody.appendChild(tr);
         $(tr).hover(function () {
