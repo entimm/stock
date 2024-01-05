@@ -5,7 +5,6 @@ from flask import Blueprint, render_template
 
 from app_cache import cache
 from common.common import RESOURCES_PATH
-from common.config import config
 from common.quotes import trade_date_list
 from controllers import make_cache_key
 
@@ -15,6 +14,7 @@ KAIPANLA_LIMITUP_PATH = os.path.join(RESOURCES_PATH, 'kaipanla/notice')
 
 
 @blueprint.route('/notice_data')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def limited_power2_data():
     result_plate_list = {}
     for ts in trade_date_list.tail(200)['date'].to_list():

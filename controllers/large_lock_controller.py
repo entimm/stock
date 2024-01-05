@@ -3,8 +3,10 @@ import os
 import pandas as pd
 from flask import Blueprint, render_template
 
+from app_cache import cache
 from common.common import RESOURCES_PATH
 from common.quotes import trade_date_list
+from controllers import make_cache_key
 
 blueprint = Blueprint('large_lock', __name__)
 
@@ -12,6 +14,7 @@ KAIPANLA_LIMITUP_PATH = os.path.join(RESOURCES_PATH, 'kaipanla/limit_up')
 
 
 @blueprint.route('/large_lock_data')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def large_lock_data():
     result_plate_list = {}
     for ts in trade_date_list.tail(500)['date'].to_list():

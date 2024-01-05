@@ -44,6 +44,8 @@ def chart():
     else:
         df = fetch_local_plus_real(symbol, period_enum, req_real)
 
+    if show_chan and not limit:
+        limit = 10000
     if limit:
         df = df.tail(limit)
 

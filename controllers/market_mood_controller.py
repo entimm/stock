@@ -53,6 +53,6 @@ def market_mood_data():
 
     field = request.args.get('field', 'highest_limit', type=str)
 
-    chart_data = df[['date', field]].tail(500).to_dict(orient='records')
+    chart_data = df[['date', field]].tail(300).to_dict(orient='records')
 
     return jsonify(chart_data)

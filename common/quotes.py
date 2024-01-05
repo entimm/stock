@@ -81,7 +81,7 @@ def read_local_csv(csv_file):
 
 def fetch_local_history(date_str, symbol, period_enum):
     date_object = datetime.strptime(date_str, "%Y-%m-%d")
-    if period_enum == PeriodEnum.D or date_object >= datetime(2023, 9, 1):
+    if period_enum == PeriodEnum.D or date_object >= datetime(2023, 12, 31):
         return fetch_local_plus_real(symbol, period_enum)
 
     csv_file = f"{config['local_kline_1min_path']}/{date_object.year}_yssj/{symbol}.csv"

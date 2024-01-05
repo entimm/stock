@@ -2,9 +2,11 @@ import os
 
 from flask import Blueprint, render_template, request
 
+from app_cache import cache
 from common.common import RAW_V2_PATH
 from common.tdx import read_tdx_text
 from common.utils import filter_files_by_date
+from controllers import make_cache_key
 
 blueprint = Blueprint('follow_bull', __name__)
 
@@ -44,6 +46,7 @@ def mode_bomb_limit(df):
 
 
 @blueprint.route('/mode')
+@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def mode():
     mode_list: list = [
         ('次阳', mode_follow_bull,),
