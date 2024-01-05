@@ -53,6 +53,10 @@ th {
   background-color: #008b7d;
 }
 
+table tr td {
+  border: 1px solid rgba(227, 227, 227, 0.5);
+}
+
 #chart {
   width: 100%;
   height: 100%;
