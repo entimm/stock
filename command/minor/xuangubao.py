@@ -13,48 +13,6 @@ xuangubao_url = 'https://flash-api.xuangubao.cn/api'
 
 
 @click.command()
-def download_xuangubao_plates():
-    for ts in trade_date_list.tail(1000)['date'].to_list()[::-1]:
-        date_str = ts.strftime('%Y%m%d')
-        file_path = os.path.join(RESOURCES_PATH, 'xuangubao', 'plates', f'plates-{date_str}.csv')
-        if os.path.exists(file_path):
-            continue
-
-        print(f"date={date_str}")
-        url = f'{xuangubao_url}/surge_stock/plates?date={int(ts.timestamp())}'
-        data_dict = send_request(url)
-
-        if 'items' not in data_dict['data']:
-            print('空数据')
-            continue
-
-        items = data_dict['data']['items']
-        df = pd.DataFrame(items, columns=['id', 'name', 'description'])
-
-        df.to_csv(file_path, index=False)
-
-
-@click.command()
-def download_xuangubao_stock():
-    for ts in trade_date_list.tail(1000)['date'].to_list()[::-1]:
-        date_str = ts.strftime('%Y%m%d')
-        file_path = os.path.join(RESOURCES_PATH, 'xuangubao', 'stocks', f'stock-{date_str}.csv')
-        if os.path.exists(file_path):
-            continue
-
-        print(f"date={date_str}")
-        url = f'{xuangubao_url}/surge_stock/stocks?date={date_str}&normal=true&uplimit=true'
-        data_dict = send_request(url)
-
-        fields = data_dict['data']['fields']
-        items = data_dict['data']['items']
-
-        df = pd.DataFrame(items, columns=fields)
-
-        df.to_csv(file_path, index=False)
-
-
-@click.command()
 def download_xuangubao_detail():
     for ts in trade_date_list.tail(1000)['date'].to_list()[::-1]:
         date_str = ts.strftime('%Y%m%d')

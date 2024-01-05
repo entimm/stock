@@ -11,7 +11,7 @@ from controllers import make_cache_key
 
 blueprint = Blueprint('limited_power', __name__)
 
-XUANGUBAO_DETAIL_PATH = os.path.join(RESOURCES_PATH, 'xuangubao', 'details')
+XUANGUBAO_DETAIL_PATH = os.path.join(RESOURCES_PATH, 'xuangubao/details')
 
 
 @blueprint.route('/limited_power_data')
