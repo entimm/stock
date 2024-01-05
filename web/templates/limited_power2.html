@@ -55,7 +55,7 @@
 
     #main-grid td span.interrupt {
       font-style: normal;
-      font-size: 10px;
+      font-size: 12px;
       color: #773fec;
     }
 
@@ -207,9 +207,7 @@
             }
           }
         }
-        if (0 in tmpList) {
-          delete tmpList[0];
-        }
+        deleteDictKey(tmpList, 0);
         groupData[date] = Object.values(tmpList);
         groupData[date].sort((a, b) => a.name - b.name);
       });

@@ -55,7 +55,7 @@
 
     #main-grid td span.interrupt {
       font-style: normal;
-      font-size: 10px;
+      font-size: 12px;
       color: #773fec;
     }
 
@@ -238,13 +238,9 @@
         }
 
         if (mode === 'm_days_n_boards_boards') {
-          if (1 in tmpList) {
-            delete tmpList[1];
-          }
+          deleteDictKey(tmpList, 1);
         } else {
-          if (0 in tmpList) {
-            delete tmpList[0];
-          }
+          deleteDictKey(tmpList, 0);
         }
 
         groupData[date] = Object.values(tmpList);

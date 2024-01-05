@@ -44,3 +44,9 @@ function getDateStrFromTs(timestamp) {
 
   return `${year}-${month}-${day}`;
 }
+
+function deleteDictKey(dict, key) {
+  if (key in dict) {
+    delete dict[key];
+  }
+}
