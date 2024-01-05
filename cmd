@@ -10,6 +10,7 @@ from command.convert_gnbk import convert_gnbk, convert_gnbk_trend_up, convert_gn
 from command.download_total import download_total
 from command.minor.cal_trend_ptg import cal_trend_ptg
 from command.minor.convert_tdx_xls import convert_tdx_xls
+from command.minor.hot_lose import hot_lose
 from command.minor.kaipanla import kaipanla_mood, kaipanla_limit_up, kaipanla_limit_down, kaipanla_notice
 from command.minor.north_funds import north_funds
 from command.minor.stock_meta import stock_meta
@@ -56,6 +57,7 @@ main.add_command(backtest_trend_monster)
 main.add_command(backtest_three_ma)
 main.add_command(backtest_three_ma_forex)
 
+main.add_command(hot_lose)
 main.add_command(test)
 
 if __name__ == '__main__':

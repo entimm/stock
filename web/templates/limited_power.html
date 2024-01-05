@@ -77,7 +77,7 @@
       min-height: 600px;
       max-height: 600px;
       bottom: 0;
-      background-color: rgba(0, 139, 125, 0.2);
+      background-color: rgb(217, 255, 251);
       transform: translateX(-50%);
       left: 50%;
     }
@@ -91,12 +91,17 @@
       max-width: 400px;
       white-space: break-spaces;
     }
+
+    #hot-lose-grid {
+      background-color: rgb(176, 255, 196);
+    }
   </style>
 {% endblock %}
 {% block content %}
 
   <div id="grid-container">
     <table id="main-grid" class="striped centered"></table>
+    <table id="hot-lose-grid" class="striped centered"></table>
     <table id="stock-grid" class="striped centered z-depth-5" style="display: none;">
       <thead>
       <tr>
@@ -163,6 +168,8 @@
             return acc;
           }, []));
         });
+
+        readHotLoss();
         renderGrid(groupDataByBk(total_stock_list));
       });
 
@@ -541,6 +548,49 @@
         if (mode === 'plate_name') return item['related_plates'].map(item => item['plate_name']).includes(cell.getAttribute('name'));
         return String(item[mode]) === cell.getAttribute('name');
       });
+    }
+
+    function readHotLoss() {
+      fetch('/hot_lose_data').then(response => response.json())
+        .then(dataList => {
+          let tbody = document.createElement('tbody');
+
+          let row1 = document.createElement('tr');
+          let row2 = document.createElement('tr');
+          let dateList = Object.keys(total_stock_list);
+          for (let index in dateList) {
+            index = parseInt(index);
+            let date = dateList[index];
+            let preDate = dateList[index + 1];
+
+            let cell1 = document.createElement('td');
+            row1.appendChild(cell1);
+            if (preDate) {
+              cell1.innerHTML = total_stock_list[preDate]
+                .filter(item => item.m_days_n_boards_boards >= 4 && dataList[date][0].includes(item.symbol))
+                .sort((a, b) => (a['m_days_n_boards_boards'] > b['m_days_n_boards_boards']))
+                .map(item => item['stock_chi_name'])
+                .join('<br/>');
+            } else {
+              cell1.innerHTML = '';
+            }
+
+            let cell2 = document.createElement('td');
+            row2.appendChild(cell2);
+            if (preDate) {
+              cell2.innerHTML = total_stock_list[preDate]
+                .filter(item => item.m_days_n_boards_boards >= 4 && dataList[date][1].includes(item.symbol))
+                .sort((a, b) => (a['m_days_n_boards_boards'] > b['m_days_n_boards_boards']))
+                .map(item => item['stock_chi_name'])
+                .join('<br/>');
+            } else {
+              cell2.innerHTML = '';
+            }
+          }
+          tbody.appendChild(row1);
+          tbody.appendChild(row2);
+          document.getElementById('hot-lose-grid').appendChild(tbody);
+        });
     }
   </script>
 {% endblock %}

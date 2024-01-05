@@ -26,3 +26,6 @@ python cmd kaipanla-mood
 
 echo 'backtest-trend-monster'
 python cmd backtest-trend-monster
+
+echo 'hot-lose'
+python cmd hot-lose

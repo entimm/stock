@@ -34,6 +34,7 @@ controllers = [
     'trade_history',
     'notice',
     'large_lock',
+    'hot_lose',
 ]
 
 for controller in controllers:
