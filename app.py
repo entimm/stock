@@ -35,6 +35,7 @@ controllers = [
     'notice',
     'large_lock',
     'hot_lose',
+    'limit_up_bs',
 ]
 
 for controller in controllers:

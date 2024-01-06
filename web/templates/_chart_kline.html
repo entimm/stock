@@ -51,7 +51,7 @@
             {title: 'High: ', value: args.current.high.toFixed(2).toString()},
             {title: 'Low: ', value: args.current.low.toFixed(2).toString()},
             {title: 'Close: ', value: args.current.close.toFixed(2).toString()},
-            {title: 'Pct: ', value: ((args.current.close / args.prev.close - 1) * 100).toFixed(2).toString()},
+            {title: 'Pct: ', value: ((args.current?.close / args.prev?.close - 1) * 100).toFixed(2).toString()},
           ];
         },
       }
@@ -103,7 +103,7 @@
   window.addEventListener('resize', resizeChart);
   window.addEventListener('load', resizeChart);
 
-////////////////////
+  ////////////////////
 
   {% if request_args.date %}
     (function () {
@@ -173,7 +173,7 @@
     return time2 >= time1;
   }
 
-////////////////////
+  ////////////////////
 
   let verticalGapKlines = {};
   {% if request_args is defined and request_args.period in ['F1', 'F5', 'F15', 'F30'] %}
@@ -210,7 +210,7 @@
     });
   });
 
-////////////////////
+  ////////////////////
 
   const periodZoomData = {
     'F1': 240,
