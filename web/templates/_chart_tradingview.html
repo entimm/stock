@@ -14,7 +14,7 @@
     }
 
     // 最大涨幅
-    const maxp = symbol.slice(0, 2) in ['68', '30'] ? 0.2 : 0.1;
+    const maxp = ['68', '30'].includes(symbol.slice(0, 2)) ? 0.2 : 0.1;
     // 涨停色
     if (item.close >= Math.round(item.last_close * (1 + maxp))) {
       data.color = '#F500FF';

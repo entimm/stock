@@ -59,22 +59,22 @@
       color: #773fec;
     }
 
-    #main-grid tr:nth-child(3) {
+    #main-grid tr:nth-child(3) td {
       border-bottom: 1px solid rgba(255, 0, 0, 0.5);
     }
 
-    #main-grid tr:nth-child(6) {
+    #main-grid tr:nth-child(6) td {
       border-bottom: 1px solid rgba(255, 0, 0, 0.5);
     }
 
-    #main-grid tr:nth-child(9) {
+    #main-grid tr:nth-child(9) td {
       border-bottom: 1px solid rgba(255, 0, 0, 0.5);
     }
 
     #stock-grid {
       position: fixed;
       overflow-y: scroll;
-      min-height: 600px;
+      min-height: 300px;
       max-height: 600px;
       bottom: 0;
       background-color: rgb(217, 255, 251);
@@ -223,6 +223,10 @@
           }
           if (item['limit_up_days'] !== item[field]) {
             name = `#${name}#`;
+          }
+
+          if (['30', '68'].includes(item['symbol'].slice(0, 2))) {
+            name = `@${name}`;
           }
           acc[item[field]].stock_list.push(name);
 
@@ -385,7 +389,7 @@
       let cells = document.querySelectorAll('span.stock');
       color = getRandomColor();
       for (let cell of cells) {
-        if (cell.textContent.replaceAll(/[_#]/g, '') === value.replaceAll(/[_#]/g, '')) {
+        if (cell.textContent.replaceAll(/[_#@]/g, '') === value.replaceAll(/[_#@]/g, '')) {
           if (cell.style.backgroundColor) {
             cell.style.backgroundColor = "";
             cell.style.color = '';
@@ -574,50 +578,50 @@
       fetch('/hot_lose_data').then(response => response.json())
         .then(dataList => {
           let tbody = document.createElement('tbody');
-
-          let row1 = document.createElement('tr');
-          let row2 = document.createElement('tr');
           let dateList = Object.keys(total_stock_list);
-          for (let index in dateList) {
-            index = parseInt(index);
-            let date = dateList[index];
-            let preDate = dateList[index + 1];
 
-            let cell1 = document.createElement('td');
-            row1.appendChild(cell1);
-            if (preDate) {
-              cell1.innerHTML = total_stock_list[preDate]
-                .filter(item => item.m_days_n_boards_boards >= 4 && dataList[date][0].includes(item.symbol))
-                .sort((a, b) => (a['m_days_n_boards_boards'] > b['m_days_n_boards_boards']))
-                .map(item => `<span class="stock">${item['stock_chi_name']}</span>`)
-                .join('<br/>');
-            } else {
-              cell1.innerHTML = '';
-            }
+          [0, 1].forEach(function (rowIndex) {
+            let row = document.createElement('tr');
+            for (let index in dateList) {
+              index = parseInt(index);
+              let date = dateList[index];
+              let preDate = dateList[index + 1];
 
-            let cell2 = document.createElement('td');
-            row2.appendChild(cell2);
-            if (preDate) {
-              cell2.innerHTML = total_stock_list[preDate]
-                .filter(item => item.m_days_n_boards_boards >= 4 && dataList[date][1].includes(item.symbol))
-                .sort((a, b) => (a['m_days_n_boards_boards'] > b['m_days_n_boards_boards']))
-                .map(item => `<span class="stock">${item['stock_chi_name']}</span>`)
-                .join('<br/>');
-            } else {
-              cell2.innerHTML = '';
+              let cell = document.createElement('td');
+              row.appendChild(cell);
+              if (preDate) {
+                cell.innerHTML = total_stock_list[preDate]
+                  .filter(item => item['m_days_n_boards_boards'] >= 3 && dataList[date][rowIndex].includes(item.symbol))
+                  .sort((a, b) => a['m_days_n_boards_boards'] - b['m_days_n_boards_boards'])
+                  .map(item => `<span class="stock">${item['stock_chi_name']}</span>`)
+                  .join('<br/>');
+              } else {
+                cell.innerHTML = '';
+              }
             }
-          }
-          tbody.appendChild(row1);
-          tbody.appendChild(row2);
+            tbody.appendChild(row);
+          })
+
           document.getElementById('hot-lose-grid').appendChild(tbody);
 
-
           tbody.addEventListener('click', function (event) {
+            if (event.target.tagName === 'TD') {
+              let colName = table.rows[0].cells[event.target.cellIndex + 1]?.innerHTML;
+              changeStockListInTable2(colName, Array.from(event.target.getElementsByTagName('span')).map(item => item.textContent));
+              show_stocks_table();
+              return;
+            }
             if (['m_days_n_boards_boards', 'limit_up_days'].includes(mode) && event.target.classList.contains('stock')) {
               highlightStocks(event.target.textContent);
             }
           });
         });
+    }
+
+    function changeStockListInTable2(colName, nameList) {
+      stockListInTable = total_stock_list[colName].filter(item => {
+        return nameList.includes(item['stock_chi_name']);
+      }).sort((a, b) => (a['m_days_n_boards_boards'] - b['m_days_n_boards_boards']));
     }
   </script>
 {% endblock %}
