@@ -47,7 +47,7 @@
       width: 25%;
     }
 
-    #main-grid td span {
+    #main-grid td span.empty {
       font-style: italic;
       font-size: 8px;
       color: #b0b080;
@@ -193,22 +193,22 @@
             name = `_${name}_`;
           }
           if (const_desc.includes('天')) {
-            name = `*${name}*`;
+            name = `#${name}#`;
           }
           acc[const_num].stock_list.push(name);
           return acc;
         }, {});
         for (i = 1; i <= maxHeight + 1; i++) {
           if (!tmpList[i]) {
-            tmpList[i] = {name: i, content: `<span>${i}<span>`, num: 0, stock_list: []};
+            tmpList[i] = {name: i, content: `<span class="empty">${i}<span>`, num: 0, stock_list: []};
           } else {
             tmpList[i].content = tmpList[i].num;
             if (tmpList[i].num <= 3) {
               tmpList[i].content = tmpList[i].stock_list.map(function (item) {
-                if (/\*.*\*/.test(item)) {
-                  item = `<span class="interrupt">${item}</span>`
+                if (/#.*#/.test(item)) {
+                  item = `<span class="stock interrupt">${item}</span>`
                 }
-                return item;
+                return `<span class="stock">${item}</span>`;
               }).join('<br/>')
             }
           }
@@ -292,6 +292,10 @@
             show_stocks_table();
           }
         }
+
+        if (event.target.classList.contains('stock')) {
+          highlightStocks(event.target.textContent);
+        }
       });
       tbody.addEventListener('mouseover', function (event) {
         if (event.target.tagName === 'TD') {
@@ -331,7 +335,23 @@
         if (cell.getAttribute('name') === value && cell.getAttribute('stock_num') > 0) {
           if (cell.style.backgroundColor) {
             cell.style.backgroundColor = "";
-            cell.style.color = '#000';
+            cell.style.color = '';
+          } else {
+            cell.style.backgroundColor = color;
+            cell.style.color = '#fff';
+          }
+        }
+      }
+    }
+
+    function highlightStocks(value) {
+      let cells = document.querySelectorAll('span.stock');
+      color = getRandomColor();
+      for (let cell of cells) {
+        if (cell.textContent.replaceAll(/[_#]/g, '') === value.replaceAll(/[_#]/g, '')) {
+          if (cell.style.backgroundColor) {
+            cell.style.backgroundColor = "";
+            cell.style.color = '';
           } else {
             cell.style.backgroundColor = color;
             cell.style.color = '#fff';
@@ -542,7 +562,7 @@
               cell1.innerHTML = total_stock_list[preDate]
                 .filter(item => item.const_num >= 4 && dataList[date][0].includes(item.symbol))
                 .sort((a, b) => (a['const_num'] > b['const_num']))
-                .map(item => item['name'])
+                .map(item => `<span class="stock">${item['name']}</span>`)
                 .join('<br/>');
             } else {
               cell1.innerHTML = '';
@@ -554,7 +574,7 @@
               cell2.innerHTML = total_stock_list[preDate]
                 .filter(item => item.const_num >= 4 && dataList[date][1].includes(item.symbol))
                 .sort((a, b) => (a['const_num'] > b['const_num']))
-                .map(item => item['name'])
+                .map(item => `<span class="stock">${item['name']}</span>`)
                 .join('<br/>');
             } else {
               cell2.innerHTML = '';
@@ -563,6 +583,13 @@
           tbody.appendChild(row1);
           tbody.appendChild(row2);
           document.getElementById('hot-lose-grid').appendChild(tbody);
+
+
+          tbody.addEventListener('click', function (event) {
+            if (['const_num'].includes(mode) && event.target.classList.contains('stock')) {
+              highlightStocks(event.target.textContent);
+            }
+          });
         });
     }
   </script>

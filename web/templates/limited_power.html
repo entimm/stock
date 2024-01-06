@@ -47,7 +47,7 @@
       width: 25%;
     }
 
-    #main-grid td span {
+    #main-grid td span.empty {
       font-style: italic;
       font-size: 8px;
       color: #b0b080;
@@ -222,7 +222,7 @@
             name = `_${name}_`;
           }
           if (item['limit_up_days'] !== item[field]) {
-            name = `*${name}*`;
+            name = `#${name}#`;
           }
           acc[item[field]].stock_list.push(name);
 
@@ -230,15 +230,15 @@
         }, {});
         for (i = 0; i <= maxHeight + 1; i++) {
           if (tmpList[i] === undefined) {
-            tmpList[i] = {name: i, content: `<span>${i}<span>`, num: 0, stock_list: [], desc: '空'};
+            tmpList[i] = {name: i, content: `<span class="empty">${i}<span>`, num: 0, stock_list: [], desc: '空'};
           } else {
             tmpList[i].content = tmpList[i].num;
             if (tmpList[i].num <= 3) {
               tmpList[i].content = tmpList[i].stock_list.map(function (item) {
-                if (/\*.*\*/.test(item)) {
-                  item = `<span class="interrupt">${item}</span>`
+                if (/#.*#/.test(item)) {
+                  item = `<span class="stock interrupt">${item}</span>`
                 }
-                return item;
+                return `<span class="stock">${item}</span>`;
               }).join('<br/>')
             }
           }
@@ -332,6 +332,10 @@
             show_stocks_table();
           }
         }
+
+        if (event.target.classList.contains('stock')) {
+          highlightStocks(event.target.textContent);
+        }
       });
       tbody.addEventListener('mouseover', function (event) {
         if (event.target.tagName === 'TD') {
@@ -368,7 +372,23 @@
         if (cell.textContent === value) {
           if (cell.style.backgroundColor) {
             cell.style.backgroundColor = "";
-            cell.style.color = '#000';
+            cell.style.color = '';
+          } else {
+            cell.style.backgroundColor = color;
+            cell.style.color = '#fff';
+          }
+        }
+      }
+    }
+
+    function highlightStocks(value) {
+      let cells = document.querySelectorAll('span.stock');
+      color = getRandomColor();
+      for (let cell of cells) {
+        if (cell.textContent.replaceAll(/[_#]/g, '') === value.replaceAll(/[_#]/g, '')) {
+          if (cell.style.backgroundColor) {
+            cell.style.backgroundColor = "";
+            cell.style.color = '';
           } else {
             cell.style.backgroundColor = color;
             cell.style.color = '#fff';
@@ -569,7 +589,7 @@
               cell1.innerHTML = total_stock_list[preDate]
                 .filter(item => item.m_days_n_boards_boards >= 4 && dataList[date][0].includes(item.symbol))
                 .sort((a, b) => (a['m_days_n_boards_boards'] > b['m_days_n_boards_boards']))
-                .map(item => item['stock_chi_name'])
+                .map(item => `<span class="stock">${item['stock_chi_name']}</span>`)
                 .join('<br/>');
             } else {
               cell1.innerHTML = '';
@@ -581,7 +601,7 @@
               cell2.innerHTML = total_stock_list[preDate]
                 .filter(item => item.m_days_n_boards_boards >= 4 && dataList[date][1].includes(item.symbol))
                 .sort((a, b) => (a['m_days_n_boards_boards'] > b['m_days_n_boards_boards']))
-                .map(item => item['stock_chi_name'])
+                .map(item => `<span class="stock">${item['stock_chi_name']}</span>`)
                 .join('<br/>');
             } else {
               cell2.innerHTML = '';
@@ -590,6 +610,13 @@
           tbody.appendChild(row1);
           tbody.appendChild(row2);
           document.getElementById('hot-lose-grid').appendChild(tbody);
+
+
+          tbody.addEventListener('click', function (event) {
+            if (['m_days_n_boards_boards', 'limit_up_days'].includes(mode) && event.target.classList.contains('stock')) {
+              highlightStocks(event.target.textContent);
+            }
+          });
         });
     }
   </script>
