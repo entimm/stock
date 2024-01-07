@@ -20,6 +20,7 @@ def trade_history_data():
 def trade_history():
     template_var = {
         'request_args': request.args.to_dict(),
+        'socket_token': request.args.get('socket_token', '', str),
     }
 
     return render_template('trade_history2.html', **template_var)

@@ -175,6 +175,7 @@
           let currentUrl = new URL(document.URL.replace(/\d{6}/, message.symbol));
           let searchParams = currentUrl.searchParams;
           searchParams.set("date", message.date);
+          searchParams.set("time", message.time);
           window.location.href = currentUrl.toString();
         }
       });
