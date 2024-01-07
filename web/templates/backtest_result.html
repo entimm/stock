@@ -82,6 +82,7 @@
     <table id="grid" class="striped centered z-depth-5">
       <thead>
       <tr>
+        <th>序号</th>
         <th>名称</th>
         <th>代码</th>
         <th>买入价格</th>
@@ -90,7 +91,7 @@
         <th>持有时间</th>
       </tr>
       </thead>
-      <tbody id="json-table"></tbody>
+      <tbody id="table-content"></tbody>
     </table>
   </div>
 {% endblock %}
@@ -245,29 +246,33 @@
         });
 
         const reversedKeys = Object.keys(jsonData).reverse();
-        const jsonTable = document.getElementById('json-table');
+        const tableContent = document.getElementById('table-content');
+        let i = reversedKeys.length;
         reversedKeys.forEach(key => {
           if (jsonData.hasOwnProperty(key)) {
             const item = jsonData[key];
-            const row = jsonTable.insertRow();
+            const row = tableContent.insertRow();
 
-            const cellName = row.insertCell(0);
+            const index = row.insertCell(0);
+            index.innerHTML = String(i--);
+
+            const cellName = row.insertCell(1);
             cellName.innerHTML = item.name;
 
-            const cellSymbol = row.insertCell(1);
+            const cellSymbol = row.insertCell(2);
             cellSymbol.innerHTML = item.symbol;
 
-            const cellPrice = row.insertCell(2);
+            const cellPrice = row.insertCell(3);
             cellPrice.innerHTML = item.price;
 
-            const cellChangeRate = row.insertCell(3);
+            const cellChangeRate = row.insertCell(4);
             cellChangeRate.innerHTML = item.profit;
             addDotClass(cellChangeRate, item.profit)
 
-            const cellCapital = row.insertCell(4);
+            const cellCapital = row.insertCell(5);
             cellCapital.innerHTML = (item.capital / 10000.0).toFixed(2) + '万';
 
-            const cellDateDesc = row.insertCell(5);
+            const cellDateDesc = row.insertCell(6);
             cellDateDesc.innerHTML = item.date_desc;
 
             row.addEventListener('click', () => {

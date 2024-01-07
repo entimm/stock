@@ -78,7 +78,7 @@
         <th>连板数</th>
       </tr>
       </thead>
-      <tbody id="json-table"></tbody>
+      <tbody id="table-content"></tbody>
     </table>
   </div>
 {% endblock %}
@@ -88,11 +88,11 @@
     fetch(document.URL.replace('limit_up_bs', 'limit_up_bs_data')).then(response => response.json())
       .then(jsonData => {
         const reversedKeys = Object.keys(jsonData).reverse();
-        const jsonTable = document.getElementById('json-table');
+        const tableContent = document.getElementById('table-content');
         let lastDate = ''
         reversedKeys.forEach(key => {
           const item = jsonData[key];
-          const row = jsonTable.insertRow();
+          const row = tableContent.insertRow();
 
           row.insertCell(0).innerHTML = key;
           row.insertCell(1).innerHTML = item['name'];
