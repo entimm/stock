@@ -53,6 +53,10 @@
     .green3 {
       color: #1619de;
     }
+
+    .divide {
+      border-bottom: 3px solid rgba(255, 0, 0, 0.5)!important;
+    }
   </style>
 {% endblock %}
 {% block content %}
@@ -70,6 +74,8 @@
         <th>盈亏</th>
         <th>持仓天数</th>
         <th>模式</th>
+        <th>涨停密度</th>
+        <th>连板数</th>
       </tr>
       </thead>
       <tbody id="json-table"></tbody>
@@ -83,6 +89,7 @@
       .then(jsonData => {
         const reversedKeys = Object.keys(jsonData).reverse();
         const jsonTable = document.getElementById('json-table');
+        let lastDate = ''
         reversedKeys.forEach(key => {
           const item = jsonData[key];
           const row = jsonTable.insertRow();
@@ -101,6 +108,14 @@
 
           row.insertCell(8).innerHTML = item['days'] + 1;
           row.insertCell(9).innerHTML = item['mode'];
+          row.insertCell(10).innerHTML = item['const_density'];
+          row.insertCell(11).innerHTML = item['const_num'];
+
+          if (lastDate && lastDate !== item['buy_date']) {
+            console.log(row)
+            row.classList.add('divide');
+          }
+          lastDate = item['buy_date']
 
           row.addEventListener('click', () => {
             let dateNumber = String(item['buy_date']);

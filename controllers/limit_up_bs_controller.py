@@ -13,10 +13,10 @@ blueprint = Blueprint('limit_up_bs', __name__)
 def limit_up_bs_data():
     csv_file = os.path.join(RESOURCES_PATH, 'limit_up_bs.csv')
     df = pd.read_csv(csv_file, dtype={0: str})
-
+    df = df.sort_values(by='buy_date', ascending=True)
     df['name'] = df['symbol'].apply(ticker_name)
 
-    return df.to_dict(orient='records')
+    return df.tail(2000).to_dict(orient='records')
 
 
 @blueprint.route('/limit_up_bs')

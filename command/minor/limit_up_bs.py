@@ -6,6 +6,8 @@ import pandas as pd
 from common.common import TOTAL_PATH, RESOURCES_PATH
 from common.quotes import trade_date_list
 
+XUANGUBAO_DETAIL_PATH = os.path.join(RESOURCES_PATH, 'xuangubao/details')
+
 
 @click.command()
 def limit_up_bs():
@@ -14,6 +16,7 @@ def limit_up_bs():
 
     to_buy_list = []
     date_index = 0
+    pre_date = ''
     date_list = trade_date_list['date'].tail(500).to_list()
     for ts in date_list:
         date = ts.strftime('%Y%m%d')
@@ -23,6 +26,14 @@ def limit_up_bs():
         df = pd.read_csv(csv_file)
         df = df[df['ts_code'].str.endswith(('SH', 'SZ'))]
         df['ts_code'] = df['ts_code'].str[:6]
+
+        pre_limit_up_infos = {}
+        if pre_date:
+            file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{pre_date}.csv')
+            df_pre_limit_up_infos = pd.read_csv(file_path, index_col="symbol")
+            df_pre_limit_up_infos = df_pre_limit_up_infos[['stock_chi_name', 'limit_up_days', 'm_days_n_boards_days', 'm_days_n_boards_boards']]
+            df_pre_limit_up_infos.index = df_pre_limit_up_infos.index.astype(str).str[:6]
+            pre_limit_up_infos = df_pre_limit_up_infos.to_dict(orient='index')
 
         # 卖操作
         plan_sell_symbols = [item['symbol'] for item in holding]
@@ -58,6 +69,8 @@ def limit_up_bs():
                         'profit': profit,
                         'days': days,
                         'mode': target_hold['mode'],
+                        'const_num': target_hold['const_num'],
+                        'const_density': target_hold['const_density'],
                     })
 
         # 买操作
@@ -70,12 +83,15 @@ def limit_up_bs():
             if row['high'] == row['low'] and row['pct_chg'] <= -9.8:
                 continue
 
+            pre_limit_up_info = get_pre_limit_up_info(pre_limit_up_infos, row['ts_code'])
             holding.append({
                 'symbol': row['ts_code'],
                 'buy_date': date2,
                 'buy_price': row['open'],
                 'buy_index': date_index,
                 'mode': '开盘竞价',
+                'const_num': pre_limit_up_info[0],
+                'const_density': pre_limit_up_info[1],
             })
 
         df_hit_limit = df[(df['high'] / df['pre_close'] - 1) * 100 >= 9.8]
@@ -84,12 +100,15 @@ def limit_up_bs():
             highest_percent = (row['high'] / row['pre_close'] - 1) * 100
             is_percent_20cm = row['ts_code'][0: 2] in ['68', '30']
             if (is_percent_20cm and highest_percent >= 19.6) or not is_percent_20cm:
+                pre_limit_up_info = get_pre_limit_up_info(pre_limit_up_infos, row['ts_code'])
                 holding.append({
                     'symbol': row['ts_code'],
                     'buy_date': date2,
                     'buy_price': row['high'],
                     'buy_index': date_index,
                     'mode': '打板',
+                    'const_num': pre_limit_up_info[0],
+                    'const_density': pre_limit_up_info[1],
                 })
 
         df = df[df['high'] == df['close']]
@@ -97,7 +116,23 @@ def limit_up_bs():
         to_buy_list = df['ts_code'].to_list()
 
         date_index += 1
+        pre_date = date
 
     df = pd.DataFrame(result)
     file_path = os.path.join(RESOURCES_PATH, f'limit_up_bs.csv')
     df.to_csv(file_path, index=False)
+
+
+def get_pre_limit_up_info(pre_limit_up_infos, symbol):
+    pre_limit_up_info = pre_limit_up_infos.get(symbol, {})
+
+    const_num = 0
+    const_density = 0
+    if pre_limit_up_info:
+        const_num = pre_limit_up_info.get('limit_up_days', 0)
+        if pre_limit_up_info.get('m_days_n_boards_days'):
+            const_density = '{}天{}板'.format(pre_limit_up_info.get('m_days_n_boards_days'), pre_limit_up_info.get('m_days_n_boards_boards'))
+        else:
+            const_density = '首板'
+
+    return const_num, const_density
