@@ -90,71 +90,16 @@
   <script src="/static/third/socket.io.min.js"></script>
   <script src="/static/socket_utils.js"></script>
   <script>
-    let socket = null;
     let socketToken = '{{ request.args.get('socket_token', '') }}';
-
-    if (socketToken) {
-      socket = io.connect(`http://${document.domain}:${location.port}`);
-      socket.on('message_from_client1', function (message) {
-        if (message.socketToken !== socketToken) return;
-        sendSocket(message.key);
-      });
-    }
-
     let table = document.getElementById('grid');
-    let selectedRow = null;
 
-    document.addEventListener('keydown', function (event) {
-      if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
-        sendSocket(event.code);
-        event.preventDefault();
-      }
-    });
+    initSocket();
 
-    function sendSocket(direction) {
-      let row = processMove(direction);
-      if (row) {
-        let time = new Date(row.cells[1].textContent).getTime() / 1000;
-        let symbol = row.cells[2].textContent;
-        socketEmit(symbol, '', time);
-      }
-    }
+    function getKlineParams(row) {
+      let time = new Date(row.cells[1].textContent).getTime() / 1000;
+      let symbol = row.cells[2].textContent;
 
-    function processMove(direction) {
-      let row = getAdjacentCell(selectedRow, direction);
-      if (row) {
-        setSelectedRow(row);
-      }
-
-      return row;
-    }
-
-    function setSelectedRow(row) {
-      if (selectedRow) {
-        selectedRow.classList.remove('select-row');
-      }
-      selectedRow = row;
-      row.classList.add('select-row');
-    }
-
-    function getAdjacentCell(row, direction) {
-      if (!row) {
-        row = table.querySelector('tbody tr');
-      }
-      let rowIndex = getRowIndex(row);
-      let numRows = table.querySelector('tbody').childNodes.length;
-      switch (direction) {
-        case "ArrowUp":
-          return rowIndex > 0 ? table.querySelector(`tbody tr:nth-child(${rowIndex})`) : null;
-        case "ArrowDown":
-          return rowIndex < numRows - 1 ? table.querySelector(`tbody tr:nth-child(${rowIndex + 2})`) : null;
-        default:
-          return null;
-      }
-    }
-
-    function getRowIndex(row) {
-      return Array.from(row.parentElement.children).indexOf(row);
+      return {symbol, time}
     }
   </script>
 
@@ -185,17 +130,17 @@
             let ts = new Date(timeStr).getTime() / 1000;
 
             setSelectedRow(event.target.parentNode);
-            openKline(item['证券代码'], ts);
+            openKline(item['证券代码'], '', ts);
           });
         });
       });
 
-    function openKline(symbol, ts) {
+    function openKline(symbol, date, ts) {
       if (socketToken) {
-        socketEmit(symbol, '', ts);
+        socketEmit(symbol, date, ts);
         return;
       }
-      window.open(`/chart?time=${ts}&period=${period}&symbol=${symbol}`, "_blank");
+      window.open(`/chart?date=${date}&time=${ts}&period=${period}&symbol=${symbol}`, "_blank");
     }
   </script>
 {% endblock %}
