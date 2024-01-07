@@ -32,6 +32,7 @@ controllers = [
     'info',
     'market_mood',
     'trade_history',
+    'trade_history2',
     'notice',
     'large_lock',
     'hot_lose',

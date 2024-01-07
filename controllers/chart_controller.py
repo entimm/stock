@@ -32,6 +32,7 @@ def chart():
     limit = request.args.get('n', 0, type=int)
 
     date = request.args.get('date', '', type=str)
+    time = request.args.get('time', '', type=int)
 
     if not symbol or not period:
         return redirect(url_for('chart.chart', symbol='999999', period=PeriodEnum.D.name, req_real=0))
@@ -70,6 +71,7 @@ def chart():
             'show_chan': show_chan,
             'socket_token': socket_token,
             'date': date,
+            'time': time,
             'n': limit,
         },
         'indicator_config': config.get('indicator'),

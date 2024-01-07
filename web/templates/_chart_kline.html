@@ -105,11 +105,10 @@
 
   ////////////////////
 
-  {% if request_args.date %}
-    (function () {
-      let date = '{{ request_args.date }}';
-      scrollToDateRange(date);
-    })();
+  {% if request_args.time %}
+    scrollToDTime(parseInt('{{ request_args.time }}'));
+  {% elif request_args.date %}
+    scrollToDateRange('{{ request_args.date }}');
   {% endif %}
 
   function scrollToDateRange(date) {
@@ -149,6 +148,36 @@
     let index = kline_list.findIndex(item => timeCompare(dateRage.end, item.timestamp));
     index = index === -1 ? kline_list.length : index;
     chart.scrollToDataIndex(Math.min(index + 160, kline_list.length));
+  }
+
+  function scrollToDTime(time) {
+    time *= 1000;
+    let targetIndex = 0;
+    for (const index in kline_list) {
+      if (new Date(kline_list[index].timestamp).getTime() >= time) {
+        targetIndex = parseInt(index);
+        console.log(targetIndex)
+        break;
+      }
+    }
+
+    chart.createOverlay({
+      name: 'verticalSegment',
+      points: [{timestamp: kline_list[targetIndex].timestamp, value: -9999}, {timestamp: kline_list[targetIndex].timestamp, value: 9999}],
+      groupId: 'range',
+      lock: true,
+      styles: {
+        line: {
+          color: 'rgba(71,4,241,0.25)',
+          style: 'solid',
+          size: 3,
+          dashedValue: [3, 6],
+          zLevel: 0,
+        }
+      },
+    });
+
+    chart.scrollToDataIndex(Math.min(targetIndex + 160, kline_list.length));
   }
 
   function findEndPointByDate(targetDate) {

@@ -1,0 +1,112 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>他人历史交割单</title>
+  <style>
+    #grid-container {
+      width: 1800px;
+      margin: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    th {
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    td, th {
+      padding: 0;
+      white-space: nowrap;
+      width: 100px;
+      position: relative;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    #grid tr:hover {
+      background-color: rgba(0, 139, 125, 0.5);
+    }
+
+    .red1 {
+      color: #FF8800;
+    }
+
+    .red2 {
+      color: #ff0000;
+    }
+
+    .red3 {
+      color: #f500ff;
+    }
+
+    .green1 {
+      color: #00f7ff;
+    }
+
+    .green2 {
+      color: #00ff00;
+    }
+
+    .green3 {
+      color: #1619de;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="grid-container">
+    <table id="grid" class="striped centered z-depth-5">
+      <thead>
+      <tr>
+        <th>序号</th>
+        <th>成交日期</th>
+        <th>证券代码</th>
+        <th>证券名称</th>
+        <th>操作</th>
+        <th>成交数量</th>
+        <th>成交均价</th>
+        <th>成交金额</th>
+        <th>发生金额</th>
+        <th>资金余额</th>
+        <th>本次金额</th>
+      </tr>
+      </thead>
+      <tbody id="json-table"></tbody>
+    </table>
+  </div>
+{% endblock %}
+{% block footer %}
+  <script>
+    const period = '{{ request_args.get('period', 'F5') }}';
+    fetch(document.URL.replace('trade_history2', 'trade_history2_data')).then(response => response.json())
+      .then(jsonData => {
+        const reversedKeys = Object.keys(jsonData).reverse();
+        const jsonTable = document.getElementById('json-table');
+        reversedKeys.forEach(key => {
+          const item = jsonData[key];
+          const row = jsonTable.insertRow();
+
+          row.insertCell(0).innerHTML = key;
+          row.insertCell(1).innerHTML = item['成交时间'];
+          row.insertCell(2).innerHTML = item['证券代码'];
+          row.insertCell(3).innerHTML = String(item['证券名称']);
+          row.insertCell(4).innerHTML = item['操作'];
+          row.insertCell(5).innerHTML = item['成交数量'];
+          row.insertCell(6).innerHTML = item['成交均价'].toFixed(2);
+          row.insertCell(7).innerHTML = item['成交金额'].toFixed(2);
+          row.insertCell(8).innerHTML = item['发生金额'].toFixed(2);
+          row.insertCell(9).innerHTML = item['资金余额'].toFixed(2);
+          row.insertCell(10).innerHTML = item['本次金额'].toFixed(2);
+
+          row.addEventListener('click', () => {
+            let timeStr = String(item['成交时间']);
+            let ts = parseInt(new Date(timeStr).getTime() / 1000);
+
+            window.open(`/chart?time=${ts}&period=${period}&symbol=${item['证券代码']}`, "_blank");
+          });
+        });
+      });
+  </script>
+{% endblock %}
