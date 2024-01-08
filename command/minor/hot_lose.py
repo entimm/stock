@@ -24,11 +24,11 @@ def hot_lose():
 
         if yesterday_limit_up_list:
             df_limit_down = df[df['low'] == df['close']]
-            df_limit_down = df_limit_down[df_limit_down['pct_chg'] <= -9.6]
+            df_limit_down = df_limit_down[df_limit_down['pct_chg'] <= -9.8]
             limit_down_list = df_limit_down['ts_code'].to_list()
             limit_down_list = set(limit_down_list) & set(yesterday_limit_up_list)
 
-            df_big_noodle = df[(df['close'] / df['high'] - 1) * 100 <= -9.6]
+            df_big_noodle = df[(df['close'] / df['high'] - 1) * 100 <= -9.8]
             big_noodle_list = df_big_noodle['ts_code'].to_list()
             big_noodle_list = set(big_noodle_list) & set(yesterday_limit_up_list)
 
@@ -37,7 +37,7 @@ def hot_lose():
             result[date2].append(list(big_noodle_list))
 
         df = df[df['high'] == df['close']]
-        df = df[df['pct_chg'] >= 9.6]
+        df = df[df['pct_chg'] >= 9.8]
         yesterday_limit_up_list = df['ts_code'].to_list()
 
     result_json_file = os.path.join(RESOURCES_PATH, f'hot_lose.json')
