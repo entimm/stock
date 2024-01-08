@@ -19,13 +19,11 @@ python cmd  download-xuangubao-detail
 echo 'arrange-xuangubao-detail'
 python cmd  arrange-xuangubao-detail
 
-echo 'kaipanla-mood'
-python cmd kaipanla-mood
-echo 'kaipanla-notice'
-python cmd kaipanla-mood
-
 echo 'backtest-trend-monster'
 python cmd backtest-trend-monster
 
 echo 'hot-lose'
 python cmd hot-lose
+
+echo 'limit-up-bs'
+python cmd limit-up-bs
