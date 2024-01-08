@@ -80,8 +80,8 @@
       <tbody id="table-content"></tbody>
     </table>
   </div>
-  <div class="fixed-action-btn z-depth-5" style="top: 0; right: 10px; height: 40px">
-    <a class="btn-floating btn waves-effect waves-light orange" onclick="openRelateKlineMode()">
+  <div class="fixed-action-btn" style="top: 0; right: 10px; height: 40px">
+    <a class="btn-floating btn waves-effect waves-light orange z-depth-5" onclick="openRelateKlineMode()">
       K线
     </a>
   </div>
@@ -96,10 +96,15 @@
     initSocket();
 
     function getKlineParams(row) {
-      let time = new Date(row.cells[1].textContent).getTime() / 1000;
       let symbol = row.cells[2].textContent;
+      let date = '';
+      let time = new Date(row.cells[1].textContent).getTime() / 1000;
+      if (row.cells[4].textContent === '卖') {
+        time = -time;
+      }
+      let price = row.cells[6].textContent
 
-      return {symbol, time}
+      return {symbol, date, time, price}
     }
   </script>
 
@@ -130,17 +135,18 @@
             let ts = new Date(timeStr).getTime() / 1000;
 
             setSelectedRow(event.target.parentNode);
-            openKline(item['证券代码'], '', ts);
+            openKline(row);
           });
         });
       });
 
-    function openKline(symbol, date, ts) {
+    function openKline(row) {
+      let klineParams = getKlineParams(row);
       if (socketToken) {
-        socketEmit(symbol, date, ts);
+        socketEmit(klineParams.symbol, '', klineParams.time, klineParams.price);
         return;
       }
-      window.open(`/chart?date=${date}&time=${ts}&period=${period}&symbol=${symbol}`, "_blank");
+      window.open(`/chart?date=${klineParams.date}&time=${klineParams.time}&symbol=${klineParams.symbol}&period=${period}&price=${klineParams.price}`, "_blank");
     }
   </script>
 {% endblock %}

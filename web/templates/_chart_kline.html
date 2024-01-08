@@ -105,6 +105,25 @@
 
   ////////////////////
 
+  {% if request_args.price %}
+    const price = {{ request_args.price }};
+    chart.createOverlay({
+      name: 'horizontalStraightLine',
+      points: [{value: price}],
+      groupId: 'range',
+      lock: true,
+      styles: {
+        line: {
+          color: 'rgb(101,0,255)',
+          style: 'dashed',
+          size: 1,
+          dashedValue: [6, 3],
+          zLevel: 0,
+        }
+      },
+    });
+  {% endif %}
+
   {% if request_args.time %}
     scrollToDTime(parseInt('{{ request_args.time }}'));
   {% elif request_args.date %}
@@ -115,8 +134,8 @@
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
     let dateRage = findEndPointByDate(date);
     chart.createOverlay({
-      name: 'verticalSegment',
-      points: [{timestamp: dateRage.start, value: -9999}, {timestamp: dateRage.start, value: 9999}],
+      name: 'verticalStraightLine',
+      points: [{timestamp: dateRage.start}],
       groupId: 'range',
       lock: true,
       styles: {
@@ -130,8 +149,8 @@
       },
     });
     chart.createOverlay({
-      name: 'verticalSegment',
-      points: [{timestamp: dateRage.end, value: -9999}, {timestamp: dateRage.end, value: 9999}],
+      name: 'verticalStraightLine',
+      points: [{timestamp: dateRage.end}],
       groupId: 'range',
       lock: true,
       styles: {
@@ -151,7 +170,8 @@
   }
 
   function scrollToDTime(time) {
-    time *= 1000;
+    let flag = time > 0;
+    time = Math.abs(time * 1000);
     let targetIndex = 0;
     for (const index in kline_list) {
       if (new Date(kline_list[index].timestamp).getTime() >= time) {
@@ -162,13 +182,13 @@
     }
 
     chart.createOverlay({
-      name: 'verticalSegment',
-      points: [{timestamp: kline_list[targetIndex].timestamp, value: -9999}, {timestamp: kline_list[targetIndex].timestamp, value: 9999}],
+      name: 'verticalStraightLine',
+      points: [{timestamp: kline_list[targetIndex].timestamp}],
       groupId: 'range',
       lock: true,
       styles: {
         line: {
-          color: 'rgba(71,4,241,0.25)',
+          color: flag ? 'rgba(241,4,87,0.25)' : 'rgba(4,241,8,0.25)',
           style: 'solid',
           size: 3,
           dashedValue: [3, 6],
@@ -226,10 +246,10 @@
   {% endif %}
   Object.entries(verticalGapKlines).forEach(function (item) {
     chart.createOverlay({
-      name: 'verticalSegment',
+      name: 'verticalStraightLine',
       groupId: 'verticalGap',
       lock: true,
-      points: [{timestamp: item[1].timestamp, value: -9999}, {timestamp: item[1].timestamp, value: 9999}],
+      points: [{timestamp: item[1].timestamp}],
       styles: {
         line: {
           color: '#000000',

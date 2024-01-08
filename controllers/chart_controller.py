@@ -1,4 +1,6 @@
+import decimal
 import json
+from datetime import datetime
 
 from chan import chan_config
 from chan.chan import Chan
@@ -31,8 +33,11 @@ def chart():
 
     limit = request.args.get('n', 0, type=int)
 
+    price = request.args.get('price', 0, type=float)
     date = request.args.get('date', '', type=str)
     time = request.args.get('time', '', type=int)
+    if time:
+        date = datetime.fromtimestamp(abs(time)).strftime('%Y-%m-%d')
 
     if not symbol or not period:
         return redirect(url_for('chart.chart', symbol='999999', period=PeriodEnum.D.name, req_real=0))
@@ -73,6 +78,7 @@ def chart():
             'date': date,
             'time': time,
             'n': limit,
+            'price': price,
         },
         'indicator_config': config.get('indicator'),
     }

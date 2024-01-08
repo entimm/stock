@@ -34,7 +34,7 @@ function sendSocket(direction) {
   let row = processMove(direction);
   if (row) {
     let klineParams = getKlineParams(row);
-    socketEmit(klineParams.symbol, klineParams.date, klineParams.time);
+    socketEmit(klineParams.symbol, klineParams.date, klineParams.time, klineParams.price);
   }
 }
 
@@ -90,13 +90,14 @@ function openRelateKlineMode() {
   window.location.href = currentUrl.toString();
 }
 
-function socketEmit(symbol, date = '', time = 0) {
+function socketEmit(symbol, date = '', time = 0, price = 0) {
   if (!socket) return;
   if (!symbol) return;
   socket.emit('message_from_client2', {
     symbol: symbol,
     date: date,
     time: time,
+    price: price,
     socketToken: socketToken,
   });
 }

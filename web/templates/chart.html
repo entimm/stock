@@ -176,6 +176,7 @@
           let searchParams = currentUrl.searchParams;
           searchParams.set("date", message.date);
           searchParams.set("time", message.time);
+          searchParams.set("price", message.price);
           window.location.href = currentUrl.toString();
         }
       });
