@@ -11,7 +11,7 @@ blueprint = Blueprint('north_funds', __name__)
 
 @blueprint.route('/north_funds')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
-def ipo():
+def north_funds():
     df = pd.read_csv(NORTH_FUNDS_FILE_PATH, dtype={0: str})
     df['trade_date'] = pd.to_datetime(df['trade_date'], format='%Y%m%d')
 

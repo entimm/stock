@@ -320,7 +320,7 @@ function show_tooltip_trend(cell) {
       infoCardDiv2.innerHTML = `
         <div class="card-content compact-content">
         <p><strong>日期:</strong> ${jsonData['date']}</p>
-        <p><strong>题材:</strong> ${jsonData['plates_info'].join(' + ')}</p>
+        <p><strong>题材:</strong> ${jsonData['plates_info']?.join(' + ')}</p>
         <p><strong>涨停原因:</strong> ${jsonData['reason']}</p>
         <p><strong>连板:</strong>${jsonData['limited_freq']}</p>
         <p><strong>上板时间:</strong> 首${jsonData['first_limit_up']} 末${jsonData['last_limit_up']}</p>
