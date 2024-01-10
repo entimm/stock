@@ -5,8 +5,8 @@
 </div>
 
 <script src="/static/third/socket.io.min.js"></script>
+<script src="/static/socket_utils.js"></script>
 <script>
-  let socket = null;
   let socketToken = '{{ request.args.get('socket_token', '') }}';
 
   if (socketToken) {
@@ -23,4 +23,4 @@
     });
   }
 </script>
-<script src="/static/socket_utils.js"></script>
+

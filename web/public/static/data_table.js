@@ -23,6 +23,7 @@ window.addEventListener('message', function (event) {
 document.addEventListener('keydown', function (event) {
   if (event.code === 'ArrowUp' || event.code === 'ArrowDown' || event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
     let cell = processMove(event.code);
+    if (!cell) return;
     let headName = getCellHeadName(cell);
     let date = /^\d{4}-\d{2}-\d{2}$/.test(headName) ? headName : '';
     let symbol = cell.getAttribute('symbol');
