@@ -27,7 +27,7 @@ def large_lock_data():
 
         df = df[pd.to_datetime(df['limit_ts'] + 3600 * 8, unit='s').dt.strftime('%H:%M') == '09:25']
 
-        df = df[df['limit_amount'] >= 10 ** 8 * 3]
+        df = df[df['limit_amount'] >= 10 ** 8 * 1]
 
         result_plate_list[date2] = df.to_dict(orient='records')
 
