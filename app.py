@@ -37,6 +37,7 @@ controllers = [
     'large_lock',
     'hot_lose',
     'limit_up_bs',
+    'new_stock',
 ]
 
 for controller in controllers:
