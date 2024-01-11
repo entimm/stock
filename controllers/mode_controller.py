@@ -23,7 +23,8 @@ def mode_follow_bull(df):
     df = df[df['上次涨停'] <= 10]
     df = df[df['连放量'] == 1]
     df = df[df['昨涨幅'] < 0]
-    df = df[df['涨幅%'] > 0]
+    df = df[df['涨幅%'] > abs(df['昨涨幅'])]
+    df = df[~((df['涨停10D'] == 1) & (df['是否涨停'] == 1))]
 
     return df
 

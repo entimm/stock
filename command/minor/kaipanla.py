@@ -114,6 +114,9 @@ def kaipanla_limit_up():
             'together_num': item[27],  # 一起涨停数
         } for item in stock_list]
 
+        if not stock_list:
+            continue
+
         df = pd.json_normalize(stock_list)
         df.to_csv(file_path, index=False)
 
@@ -139,6 +142,9 @@ def kaipanla_limit_down():
             'act_turnover': item[14],  # 实际换手
             'act_flow_amount': item[15],  # 实际流通
         } for item in stock_list]
+
+        if not stock_list:
+            continue
 
         df = pd.json_normalize(stock_list)
         df.to_csv(file_path, index=False)
@@ -171,6 +177,9 @@ def kaipanla_notice():
 
         url = '{}/w1/api/index.php?Date={}&Index={}&PhoneOSNew=2&VerSion=5.12.0.9&a=GetPMSL_PMLD&apiv=w34&c=FuPanLa&st={}'
         data_list = request_kaipanla_page_data(url, day, 0, 50, 'List')
+
+        if not data_list:
+            continue
 
         with open(file_path, 'w') as json_file:
             json.dump(data_list, json_file)

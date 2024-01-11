@@ -153,14 +153,11 @@
         total_stock_list = {}
         Object.keys(dataList).reverse().forEach(function (date) {
           total_stock_list[date] = Object.values(dataList[date].reduce((acc, item) => {
-            item['plates'] = '';
-            if (item['related_plates']) {
-              item['related_plates'] = item['related_plates'].split('##').map(item => {
-                let sub = item.split('||');
-                return {'plate_name': sub[0], 'plate_reason': sub[1]};
-              });
-              item['plates'] = item['related_plates'].map(item => item['plate_name']).join(', ');
-            }
+            item['related_plates'] = item['related_plates'].split('##').map(item => {
+              let sub = item.split('||');
+              return {'plate_name': sub[0], 'plate_reason': sub[1]};
+            })
+            item['plates'] = item['related_plates'].map(item => item['plate_name']).join(', ');
             item['date'] = date;
             item['symbol'] = item['symbol'].slice(0, 6);
             acc.push(item);
