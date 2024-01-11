@@ -23,6 +23,7 @@ def limited_power2_data():
         file_path = os.path.join(KAIPANLA_LIMITUP_PATH, f'{date2}.csv')
         if not os.path.exists(file_path): continue
         df = pd.read_csv(file_path, dtype={0: str})
+        df['date'] = date2
 
         result_plate_list[date2] = df.to_dict(orient='records')
 

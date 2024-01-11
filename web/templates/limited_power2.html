@@ -82,6 +82,12 @@
       left: 50%;
     }
 
+    #stock-grid thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
     #stock-grid tr:hover {
       background-color: rgba(0, 139, 125, 0.5);
     }
@@ -100,6 +106,7 @@
     <table id="stock-grid" class="striped centered z-depth-5" style="display: none;">
       <thead>
       <tr>
+        <th data-k="date">日期</th>
         <th data-k="symbol">股票代码</th>
         <th data-k="name">股票名称</th>
         <th data-k="limit_ts">封停时间</th>
@@ -172,7 +179,10 @@
           acc[reason].stock_list.push(name);
           return acc;
         }, {}));
-        groupData[date].sort((a, b) => b.num - a.num);
+        groupData[date].map(item => {
+          item['content'] += `<sub>${item['num']}</sub>`;
+          return item;
+        }).sort((a, b) => b.num - a.num);
       });
 
       return groupData;
@@ -447,6 +457,7 @@
       stockListInTable.forEach(function (jsonData) {
         const tr = document.createElement('tr')
         tr.innerHTML = `
+          <td data-v=${jsonData['date']}>${jsonData['date']}</td>
           <td>${jsonData['symbol']}</td>
           <td>${jsonData['name']}</td>
           <td data-v=${jsonData['limit_ts']}>${getTimeStrFromTs(jsonData['limit_ts'])}</td>
@@ -495,9 +506,8 @@
       if (event.target.tagName === 'TD') {
         let tr = event.target.parentElement;
         let trList = tr.querySelectorAll('td');
-        let symbol = trList[0].textContent;
-        let ts = trList[2].getAttribute('data-v');
-        let date = getDateStrFromTs(ts);
+        let date = trList[0].textContent;
+        let symbol = trList[1].textContent;
         window.open(`/chart?date=${date}&period=F5&symbol=${symbol}`, "_blank");
       }
     });

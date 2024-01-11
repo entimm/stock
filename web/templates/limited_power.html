@@ -82,6 +82,12 @@
       left: 50%;
     }
 
+    #stock-grid thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
     #stock-grid tr:hover {
       background-color: rgba(0, 139, 125, 0.5);
     }
@@ -196,7 +202,10 @@
           }
           return acc;
         }, {}));
-        groupData[date].sort((a, b) => b.num - a.num);
+        groupData[date].map(item => {
+          item['content'] += `<sub>${item['num']}</sub>`;
+          return item;
+        }).sort((a, b) => b.num - a.num);
       });
 
       return groupData;
@@ -370,7 +379,7 @@
       let cells = document.querySelectorAll('td');
       color = getRandomColor();
       for (let cell of cells) {
-        if (cell.textContent === value) {
+        if (cell.getAttribute('name') === value) {
           if (cell.style.backgroundColor) {
             cell.style.backgroundColor = "";
             cell.style.color = '';
@@ -483,7 +492,7 @@
         const tr = document.createElement('tr')
         tr.innerHTML = `
           <td>${jsonData['date']}</td>
-          <td><a href="/chart?symbol=${jsonData['symbol']}&period=D&req_real=0&date=${jsonData['date']}" target="_blank">${jsonData['symbol']}</a></td>
+          <td>${jsonData['symbol']}</td>
           <td>${jsonData['stock_chi_name']}</td>
           <td>${jsonData['related_plates'].map(item => item['plate_name']).join('<br/>')}</td>
           <td>${jsonData['m_days_n_boards_boards'] > 0 ? jsonData['m_days_n_boards_days'] + '天' + jsonData['m_days_n_boards_boards'] + '板' : '首板'}</td>
@@ -521,6 +530,15 @@
           }
         });
         show_stocks_table();
+      }
+    });
+    stockTable.getElementsByTagName('tbody')[0].addEventListener('click', (event) => {
+      if (event.target.tagName === 'TD') {
+        let tr = event.target.parentElement;
+        let trList = tr.querySelectorAll('td');
+        let date = trList[0].textContent;
+        let symbol = trList[1].textContent;
+        window.open(`/chart?date=${date}&period=F5&symbol=${symbol}`, "_blank");
       }
     });
   </script>

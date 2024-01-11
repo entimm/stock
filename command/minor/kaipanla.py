@@ -4,11 +4,11 @@ from datetime import datetime
 
 import click
 import pandas as pd
+import requests
 import urllib3
 
 from common.common import RESOURCES_PATH
 from common.quotes import trade_date_list
-from common.utils import send_request
 
 kaipanla_url = 'https://apphis.longhuvip.com/w1/api/index.php'
 
@@ -183,3 +183,14 @@ def kaipanla_notice():
 
         with open(file_path, 'w') as json_file:
             json.dump(data_list, json_file)
+
+
+def send_request(url):
+    headers = {
+        'Accept': '*/*',
+        'User-Agent': 'lhb/5.12.9 (com.kaipanla.www; build:0; iOS 17.1.2) Alamofire/5.12.9',
+        'Accept-Language': 'zh-Hans-CN;q=1.0',
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+    return json.loads(response.text)
