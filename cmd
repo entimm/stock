@@ -3,6 +3,7 @@
 import click
 
 from command.analyze import analyze
+from command.backtest.ma_week45 import backtest_ma_week45
 from command.convert_astock import convert_astock
 from command.convert_gnbk import convert_gnbk, convert_gnbk_trend_up, convert_gnbk_trend_down
 # from command.autogui.tdx_auto_export import tdx_auto_export_stock
@@ -55,6 +56,7 @@ main.add_command(arrange_xuangubao_detail)
 
 main.add_command(backtest_trend_monster)
 main.add_command(backtest_three_ma)
+main.add_command(backtest_ma_week45)
 
 main.add_command(hot_lose)
 main.add_command(limit_up_bs)

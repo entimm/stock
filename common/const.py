@@ -38,6 +38,7 @@ class PeriodEnum(Enum):
     F15 = auto()
     F30 = auto()
     D = auto()
+    W = auto()
 
 
 TDX_FREQUENCY_MAP = {

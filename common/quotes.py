@@ -43,7 +43,14 @@ def fetch_local_daily(symbol):
 
 
 def fetch_local_plus_real(symbol, period_enum, req_real=1):
-    base_period_enum = PeriodEnum.F5 if period_enum in [PeriodEnum.F15, PeriodEnum.F30] else period_enum
+    base_period_enum = period_enum
+    match period_enum:
+        case PeriodEnum.F15:
+            base_period_enum = PeriodEnum.F5
+        case PeriodEnum.F30:
+            base_period_enum = PeriodEnum.F5
+        case PeriodEnum.W:
+            base_period_enum = PeriodEnum.D
 
     df = fetch_local_data(symbol, base_period_enum)
     if req_real:
@@ -63,7 +70,7 @@ def fetch_local_plus_real(symbol, period_enum, req_real=1):
                 real_time_df = real_time_df[real_time_df.index > df.index[-1]]
             df = pd.concat([df, real_time_df[['open', 'high', 'low', 'close', 'amount', 'volume']]], axis=0)
 
-    if period_enum in [PeriodEnum.F15, PeriodEnum.F30]:
+    if period_enum in [PeriodEnum.F15, PeriodEnum.F30, PeriodEnum.W]:
         df = resample_kline(df, period_enum)
 
     return df

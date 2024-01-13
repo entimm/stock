@@ -61,6 +61,7 @@ def resample_kline(df, period_enum: PeriodEnum):
         PeriodEnum.F5: '5T',
         PeriodEnum.F15: '15T',
         PeriodEnum.F30: '30T',
+        PeriodEnum.W: 'W-Mon',
     }
     freq = resample_map[period_enum]
     df_new = df.resample(freq, label='right', closed='right').agg({

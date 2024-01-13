@@ -26,6 +26,7 @@ def backtest_result_data():
 def backtest_result():
     symbol = request.args.get('symbol', '', type=str)
     period = request.args.get('period', 'D', type=str)
+    ma = request.args.get('ma', '5,10,20,60', type=str).split(',')
     result_json_file = os.path.join(RESOURCES_PATH, 'backtest', f'back_test_{symbol}.json' if symbol else 'back_test.json')
     kline_list = []
     if symbol:
@@ -36,16 +37,13 @@ def backtest_result():
     with open(result_json_file, 'r') as file:
         trades = json.load(file)
 
+    get_color_func = get_color()
+
     template_var = {
         'kline_list': kline_list,
         'backtest_trades': trades,
         'indicator_config': {
-            'ma': [
-                {'period': 5, 'color': 'red', 'size': 1},
-                {'period': 15, 'color': '#930606', 'size': 1},
-                {'period': 60, 'color': '#ECAB07', 'size': 1},
-                {'period': 432, 'color': '#EF15DE', 'size': 1},
-            ]
+            'ma': [{'period': item, 'color': get_color_func(), 'size': 1} for item in ma]
         },
         'request_args': request.args.to_dict(),
     }
@@ -53,7 +51,7 @@ def backtest_result():
     return render_template('backtest_result.html', **template_var)
 
 
-def generate_order(trades, initial_capital=100000):
+def generate_order(trades, initial_capital=1000000):
     order = {}
     capital = initial_capital
     buy_date = ''
@@ -97,3 +95,23 @@ def generate_order(trades, initial_capital=100000):
         }
 
     return order
+
+
+def get_color():
+    i = 0
+    color = [
+        '#930606',
+        '#ECAB07',
+        '#EF15DE',
+        '#16DE45',
+        '#6E28E5',
+        '#E50B33',
+        '#16B9DE',
+    ]
+
+    def _get_color():
+        nonlocal i, color
+        i += 1
+        return color[i % len(color)]
+
+    return _get_color
