@@ -55,7 +55,11 @@
     }
 
     .divide {
-      border-top: 3px solid rgba(255, 0, 0, 0.5)!important;
+      border-top: 3px solid rgba(255, 0, 0, 0.5) !important;
+    }
+
+    .select-row {
+      background-color: rgba(255, 0, 0, 0.15) !important;
     }
   </style>
 {% endblock %}
@@ -81,8 +85,29 @@
       <tbody id="table-content"></tbody>
     </table>
   </div>
+  <div class="fixed-action-btn" style="top: 0; right: 10px; height: 40px">
+    <a class="btn-floating btn waves-effect waves-light orange z-depth-5" onclick="openRelateKlineMode()">
+      K线
+    </a>
+  </div>
 {% endblock %}
 {% block footer %}
+  <script src="/static/third/socket.io.min.js"></script>
+  <script src="/static/socket_utils.js"></script>
+  <script>
+    let socketToken = '{{ request.args.get('socket_token', '') }}';
+    let table = document.getElementById('grid');
+
+    function getKlineParams(row) {
+      let symbol = row.cells[2].textContent;
+      let date = row.cells[3].textContent;
+      let time = '';
+      let price = row.cells[5].textContent
+
+      return {symbol, date, time, price}
+    }
+  </script>
+  <script src="/static/data_list.js"></script>
   <script>
     const period = '{{ request_args.get('period', 'F5') }}';
     fetch(document.URL.replace('limit_up_bs', 'limit_up_bs_data')).then(response => response.json())
@@ -112,20 +137,13 @@
           row.insertCell(11).innerHTML = item['const_num'];
 
           if (lastDate && lastDate !== item['buy_date']) {
-            console.log(row)
             row.classList.add('divide');
           }
           lastDate = item['buy_date']
 
-          row.addEventListener('click', () => {
-            let dateNumber = String(item['buy_date']);
-            if (/\d{8}/.test(dateNumber)) {
-              date = dateNumber.substring(0, 4) + '-' + dateNumber.substring(4, 6) + '-' + dateNumber.substring(6, 8);
-            } else {
-              date = dateNumber.substring(0, 4) + '-' + dateNumber.substring(5, 7) + '-' + dateNumber.substring(8, 10);
-            }
-
-            window.open(`/chart?date=${date}&period=${period}&symbol=${item['symbol']}`, "_blank");
+          row.addEventListener('click', (event) => {
+            setSelectedRow(event.target.parentNode);
+            openKline(row);
           });
         });
       });
@@ -144,6 +162,15 @@
           element.classList.add('dot', dotClass.className);
         }
       });
+    }
+
+    function openKline(row) {
+      let klineParams = getKlineParams(row);
+      if (socketToken) {
+        socketEmit(klineParams.symbol, klineParams.date, '', klineParams.price);
+        return;
+      }
+      window.open(`/chart?date=${klineParams.date}&symbol=${klineParams.symbol}&period=${period}&price=${klineParams.price}`, "_blank");
     }
   </script>
 {% endblock %}

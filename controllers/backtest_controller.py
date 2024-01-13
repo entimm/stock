@@ -45,7 +45,11 @@ def backtest_result():
         'indicator_config': {
             'ma': [{'period': item, 'color': get_color_func(), 'size': 1} for item in ma]
         },
-        'request_args': request.args.to_dict(),
+        'request_args': {
+            'symbol': symbol,
+            'period': period,
+            'ma': ma,
+        }
     }
 
     return render_template('backtest_result.html', **template_var)
@@ -66,10 +70,10 @@ def generate_order(trades, initial_capital=1000000):
             hold_vol = (capital // trade["price"]) // 100 * 100
             hold_amount = hold_vol * trade["price"]
 
-            capital -= hold_amount
         elif trade["action"] == "SELL":
-            capital += hold_vol * trade["price"]
-            profit = round((trade["price"] / buy_price - 1) * 100, 2)
+            profit_percent = round((trade["price"] / buy_price - 1) * 100, 2)
+            profit_amount = hold_vol * (trade["price"] - buy_price)
+            capital += profit_amount
 
             hold_vol = 0
             hold_amount = 0
@@ -78,7 +82,8 @@ def generate_order(trades, initial_capital=1000000):
                 'capital': round(capital + hold_amount, 2),
                 'symbol': trade.get('symbol', ''),
                 'name': ticker_name(trade.get('symbol', '')),
-                'profit': profit,
+                'profit_percent': profit_percent,
+                'profit_amount': profit_amount,
                 'price': round(trade["price"], 2),
                 'date_desc': f'{buy_date} - {trade["date"]}'
             }
@@ -86,11 +91,12 @@ def generate_order(trades, initial_capital=1000000):
     if trades[-1]['action'] == 'BUY':
         last_trade = trades[-1]
         order[last_trade["date"]] = {
-            'capital': round(capital + buy_price * hold_vol, 2),
+            'capital': round(capital, 2),
             'symbol': last_trade.get('symbol', ''),
             'name': ticker_name(last_trade.get('symbol', '')),
-            'profit': 0,
-            'price': round(buy_price, 2),
+            'profit_percent': 0,
+            'profit_amount': 0,
+            'price': round(last_trade.get('price'), 2),
             'date_desc': f'{buy_date} - '
         }
 
