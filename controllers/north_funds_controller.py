@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request
 from pandas import Series
 
 from app_cache import cache
-from common.common import NORTH_FUNDS_FILE_PATH
+from common.const import NORTH_FUNDS_FILE_PATH
 from controllers import make_cache_key
 
 blueprint = Blueprint('north_funds', __name__)

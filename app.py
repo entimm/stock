@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO
 
 from app_cache import cache
-from common.common import MENUS
+from common.const import MENUS
 from common.utils import create_link
 
 app = Flask(__name__, template_folder='web/templates', static_folder='web/public/static')

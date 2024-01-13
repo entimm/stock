@@ -4,7 +4,7 @@ import pandas as pd
 from flask import Blueprint, jsonify, render_template, request
 
 from app_cache import cache
-from common.common import RESOURCES_PATH
+from common.const import RESOURCES_PATH
 from controllers import make_cache_key
 
 blueprint = Blueprint('market_mood', __name__)

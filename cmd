@@ -20,7 +20,6 @@ from command.minor.xuangubao import download_xuangubao_detail, arrange_xuangubao
 from command.mv_raw import mv_raw
 from command.backtest.trend_monster import backtest_trend_monster
 from command.backtest.three_ma import backtest_three_ma
-from command.backtest.three_ma_forex import backtest_three_ma_forex
 
 
 @click.group()
@@ -56,7 +55,6 @@ main.add_command(arrange_xuangubao_detail)
 
 main.add_command(backtest_trend_monster)
 main.add_command(backtest_three_ma)
-main.add_command(backtest_three_ma_forex)
 
 main.add_command(hot_lose)
 main.add_command(limit_up_bs)

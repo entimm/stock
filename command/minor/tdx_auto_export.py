@@ -4,7 +4,7 @@ import time
 import click
 import pyautogui
 
-from common.common import RESOURCES_PATH, TDX_EXPORT_PATH
+from common.const import RESOURCES_PATH, TDX_EXPORT_PATH
 
 
 def count_lines(file_path):

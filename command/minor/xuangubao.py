@@ -4,7 +4,7 @@ import os
 import click
 import pandas as pd
 
-from common.common import RESOURCES_PATH
+from common.const import RESOURCES_PATH
 from common.quotes import trade_date_list
 from common.utils import send_request
 from common.xuangubao import row2info

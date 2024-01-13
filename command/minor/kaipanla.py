@@ -7,7 +7,7 @@ import pandas as pd
 import requests
 import urllib3
 
-from common.common import RESOURCES_PATH
+from common.const import RESOURCES_PATH
 from common.quotes import trade_date_list
 
 kaipanla_url = 'https://apphis.longhuvip.com/w1/api/index.php'

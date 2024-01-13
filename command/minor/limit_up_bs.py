@@ -3,7 +3,7 @@ import os
 import click
 import pandas as pd
 
-from common.common import TOTAL_PATH, RESOURCES_PATH
+from common.const import TOTAL_PATH, RESOURCES_PATH
 from common.quotes import trade_date_list
 
 XUANGUBAO_DETAIL_PATH = os.path.join(RESOURCES_PATH, 'xuangubao/details')

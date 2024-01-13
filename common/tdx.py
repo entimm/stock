@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from common.common import TDX_BLOCK_NEW_PATH, STOCK_INFO_FILE_PATH
+from common.const import TDX_BLOCK_NEW_PATH, STOCK_INFO_FILE_PATH
 
 
 def read_tdx_text(file_path):

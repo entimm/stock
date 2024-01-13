@@ -2,7 +2,7 @@ from flask import Blueprint
 from pypinyin import pinyin, Style
 
 from app_cache import cache
-from common.common import DEFAULT_SELECT_OPTIONS
+from common.const import DEFAULT_SELECT_OPTIONS
 from common.data import limited_up_total_dict
 from common.tdx import stock_info_df
 from common.utils import symbol_all

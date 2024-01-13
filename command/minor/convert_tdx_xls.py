@@ -3,7 +3,7 @@ import re
 
 import click
 
-from common.common import RAW_PATH
+from common.const import RAW_PATH
 
 
 def rename_xls_to_txt(directory, filename):

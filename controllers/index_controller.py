@@ -3,7 +3,7 @@ from collections import defaultdict
 from flask import Blueprint, render_template, request, url_for, redirect
 
 from app_cache import cache
-from common.common import MENUS
+from common.const import MENUS
 from controllers import make_cache_key
 
 blueprint = Blueprint('index', __name__)

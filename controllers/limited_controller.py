@@ -4,7 +4,7 @@ import pandas as pd
 from flask import Blueprint, render_template, request
 
 from app_cache import cache
-from common.common import TOTAL_PATH
+from common.const import TOTAL_PATH
 from common.config import config
 from common.data import ticker_name_dict
 from common.quotes import trade_date_list

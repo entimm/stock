@@ -8,7 +8,7 @@ from chan.element.kline import Kline
 from chan.manager.bar_union_manager import BarUnionManager
 
 from common.cmd_utils import get_hfq_kline
-from common.common import RESOURCES_PATH, PeriodEnum
+from common.const import RESOURCES_PATH, PeriodEnum
 from common.price_calculate import ma, ma_angle
 from common.quotes import fetch_local_plus_real
 

@@ -1,6 +1,6 @@
 import numpy as np
 
-from common.common import PeriodEnum
+from common.const import PeriodEnum
 
 
 def cont_len(condition):

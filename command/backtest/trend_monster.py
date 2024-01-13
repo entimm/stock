@@ -7,7 +7,7 @@ import click
 import pandas as pd
 
 from common.cmd_utils import get_hfq_kline
-from common.common import PROCESSED_PATH, RESOURCES_PATH
+from common.const import PROCESSED_PATH, RESOURCES_PATH
 from common.quotes import trade_date_list
 
 

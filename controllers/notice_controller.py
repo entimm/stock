@@ -4,7 +4,7 @@ import os
 from flask import Blueprint, render_template
 
 from app_cache import cache
-from common.common import RESOURCES_PATH
+from common.const import RESOURCES_PATH
 from common.quotes import trade_date_list
 from controllers import make_cache_key
 

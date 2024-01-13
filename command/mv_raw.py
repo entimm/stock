@@ -5,7 +5,7 @@ import shutil
 
 import click
 
-from common.common import TDX_EXPORT_PATH, RAW_V2_PATH
+from common.const import TDX_EXPORT_PATH, RAW_V2_PATH
 
 
 def is_recently_created(file_path, threshold_minutes=360):

@@ -5,7 +5,7 @@ import pandas as pd
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
 
-from common.common import TDX_FREQUENCY_MAP, PeriodEnum, TDX_PATH
+from common.const import TDX_FREQUENCY_MAP, PeriodEnum, TDX_PATH
 from common.config import config
 from common.price_calculate import resample_kline
 from common.utils import symbol_type, minutes_since_open

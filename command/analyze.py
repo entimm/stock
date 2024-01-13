@@ -3,7 +3,7 @@ from rich.console import Console
 from rich.table import Table
 
 from common import price_calculate
-from common.common import PeriodEnum
+from common.const import PeriodEnum
 from common.quotes import fetch_local_plus_real
 
 MA_CONFIG_LIST = {

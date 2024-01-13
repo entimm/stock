@@ -1,4 +1,3 @@
-import decimal
 import json
 from datetime import datetime
 
@@ -7,10 +6,9 @@ from chan.chan import Chan
 from flask import render_template, Blueprint, request, url_for, redirect
 from numpy import bool_
 
-from common.cmd_utils import get_forex_kline
-from common.common import PeriodEnum, FOREX_SYMBOLS
+from common.const import PeriodEnum
 from common.config import config
-from common.quotes import fetch_local_plus_real,fetch_local_history
+from common.quotes import fetch_local_plus_real, fetch_local_history
 from common.utils import ticker_name, row_to_kline
 
 blueprint = Blueprint('chart', __name__)
@@ -43,9 +41,7 @@ def chart():
         return redirect(url_for('chart.chart', symbol='999999', period=PeriodEnum.D.name, req_real=0))
 
     period_enum = PeriodEnum[period]
-    if symbol in FOREX_SYMBOLS:
-        df = get_forex_kline(symbol, PeriodEnum[period])
-    elif date and not req_real:
+    if date and not req_real:
         df = fetch_local_history(date, symbol, period_enum)
     else:
         df = fetch_local_plus_real(symbol, period_enum, req_real)

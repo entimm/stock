@@ -3,7 +3,7 @@ import os
 import click
 import tushare as ts
 
-from common.common import RESOURCES_PATH, TUSHARE_TOKEN
+from common.const import RESOURCES_PATH, TUSHARE_TOKEN
 
 
 @click.command()

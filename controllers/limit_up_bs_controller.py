@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from flask import Blueprint, render_template, request
 
-from common.common import RESOURCES_PATH
+from common.const import RESOURCES_PATH
 from common.utils import ticker_name
 
 blueprint = Blueprint('limit_up_bs', __name__)

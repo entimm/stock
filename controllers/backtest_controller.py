@@ -3,8 +3,7 @@ import os
 
 from flask import Blueprint, render_template, request
 
-from common.cmd_utils import get_forex_kline
-from common.common import RESOURCES_PATH, PeriodEnum, FOREX_SYMBOLS
+from common.const import RESOURCES_PATH, PeriodEnum
 from common.quotes import fetch_local_plus_real
 from common.utils import ticker_name, row_to_kline
 
@@ -18,10 +17,7 @@ def backtest_result_data():
     with open(result_json_file, 'r') as file:
         trades = json.load(file)
 
-    if symbol in FOREX_SYMBOLS:
-        result_list = generate_order_leverage(trades)
-    else:
-        result_list = generate_order(trades)
+    result_list = generate_order(trades)
 
     return result_list
 
@@ -33,10 +29,7 @@ def backtest_result():
     result_json_file = os.path.join(RESOURCES_PATH, 'backtest', f'back_test_{symbol}.json' if symbol else 'back_test.json')
     kline_list = []
     if symbol:
-        if symbol in FOREX_SYMBOLS:
-            df = get_forex_kline(symbol, PeriodEnum[period])
-        else:
-            df = fetch_local_plus_real(symbol, PeriodEnum[period])
+        df = fetch_local_plus_real(symbol, PeriodEnum[period])
         kline_list = df.apply(row_to_kline, axis=1).to_list()
     if not os.path.exists(result_json_file):
         return '没有数据'
@@ -102,40 +95,5 @@ def generate_order(trades, initial_capital=100000):
             'price': round(buy_price, 2),
             'date_desc': f'{buy_date} - '
         }
-
-    return order
-
-
-def generate_order_leverage(trades, initial_capital=100000):
-    leverage = 150
-    bet_percentage = 0.1
-
-    order = {}
-    capital = initial_capital
-    buy_date = ''
-    buy_price = 0
-    hold_vol = 0
-
-    for trade in trades:
-        if trade["action"] == "BUY":
-            buy_date = trade["date"]
-            buy_price = trade["price"]
-
-            hold_vol = (capital * bet_percentage * leverage // trade["price"])
-        elif trade["action"] == "SELL":
-            profit = round((trade["price"] - buy_price) * hold_vol, 2)
-            capital = capital + profit
-
-            hold_vol = 0
-
-            order[trade["date"]] = {
-                'capital': round(capital, 2),
-                'symbol': trade.get('symbol', ''),
-                'name': ticker_name(trade.get('symbol', '')),
-                'profit': profit,
-                'price': round(trade["price"], 2),
-                'date_desc': f'{buy_date} - {trade["date"]}'
-            }
-            print(order[trade["date"]])
 
     return order

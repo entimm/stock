@@ -3,7 +3,7 @@ import os
 from flask import Blueprint, render_template, request
 
 from app_cache import cache
-from common.common import RAW_V2_PATH
+from common.const import RAW_V2_PATH
 from common.tdx import read_tdx_text
 from common.utils import filter_files_by_date
 from controllers import make_cache_key

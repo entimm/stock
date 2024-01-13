@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from flask import Blueprint, render_template, request
 
-from common.common import RESOURCES_PATH
+from common.const import RESOURCES_PATH
 
 blueprint = Blueprint('trade_history2', __name__)
 

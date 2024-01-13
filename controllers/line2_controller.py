@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from flask import Blueprint, request, render_template
 
-from common.common import PeriodEnum
+from common.const import PeriodEnum
 from common.quotes import fetch_local_plus_real
 from common.utils import ticker_name
 
