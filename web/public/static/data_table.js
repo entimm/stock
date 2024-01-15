@@ -121,8 +121,9 @@ function renderGrid(data) {
         if (!symbol) return;
 
         setSelectedCell(cell);
-        show_tooltip_trend(cell);
         show_tooltip(cell);
+        showTooltipTrend(symbol);
+        adjTooltipTrendPosition(cell);
 
         let headName = getCellHeadName(cell);
         let date = /^\d{4}-\d{2}-\d{2}$/.test(headName) ? headName : '';
@@ -157,7 +158,8 @@ function debounce(func, delay) {
 }
 
 const debouncedFunction = debounce(function (cell) {
-  show_tooltip_trend(cell);
+  showTooltipTrend(cell.getAttribute('symbol') ?? '')
+  adjTooltipTrendPosition(cell);
 }, 200);
 
 function renderCell(cell, value, i) {
@@ -266,81 +268,14 @@ function show_tooltip(cell) {
   tooltip.style.top = tooltipY + 'px';
 }
 
-function show_tooltip_trend(cell) {
-  let symbol = cell.getAttribute('symbol') ?? '';
-  let code = getExchangeCode(symbol);
-  tooltipTrend.textContent = '';
-  if (!code) {
-    tooltipTrend.style.display = 'none';
-    return
-  }
-
-  let timestamp = new Date().getTime();
-
-  let img1 = document.createElement("img");
-  img1.src = `https://image2.sinajs.cn/newchart/min/n/${code}.gif?t=${timestamp}`;
-  tooltipTrend.appendChild(img1);
-  let img2 = document.createElement("img");
-  img2.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif?t=${timestamp}`;
-  tooltipTrend.appendChild(img2);
-  let img3 = document.createElement("img");
-  img3.src = `https://image2.sinajs.cn/newchart/weekly/n/${code}.gif?t=${timestamp}`;
-  tooltipTrend.appendChild(img3);
-
-  // 计算tooltipTrend的位置
-  let screenHeight = window.innerHeight;
-  const isTopHalf = cell.getBoundingClientRect().top <= screenHeight / 2;
-  tooltipTrend.classList.toggle('right-bottom', isTopHalf);
-  tooltipTrend.classList.toggle('right-top', !isTopHalf);
-
-  tooltipTrend.style.display = 'block';
-
-  let infoCardDiv = document.createElement("div");
-  infoCardDiv.classList.add('stock-info', 'card-panel', 'teal', 'z-depth-5');
-  tooltipTrend.prepend(infoCardDiv);
-  fetch(`/stock_info/${symbol}`).then(response => response.json())
-    .then(jsonData => {
-      infoCardDiv.innerHTML = `
-    <div class="card-content compact-content">
-      <p><strong>主题投资:</strong> ${jsonData['主题投资']}</p>
-      <p><strong>主营业务:</strong> ${jsonData['主营业务']}</p>
-      <p><strong>公司亮点:</strong> ${jsonData['公司亮点']}</p>
-      <p><strong>行业:</strong> ${jsonData['行业']}</p>
-      <p><strong>概念:</strong> ${jsonData['概念']}</p>
-      <p><strong>地域:</strong> ${jsonData['地域']}</p>
-      <p><strong>风格:</strong> ${jsonData['风格']}</p>
-      <p><strong>流通市值:</strong> ${jsonData['流通市值']}</p>
-    </div>`;
-    });
-
-  let infoCardDiv2 = document.createElement("div");
-  infoCardDiv2.classList.add('stock-info', 'card-panel', 'teal', 'z-depth-5');
-  tooltipTrend.prepend(infoCardDiv2);
-  fetch(`/limited_up_info/${symbol}`).then(response => response.json())
-    .then(jsonData => {
-      infoCardDiv2.innerHTML = `
-        <div class="card-content compact-content">
-        <p><strong>日期:</strong> ${jsonData['date']}</p>
-        <p><strong>题材:</strong> ${jsonData['plates_info']?.join(' + ')}</p>
-        <p><strong>涨停原因:</strong> ${jsonData['reason']}</p>
-        <p><strong>连板:</strong>${jsonData['limited_freq']}</p>
-        <p><strong>上板时间:</strong> 首${jsonData['first_limit_up']} 末${jsonData['last_limit_up']}</p>
-        <p><strong>封单比:</strong> ${jsonData['buy_lock_volume_ratio']}</p>
-        <p><strong>流通市值:</strong> ${jsonData['flow_capital']}亿</p>
-        <p><strong>换手:</strong> ${jsonData['turnover_ratio']}</p>
-        <p><strong>开板次数:</strong> ${jsonData['break_times']}</p>
-        <p><strong>上市日期:</strong> ${jsonData['listed_date']}</p>
-       </div>`;
-    });
-}
-
 function processMove(direction) {
   let cell = getAdjacentCell(selectedCell, direction);
   if (cell) {
     focusMode = 'key';
     setSelectedCell(cell);
     show_tooltip(cell);
-    show_tooltip_trend(cell);
+    showTooltipTrend(cell.getAttribute('symbol') ?? '');
+    adjTooltipTrendPosition(cell);
   }
 
   return cell;

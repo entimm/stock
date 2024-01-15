@@ -84,6 +84,7 @@
       </thead>
       <tbody id="table-content"></tbody>
     </table>
+    <div id="tooltip-trend" style="display:none;"></div>
   </div>
   <div class="fixed-action-btn" style="top: 0; right: 10px; height: 40px">
     <a class="btn-floating btn waves-effect waves-light orange z-depth-5" onclick="openRelateKlineMode()">
@@ -110,6 +111,7 @@
   <script src="/static/data_list.js"></script>
   <script>
     const period = '{{ request_args.get('period', 'F5') }}';
+    let tooltipTrend = document.getElementById('tooltip-trend');
     fetch(document.URL.replace('limit_up_bs', 'limit_up_bs_data')).then(response => response.json())
       .then(jsonData => {
         const reversedKeys = Object.keys(jsonData).reverse();
@@ -145,6 +147,11 @@
             setSelectedRow(event.target.parentNode);
             openKline(row);
           });
+
+          row.addEventListener('mouseover', function (event) {
+            showTooltipTrend(item['symbol']);
+            adjTooltipTrendPosition(event.target);
+          });
         });
       });
 
@@ -172,5 +179,11 @@
       }
       window.open(`/chart?date=${klineParams.date}&symbol=${klineParams.symbol}&period=${period}&price=${klineParams.price}`, "_blank");
     }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'Escape') {
+        tooltipTrend.style.display = 'none';
+      }
+    });
   </script>
 {% endblock %}

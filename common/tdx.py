@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from common.const import TDX_BLOCK_NEW_PATH, STOCK_INFO_FILE_PATH
+from common.const import TDX_BLOCK_NEW_PATH, TDX_STOCK_INFO_FILE_PATH
 
 
 def read_tdx_text(file_path):
@@ -34,6 +34,9 @@ def export_data_sort(df, col, asc, num):
     return top.values
 
 
-stock_info_df = read_tdx_text(STOCK_INFO_FILE_PATH)
+stock_info_df = read_tdx_text(TDX_STOCK_INFO_FILE_PATH)
 stock_info_df.set_index('代码', inplace=True)
+stock_info_df['概念'] = stock_info_df['概念'].astype(str).fillna('')
+stock_info_df['自定义'] = stock_info_df['自定义'].astype(str).fillna('')
+stock_info_df['风格'] = stock_info_df['风格'].astype(str).fillna('')
 stock_info_df = stock_info_df.drop(['涨幅%', '收盘', '总金额',], axis=1)

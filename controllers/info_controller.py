@@ -3,7 +3,7 @@ from pypinyin import pinyin, Style
 
 from app_cache import cache
 from common.const import DEFAULT_SELECT_OPTIONS
-from common.data import limited_up_total_dict
+from common.data import limited_up_total_dict, ths_stock_info_df
 from common.tdx import stock_info_df
 from common.utils import symbol_all
 from controllers import make_cache_key
@@ -28,7 +28,19 @@ def symbol_list():
 def stock_info(symbol):
     result = {}
     if symbol in stock_info_df.index:
-        result = stock_info_df.loc[symbol].to_json()
+        result = stock_info_df.loc[symbol].to_dict()
+
+    return result
+
+
+@blueprint.route('/ths_stock_info/<symbol>')
+def ths_stock_info(symbol):
+    result = {}
+    if symbol in ths_stock_info_df.index:
+        result = ths_stock_info_df.loc[symbol].to_dict()
+
+    result.pop('自定义', None)
+
     return result
 
 
