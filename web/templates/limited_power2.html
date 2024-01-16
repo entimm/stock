@@ -169,7 +169,8 @@
         groupData[date].map(item => {
           item['content'] += `<sub>${item['num']}</sub>`;
           return item;
-        }).sort((a, b) => b.num - a.num);
+        });
+        groupData[date].sort((a, b) => b.num - a.num)
       });
 
       return groupData;
