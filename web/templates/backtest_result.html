@@ -231,8 +231,8 @@
                 '<bold>股价</bold>: ' + tableData[date].price + '<br/>' +
                 '<bold>时间</bold>: ' + tableData[date].date_desc + '<br/>' +
                 '<bold>市值</bold>: ' + (tableData[date].capital / 10000.0).toFixed(2) + '万</span>' + '<br/>' +
-                `<bold>盈亏额</bold>: <span class="${color}">` + tableData[date].profit_amount + ' </span>' + '<br/>' +
-                `<bold>盈亏比</bold>: <span class="${color}">` + tableData[date].profit_percent + ' </span>' + '<br/>';
+                `<bold>盈亏额</bold>: <span class="${color}">` + tableData[date].profit_amount.toFixed(2) + ' </span>' + '<br/>' +
+                `<bold>盈亏比</bold>: <span class="${color}">` + tableData[date].profit_percent.toFixed(2) + ' </span>' + '<br/>';
             }
           },
           dataZoom: [
