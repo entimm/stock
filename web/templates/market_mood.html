@@ -55,12 +55,22 @@
           series: [{
             data: data.map(item => item[field]),
             type: 'line',
+            showAllSymbol: true,
             emphasis: {
               focus: 'series',
               lineStyle: {
                 width: 2,
               },
             },
+            symbol: 'circle',
+            symbolSize: 5,
+            itemStyle: {
+              borderColor: '#f3bf11',
+              color: '#f500ff',
+            },
+            lineStyle: {
+              color: '#5a6fc0'
+            }
           }],
           tooltip: {
             trigger: 'axis',
@@ -72,5 +82,6 @@
         chart.setOption(option);
       })
       .catch(error => console.error('Error fetching data:', error));
+      // circle, rect, roundRect, triangle, diamond, pin, arrow, none
   </script>
 {% endblock %}
