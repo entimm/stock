@@ -25,8 +25,23 @@ def process_data(file_list, export_columns, output_filename):
         ))
 
     df = pd.DataFrame(container)
+
+    num_columns = df.shape[1]
+    if num_columns <= 200:
+        pre_file_name = get_pre_file_name(output_filename)
+        pre_df = pd.read_csv(os.path.join(PROCESSED_PATH, pre_file_name))
+        df = pd.concat([pre_df, df], axis=1)
+
     df = df.reindex(sorted(df.columns), axis=1)
     df.to_csv(os.path.join(PROCESSED_PATH, output_filename), index=False)
+
+
+def get_pre_file_name(file_name):
+    original_number = int(''.join(filter(str.isdigit, file_name)))
+    new_number = original_number - 1
+    new_file_name = file_name.replace(str(original_number), str(new_number))
+
+    return new_file_name
 
 
 def get_file_list(year):

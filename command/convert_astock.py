@@ -9,7 +9,7 @@ from common.utils import filter_files_by_date
 
 
 @click.command()
-@click.argument('year', default=YEAR, type=str)
+@click.argument('year', default=YEAR, type=int)
 @click.argument('update_n', default=1, type=int)
 def convert_astock(year, update_n):
     directory_path = os.path.join(RAW_V2_PATH, '全部Ａ股')
@@ -48,6 +48,12 @@ def convert_astock(year, update_n):
             df = pd.DataFrame()
 
         df = pd.concat([df, pd.DataFrame(data)], axis=1)
+
+        num_columns = df.shape[1]
+        if num_columns <= 200:
+            pre_df = pd.read_csv(os.path.join(PROCESSED_PATH, f'{year - 1}-{sort_col}.csv'))
+            df = pd.concat([pre_df, pd.DataFrame(data)], axis=1)
+
         df = df.loc[:, ~df.columns.duplicated()]
         df = df.reindex(sorted(df.columns), axis=1)
         df.to_csv(csv_file, index=False)
