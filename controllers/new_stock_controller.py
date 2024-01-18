@@ -27,7 +27,7 @@ def new_stock():
     quotes_df = pd.read_csv(csv_file)
     df_merged = pd.merge(df, quotes_df, on='ts_code')
 
-    df_merged['show'] = df_merged['name'].astype(str) + '|' + df_merged['symbol'].astype(str) + '|' + df_merged['pct_chg'].astype(str)
+    df_merged['show'] = df_merged['name'].astype(str) + '|' + df_merged['symbol'].astype(str) + '|' + df_merged['pct_chg'].astype(str) + '|' + df_merged['close'].astype(str)
 
     result_dict = df_merged.groupby('list_week').apply(lambda group: group['show'].to_list()).tail(24)
 

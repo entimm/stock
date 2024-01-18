@@ -1,7 +1,7 @@
 import os
 
 import pandas as pd
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 
 from app_cache import cache
 from common.const import RESOURCES_PATH
@@ -42,4 +42,8 @@ def large_lock_data():
 
 @blueprint.route('/large_lock')
 def large_lock_limit():
-    return render_template('large_lock.html', **{})
+    template_var = {
+        'request_args': request.args.to_dict(),
+    }
+
+    return render_template('large_lock.html', **template_var)
