@@ -24,6 +24,8 @@ python cmd backtest-trend-monster
 
 echo 'hot-lose'
 python cmd hot-lose
+echo 'main-army'
+python cmd main-army
 
 echo 'limit-up-bs'
 python cmd limit-up-bs

@@ -38,6 +38,7 @@ controllers = [
     'hot_lose',
     'limit_up_bs',
     'new_stock',
+    'main_army',
 ]
 
 for controller in controllers:
