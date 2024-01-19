@@ -204,6 +204,9 @@
       Object.keys(dataList).forEach(function (date) {
         let maxHeight = 0;
         let tmpList = dataList[date].reduce((acc, item) => {
+          if (item['limit_up_days'] === item['m_days_n_boards_days']) {
+            item['m_days_n_boards_boards'] = item['limit_up_days'];
+          }
           if (item['stock_chi_name'].includes('ST')) return acc;
           maxHeight = Math.max(maxHeight, item[field]);
           acc[item[field]] ||= {name: item[field], content: 0, num: 0, stock_list: [], desc: '空'};
