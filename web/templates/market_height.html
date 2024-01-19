@@ -1,0 +1,154 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>市场高度</title>
+  <style>
+    #chart-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    #chart {
+      flex: 1;
+      box-sizing: border-box;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="chart-container">
+    <div id="chart"></div>
+  </div>
+{% endblock %}
+{% block footer %}
+  <script src="/static/third/echarts.min.js"></script>
+  <script>
+    fetch(`/market_height_data`)
+      .then(response => response.json())
+      .then(raw => {
+        const data = {};
+        for (const date in raw) {
+          data[date] = Object.keys(raw[date]).map(Number).sort((a, b) => b - a).slice(0, 2);
+        }
+
+        const chart = echarts.init(document.getElementById('chart'));
+        const option = {
+          grid: {
+            top: '1%',
+            left: '1%',
+            right: '0%',
+            bottom: '1%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'category',
+            data: Object.keys(data),
+          },
+          yAxis: {
+            type: 'value',
+            position: 'right',
+          },
+          legend: {
+            data: ['最高板', '次高板']
+          },
+          series: [{
+            name: '最高板',
+            data: Object.entries(data).reduce((acc, [key, arr]) => {
+              let onlyOne = raw[key][arr[0]].length == 1;
+              acc.push({
+                'value': arr[0],
+                'itemStyle': {
+                  borderColor: onlyOne ? '#de16a5' : 'rgb(48,232,7)',
+                  color: onlyOne ? '#de16a5' : 'rgb(48,232,7)'
+                },
+              });
+              return acc;
+            }, []),
+            type: 'line',
+            showAllSymbol: true,
+            emphasis: {
+              focus: 'series',
+              lineStyle: {
+                width: 2,
+              },
+            },
+            lineStyle: {
+              width: 2,
+              color: 'rgb(248,135,135)',
+            },
+            symbol: 'rect',
+            symbolSize: 5,
+
+            blur: {
+              lineStyle: {
+                opacity: 0.3,
+              }
+            },
+          }, {
+            name: '次高板',
+            data: Object.values(data).map(arr => arr[1]),
+            type: 'line',
+            showAllSymbol: true,
+            emphasis: {
+              focus: 'series',
+              lineStyle: {
+                width: 1,
+              },
+            },
+            blur: {
+              lineStyle: {
+                opacity: 0.3,
+              }
+            },
+            lineStyle: {
+              width: 1,
+              color: 'rgba(112,22,222,0.4)'
+            },
+            symbol: 'rect',
+            symbolSize: 3,
+            itemStyle: {
+              borderColor: 'rgba(112,22,222, 0.8)',
+              color: 'rgba(112,22,222, 0.8)',
+            },
+          }],
+          dataZoom: [
+            {
+              type: 'inside',
+              start: 0,
+              end: 9999
+            },
+            {
+              start: 0,
+              end: 9999
+            }
+          ],
+          tooltip: {
+            stack: 'Total',
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross'
+            },
+            formatter: function (params) {
+              return params.map(
+                item => ([
+                  item.marker,
+                  '<span style="display:inline-block;width:60px">' + item.seriesName + '</span>',
+                  '<span style="display:inline-block;width:50px">' + item.value + '</span>',
+                  showDesc(raw[item.name][item.value])
+                ].join(''))
+              ).join('<br/>');
+            },
+          }
+        };
+        chart.setOption(option);
+      })
+      .catch(error => console.error('Error fetching data:', error));
+
+    function showDesc(arr) {
+      if (arr.length > 3) {
+        return `${arr.length}个`;
+      } else {
+        return arr.join(',');
+      }
+    }
+  </script>
+{% endblock %}

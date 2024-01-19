@@ -16,7 +16,7 @@
     }
 
     #main-grid td span.tag {
-      background-color: #fbc02d;
+      background-color: rgba(255, 55, 185, 0.68);
     }
 
     #main-grid td span.bk {
@@ -106,10 +106,10 @@
 
       let tags = document.querySelectorAll('.badge.tag');
       tags.forEach(function (node) {
-        if (['大面', '核按钮', '人气杀跌', '天地板', '老龙头反抽'].includes(node.textContent.trim())) {
+        if (['大面', '核按钮', '人气杀跌', '权重杀跌', '天地板'].includes(node.textContent.trim())) {
           node.style.backgroundColor = 'green';
         }
-        if (['人气大长腿', '反包板'].includes(node.textContent.trim())) {
+        if (['人气大长腿', '反包板', '老龙头反抽'].includes(node.textContent.trim())) {
           node.style.backgroundColor = 'red';
         }
       });

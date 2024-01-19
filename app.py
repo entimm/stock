@@ -39,6 +39,7 @@ controllers = [
     'limit_up_bs',
     'new_stock',
     'main_army',
+    'market_height',
 ]
 
 for controller in controllers:
