@@ -1,9 +1,54 @@
 {% extends '_layout.html' %}
 {% block head %}
-  <title>中军</title>
+  <title>个股趋势表2</title>
+  <style>
+    table tr:nth-child(10) {
+      border-bottom: 2px solid #FF0000;
+    }
+
+    table tr:nth-child(20) {
+      border-bottom: 2px solid #FF4500;
+    }
+
+    table tr:nth-child(30) {
+      border-bottom: 2px solid #FFA500;
+    }
+
+    table tr:nth-child(40) {
+      border-bottom: 2px solid #FFD700;
+    }
+
+    table tr:nth-child(50) {
+      border-bottom: 2px solid #FFFF00;
+    }
+
+    table tr:nth-child(60) {
+      border-bottom: 2px solid #ADFF2F;
+    }
+
+    table tr:nth-child(70) {
+      border-bottom: 2px solid #7FFF00;
+    }
+
+    table tr:nth-child(80) {
+      border-bottom: 2px solid #00FF00;
+    }
+
+    table tr:nth-child(90) {
+      border-bottom: 2px solid #008000;
+    }
+  </style>
   <link rel="stylesheet" href="/static/data_table.css">
 {% endblock %}
 {% block content %}
+  <div id="fixed-links-container" class="right-top">
+    <div class="fixed-links">
+      {% for value in ma_list %}
+        {{ create_link(request_args, {'ma':value}, request_args.ma == value, value) | safe }}
+      {% endfor %}
+    </div>
+  </div>
+
   <div id="grid-container">
     <table id="grid" class="striped centered"></table>
     <div id="tooltip" style="display:none;"></div>
