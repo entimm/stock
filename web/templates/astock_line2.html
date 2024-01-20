@@ -1,0 +1,47 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>A股龙头趋势图2 - {{ request_args.ma }}</title>
+  <style>
+
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="fixed-links-container" class="right-top">
+    <div class="fixed-links">
+      {% for value in ma_list %}
+        {{ create_link(request_args, {'ma':value}, request_args.ma == value, value) | safe }}
+      {% endfor %}
+    </div>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div id="chart"></div>
+{% endblock %}
+{% block footer %}
+  <script src="/static/third/echarts.min.js"></script>
+  <script>
+    let rows = {{ rows | tojson }};
+    rows = rows.map(v => "NO." + v);
+    let dataName = {{ data['name'] | tojson }};
+    let dataValue = {{ data['value'] | tojson }};
+    let yAxisInterval = 20;
+  </script>
+  <script src="/static/echart1.js"></script>
+  <script>
+    document.addEventListener('keydown', function (event) {
+      const maMap = {
+        '1': '2',
+        '2': '3',
+        '3': '5',
+      }
+      if (Object.keys(maMap).includes(event.key)) {
+        let currentUrl = new URL(window.location.href);
+        let searchParams = currentUrl.searchParams;
+        searchParams.set("ma", `MA${maMap[event.key]}`);
+
+        history.pushState({}, '', currentUrl.toString());
+        window.location.href = currentUrl.toString();
+      }
+    });
+  </script>
+{% endblock %}

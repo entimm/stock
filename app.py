@@ -40,6 +40,7 @@ controllers = [
     'new_stock',
     'main_army',
     'market_height',
+    'astock_line2',
     'astock_table2',
 ]
 
