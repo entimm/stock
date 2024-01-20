@@ -12,8 +12,10 @@ window.addEventListener('message', function (event) {
     let cell = getAdjacentCell(selectedCell, event.data);
     if (cell) {
       let symbol = cell.getAttribute('symbol');
+      let headName = getCellHeadName(cell);
+      let date = /^\d{4}-\d{2}-\d{2}$/.test(headName) ? headName : '';
       if (symbol) {
-        iframe.src = iframe.contentWindow.document.URL.replace(/\d{6}/, symbol);
+        iframe.src = iframe.contentWindow.document.URL.replace(/\d{6}/, symbol).replace(/\d{4}-\d{2}-\d{2}/, date);
         setSelectedCell(cell);
       }
     }
