@@ -18,7 +18,7 @@ KAIPANLA_LIMITUP_PATH = os.path.join(RESOURCES_PATH, 'kaipanla/limit_up')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def limited_power2_data():
     result_plate_list = {}
-    for ts in trade_date_list.tail(config.get('table_cols', 200))['date'].to_list():
+    for ts in trade_date_list.tail(500)['date'].to_list():
         date2 = ts.strftime('%Y-%m-%d')
         file_path = os.path.join(KAIPANLA_LIMITUP_PATH, f'{date2}.csv')
         if not os.path.exists(file_path): continue
