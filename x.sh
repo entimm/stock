@@ -24,8 +24,10 @@ python cmd backtest-trend-monster
 
 echo 'hot-lose'
 python cmd hot-lose
-echo 'main-army'
-python cmd main-army
+echo 'main-army-up'
+python cmd main-army-up
+echo 'main-army-down'
+python cmd main-army-down
 
 echo 'cal-trend-ptg 2'
 python cmd cal-trend-ptg 2

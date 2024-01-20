@@ -4,6 +4,15 @@
   <link rel="stylesheet" href="/static/data_table.css">
 {% endblock %}
 {% block content %}
+  <div id="fixed-links-container" class="right-top">
+    <div class="fixed-links">
+      {% for key, value in direction_list.items() %}
+        {{ create_link(request_args, {'direction':key}, request_args.direction == key, value['name']) | safe }}
+      {% endfor %}
+    </div>
+  </div>
+  <div style="clear: both;"></div>
+
   <div id="grid-container">
     <table id="grid" class="striped centered"></table>
     <div id="tooltip" style="display:none;"></div>
@@ -41,5 +50,22 @@
         }
       }
     }
+  </script>
+
+  <script>
+    document.addEventListener('keydown', function (event) {
+      const maMap = {
+        '1': 'up',
+        '2': 'down',
+      }
+      if (Object.keys(maMap).includes(event.key)) {
+        let currentUrl = new URL(window.location.href);
+        let searchParams = currentUrl.searchParams;
+        searchParams.set("direction", `${maMap[event.key]}`);
+
+        history.pushState({}, '', currentUrl.toString());
+        window.location.href = currentUrl.toString();
+      }
+    });
   </script>
 {% endblock %}

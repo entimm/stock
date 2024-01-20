@@ -12,7 +12,7 @@ from command.minor.convert_tdx_xls import convert_tdx_xls
 from command.minor.hot_lose import hot_lose
 from command.minor.kaipanla import kaipanla_mood, kaipanla_limit_up, kaipanla_limit_down, kaipanla_notice
 from command.minor.limit_up_bs import limit_up_bs
-from command.minor.main_army import main_army
+from command.minor.main_army import main_army_up, main_army_down
 from command.minor.market_height import market_height
 from command.minor.north_funds import north_funds
 from command.minor.stock_meta import stock_meta
@@ -55,7 +55,8 @@ main.add_command(backtest_ma_week45)
 
 main.add_command(hot_lose)
 main.add_command(limit_up_bs)
-main.add_command(main_army)
+main.add_command(main_army_up)
+main.add_command(main_army_down)
 main.add_command(market_height)
 
 main.add_command(test)
