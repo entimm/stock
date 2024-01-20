@@ -6,8 +6,6 @@ from command.analyze import analyze
 from command.backtest.ma_week45 import backtest_ma_week45
 from command.convert_astock import convert_astock
 from command.convert_gnbk import convert_gnbk, convert_gnbk_trend_up, convert_gnbk_trend_down
-# from command.autogui.tdx_auto_export import tdx_auto_export_stock
-# from command.autogui.tdx_auto_export import tdx_auto_export_gnbk
 from command.download_total import download_total
 from command.minor.cal_trend_ptg import cal_trend_ptg
 from command.minor.convert_tdx_xls import convert_tdx_xls
@@ -38,9 +36,6 @@ main.add_command(convert_gnbk_trend_down)
 
 main.add_command(download_total)
 main.add_command(mv_raw)
-
-# main.add_command(tdx_auto_export_stock)
-# main.add_command(tdx_auto_export_gnbk)
 
 main.add_command(cal_trend_ptg)
 main.add_command(convert_tdx_xls)
