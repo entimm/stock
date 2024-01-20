@@ -13,7 +13,7 @@ blueprint = Blueprint('astock_table2', __name__)
 @blueprint.route('/astock_table2')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def astock_table():
-    ma_list = ['MA2', 'MA3']
+    ma_list = ['MA2', 'MA3', 'MA5']
     ma = request.args.get('ma', 'MA3')
 
     result_dict = {}
@@ -22,7 +22,7 @@ def astock_table():
         with open(result_json_file, 'r') as file:
             result_dict = json.load(file)
 
-    result_dict = {key: result_dict[key] for key in list(result_dict.keys())[-200:]}
+    result_dict = {key: result_dict[key] for key in list(result_dict.keys())[-300:]}
 
     template_var = {
         'data': dict(reversed(result_dict.items())),

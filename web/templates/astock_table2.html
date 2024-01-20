@@ -87,4 +87,21 @@
       }
     }
   </script>
+  <script>
+    document.addEventListener('keydown', function (event) {
+      const maMap = {
+        '1': '2',
+        '2': '3',
+        '3': '5',
+      }
+      if (Object.keys(maMap).includes(event.key)) {
+        let currentUrl = new URL(window.location.href);
+        let searchParams = currentUrl.searchParams;
+        searchParams.set("ma", `MA${maMap[event.key]}`);
+
+        history.pushState({}, '', currentUrl.toString());
+        window.location.href = currentUrl.toString();
+      }
+    });
+  </script>
 {% endblock %}
