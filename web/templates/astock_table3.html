@@ -1,0 +1,99 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>个股趋势表3</title>
+  <style>
+    table tr:nth-child(10) {
+      border-bottom: 2px solid #FF0000;
+    }
+
+    table tr:nth-child(20) {
+      border-bottom: 2px solid #FF4500;
+    }
+
+    table tr:nth-child(30) {
+      border-bottom: 2px solid #FFA500;
+    }
+
+    table tr:nth-child(40) {
+      border-bottom: 2px solid #FFD700;
+    }
+
+    table tr:nth-child(50) {
+      border-bottom: 2px solid #FFFF00;
+    }
+
+    table tr:nth-child(60) {
+      border-bottom: 2px solid #ADFF2F;
+    }
+
+    table tr:nth-child(70) {
+      border-bottom: 2px solid #7FFF00;
+    }
+
+    table tr:nth-child(80) {
+      border-bottom: 2px solid #00FF00;
+    }
+
+    table tr:nth-child(90) {
+      border-bottom: 2px solid #008000;
+    }
+  </style>
+  <link rel="stylesheet" href="/static/data_table.css">
+{% endblock %}
+{% block content %}
+  <div id="grid-container">
+    <table id="grid" class="striped centered"></table>
+    <div id="tooltip" style="display:none;"></div>
+    <div id="tooltip-trend" style="display:none;"></div>
+  </div>
+
+  <dialog id="chartDialog" style="overflow: hidden;">
+    <span class="close-button" onclick="closeDialog()">×</span>
+    <iframe id="iframeContent" style="width: 100%; height: 100%; border: none;"></iframe>
+  </dialog>
+{% endblock %}
+{% block footer %}
+  {% include "_table_socket.html" %}
+  <script src="/static/data_table.js"></script>
+  <script>
+    let data = {{ data | safe }};
+    const KLINE_PERIOD = 'D';
+
+    renderGrid(data);
+
+    function addDotClass(element, value) {
+      let price = value[2]
+      const dotClasses = [
+        {'condition': price >= 15, 'className': 'red-dot3'},
+        {'condition': price >= 9.8, 'className': 'red-dot2'},
+        {'condition': price >= 5, 'className': 'red-dot1'},
+        {'condition': price <= -15, 'className': 'green-dot3'},
+        {'condition': price <= -9.8, 'className': 'green-dot2'},
+        {'condition': price <= -5, 'className': 'green-dot1'},
+      ];
+      for (dotClass in dotClasses) {
+        if (dotClasses[dotClass].condition) {
+          element.classList.add('dot', dotClasses[dotClass].className);
+          return
+        }
+      }
+    }
+  </script>
+  <script>
+    document.addEventListener('keydown', function (event) {
+      const maMap = {
+        '1': '2',
+        '2': '3',
+        '3': '5',
+      }
+      if (Object.keys(maMap).includes(event.key)) {
+        let currentUrl = new URL(window.location.href);
+        let searchParams = currentUrl.searchParams;
+        searchParams.set("ma", `MA${maMap[event.key]}`);
+
+        history.pushState({}, '', currentUrl.toString());
+        window.location.href = currentUrl.toString();
+      }
+    });
+  </script>
+{% endblock %}

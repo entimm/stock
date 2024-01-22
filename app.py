@@ -42,6 +42,7 @@ controllers = [
     'market_height',
     'astock_line2',
     'astock_table2',
+    'astock_table3',
 ]
 
 for controller in controllers:

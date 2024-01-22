@@ -12,7 +12,7 @@ blueprint = Blueprint('astock_table2', __name__)
 
 @blueprint.route('/astock_table2')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
-def astock_table():
+def astock_table2():
     ma_list = ['MA2', 'MA3', 'MA5']
     ma = request.args.get('ma', 'MA3')
 

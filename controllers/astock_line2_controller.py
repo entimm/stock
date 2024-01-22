@@ -12,7 +12,7 @@ blueprint = Blueprint('astock_line2', __name__)
 
 @blueprint.route('/astock_line2')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
-def astock_table():
+def astock_table2():
     line_ids = '1,2,3,4,5,6,7,8,9,10'
     rows = list(map(int, line_ids.split(',')))
     ma_list = ['MA2', 'MA3', 'MA5']
