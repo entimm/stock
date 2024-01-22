@@ -1,8 +1,3 @@
-echo 'download-total'
-python cmd download-total
-echo 'north-funds'
-python cmd north-funds
-
 echo 'mv-raw'
 python cmd mv-raw
 echo 'convert-astock'
@@ -19,15 +14,8 @@ python cmd  download-xuangubao-detail
 echo 'arrange-xuangubao-detail'
 python cmd  arrange-xuangubao-detail
 
-echo 'backtest-trend-monster'
-python cmd backtest-trend-monster
-
-echo 'hot-lose'
-python cmd hot-lose
-echo 'main-army-up'
-python cmd main-army-up
-echo 'main-army-down'
-python cmd main-army-down
+echo 'market-height'
+python cmd market-height
 
 echo 'cal-trend-ptg 2'
 python cmd cal-trend-ptg 2
@@ -35,6 +23,12 @@ echo 'cal-trend-ptg 3'
 python cmd cal-trend-ptg 3
 echo 'cal-trend-ptg 5'
 python cmd cal-trend-ptg 5
+echo 'cal-trend-ptg 10'
+python cmd cal-trend-ptg 10
+echo 'cal-trend-ptg 20'
+python cmd cal-trend-ptg 20
+echo 'cal-trend-ptg 60'
+python cmd cal-trend-ptg 60
 
-echo 'limit-up-bs'
-python cmd limit-up-bs
+echo 'backtest-trend-monster'
+python cmd backtest-trend-monster

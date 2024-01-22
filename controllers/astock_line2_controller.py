@@ -15,7 +15,7 @@ blueprint = Blueprint('astock_line2', __name__)
 def astock_table2():
     line_ids = '1,2,3,4,5,6,7,8,9,10'
     rows = list(map(int, line_ids.split(',')))
-    ma_list = ['MA2', 'MA3', 'MA5']
+    ma_list = ['MA2', 'MA3', 'MA5', 'MA10', 'MA20', 'MA60']
     ma = request.args.get('ma', 'MA3')
 
     result_dict = {}

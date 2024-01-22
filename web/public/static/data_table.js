@@ -166,14 +166,16 @@ const debouncedFunction = debounce(function (cell) {
 
 function renderCell(cell, value, i) {
   value = value.split('|');
-  cell.textContent = value[0];
+  let symbol = value[1];
+  let is20cm = ['30', '68'].includes(symbol?.slice(0, 2));
+  cell.textContent = is20cm ? (`@${value[0]}`) : value[0];
   if (cell.textContent === "") {
     cell.classList.add("table-empty" + parseInt(i / 20));
     return;
   }
   addDotClass(cell, value)
   cell.setAttribute('v', value.slice(2).join(' # '));
-  cell.setAttribute('symbol', value[1]);
+  cell.setAttribute('symbol', symbol);
 }
 
 function openDialog(symbol = '', date = '', useDialog = false) {

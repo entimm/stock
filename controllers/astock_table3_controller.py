@@ -13,19 +13,19 @@ blueprint = Blueprint('astock_table3', __name__)
 @blueprint.route('/astock_table3')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def astock_table3():
-    ma_list = ['MA2', 'MA3', 'MA5']
     ma2_data = ma_data('MA2')
     ma3_data = ma_data('MA3')
     ma5_data = ma_data('MA5')
+    ma10_data = ma_data('MA10')
+    ma20_data = ma_data('MA20')
+    ma60_data = ma_data('MA60')
 
     result_dict = {}
     for key in ma2_data.keys():
-        result_dict[key] = ma2_data[key] + ma3_data[key] + ma5_data[key]
-
+        result_dict[key] = ma2_data[key][0:5] + ma3_data[key][0:5] + ma5_data[key][0:5] + ma10_data[key][0:5] + ma20_data[key][0:5] + ma60_data[key][0:5]
 
     template_var = {
         'data': dict(reversed(result_dict.items())),
-        'ma_list': ma_list,
         'request_args': {
             'socket_token': request.args.get('socket_token', '', str),
         }
