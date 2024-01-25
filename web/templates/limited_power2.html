@@ -518,7 +518,7 @@
               row.appendChild(cell);
               if (preDate) {
                 cell.innerHTML = total_stock_list[preDate]
-                  .filter(item => item['const_num'] >= 3 && dataList[date][rowIndex].includes(item.symbol))
+                  .filter(item => item['const_num'] >= 3 && dataList[date] && dataList[date][rowIndex].includes(item.symbol))
                   .sort((a, b) => a['const_num'] - b['const_num'])
                   .map(item => `<span class="stock">${item['name']}</span>`)
                   .join('<br/>');

@@ -18,7 +18,7 @@ XUANGUBAO_DETAIL_PATH = os.path.join(RESOURCES_PATH, 'xuangubao/details')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def limited_power_data():
     result_plate_list = {}
-    for ts in trade_date_list.tail(500)['date'].to_list():
+    for ts in trade_date_list.tail(300)['date'].to_list():
         date = ts.strftime('%Y%m%d')
         date2 = ts.strftime('%Y-%m-%d')
         file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{date}.csv')

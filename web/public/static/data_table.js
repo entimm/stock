@@ -93,7 +93,7 @@ function renderGrid(data) {
 
   container.style.overflowX = 'auto';
   container.style.overflowY = 'hidden';
-  container.style.maxHeight = maxRows * 25 + 'px'; // 设置最大高度，根据实际情况调整
+  container.style.maxHeight = (maxRows + 1) * 25 + 'px'; // 设置最大高度，根据实际情况调整
   container.style.position = 'relative';
 
   thead.addEventListener('click', function (event) {
