@@ -24,12 +24,15 @@ def new_stock():
 
     latest_date = trade_date_list.loc[trade_date_list.index[-1], 'date']
     csv_file = os.path.join(TOTAL_PATH, f'data_{latest_date.strftime("%Y%m%d")}.csv')
-    quotes_df = pd.read_csv(csv_file)
-    df_merged = pd.merge(df, quotes_df, on='ts_code')
+    if os.path.exists(csv_file):
+        quotes_df = pd.read_csv(csv_file)
+        df = pd.merge(df, quotes_df, on='ts_code')
 
-    df_merged['show'] = df_merged['name'].astype(str) + '|' + df_merged['symbol'].astype(str) + '|' + df_merged['pct_chg'].astype(str) + '|' + df_merged['close'].astype(str)
+    df['pct_chg'] = df['pct_chg'] if 'pct_chg' in df.columns else 0
+    df['close'] = df['close'] if 'close' in df.columns else 0
+    df['show'] = df['name'].astype(str) + '|' + df['symbol'].astype(str) + '|' + df['pct_chg'].astype(str) + '|' + df['close'].astype(str)
 
-    result_dict = df_merged.groupby('list_week').apply(lambda group: group['show'].to_list()).tail(24)
+    result_dict = df.groupby('list_week').apply(lambda group: group['show'].to_list()).tail(24)
 
     template_var = {
         'data': dict(reversed(list(result_dict.items()))),
