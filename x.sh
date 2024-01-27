@@ -32,3 +32,6 @@ python cmd cal-trend-ptg 60
 
 echo 'backtest-trend-monster'
 python cmd backtest-trend-monster
+
+echo 'download-fs-img'
+python cmd download-fs-img
