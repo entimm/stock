@@ -97,3 +97,16 @@ def send_request(url):
 
     response = requests.get(url, headers=headers, verify=False)
     return json.loads(response.text)
+
+
+def get_exchange_code(symbol):
+    exchange_code = symbol[:2]
+
+    if exchange_code in ["60", "68"]:
+        return f"sh{symbol}"
+    elif exchange_code in ["00", "30"]:
+        return f"sz{symbol}"
+    elif exchange_code in ["43", "83", "87"]:
+        return f"bj{symbol}"
+    else:
+        return ''

@@ -9,6 +9,7 @@ from command.convert_gnbk import convert_gnbk, convert_gnbk_trend_up, convert_gn
 from command.download_total import download_total
 from command.minor.cal_trend_ptg import cal_trend_ptg
 from command.minor.convert_tdx_xls import convert_tdx_xls
+from command.minor.download_img import download_fs_img
 from command.minor.hot_lose import hot_lose
 from command.minor.kaipanla import kaipanla_mood, kaipanla_limit_up, kaipanla_limit_down, kaipanla_notice
 from command.minor.limit_up_bs import limit_up_bs
@@ -58,6 +59,8 @@ main.add_command(limit_up_bs)
 main.add_command(main_army_up)
 main.add_command(main_army_down)
 main.add_command(market_height)
+
+main.add_command(download_fs_img)
 
 main.add_command(test)
 

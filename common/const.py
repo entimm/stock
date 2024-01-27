@@ -7,6 +7,7 @@ from common.config import config
 APP_PATH = os.path.dirname(os.path.dirname(__file__))
 
 RESOURCES_PATH = os.path.join(APP_PATH, 'resources')
+PUBLIC_PATH = os.path.join(APP_PATH, 'web/public')
 
 STOCK_META_FILE_PATH = os.path.join(RESOURCES_PATH, 'a_stock_meta_list.csv')
 TDX_STOCK_INFO_FILE_PATH = os.path.join(RESOURCES_PATH, 'tdx_stock_info.csv')
