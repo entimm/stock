@@ -20,7 +20,7 @@ def download_fs_img():
             os.mkdir(img_path)
 
         symbol_list = set()
-        for sub_ts in trade_date_list.tail(3)['date'].to_list():
+        for sub_ts in trade_date_list.tail(5)['date'].to_list():
             date = sub_ts.strftime('%Y%m%d')
             file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{date}.csv')
             if not os.path.exists(file_path): continue

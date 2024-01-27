@@ -1,0 +1,27 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>分时图</title>
+  <style>
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="gallery-container"></div>
+{% endblock %}
+{% block footer %}
+  <script>
+    fetch(`/images_data`).then(response => response.json())
+      .then(gifData => {
+        let galleryContainer = document.getElementById('gallery-container');
+        for (let date in gifData) {
+          gifData[date].forEach(function (gifFileName) {
+
+            var imgElement = document.createElement('img');
+
+            imgElement.src = `http://127.0.0.1:8888/static/imgs/${date}/${gifFileName}`;
+            imgElement.style.width = '20%';
+            galleryContainer.appendChild(imgElement);
+          });
+        }
+      });
+  </script>
+{% endblock %}
