@@ -73,7 +73,7 @@ def diybk():
 @blueprint.route('/diybk_history')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def diybk_history():
-    ma_config = {'MA3': 3, 'MA5': 5, 'MA10': 10, 'MA20': 20, 'MA60': 60}
+    ma_config = {'MA2': 2, 'MA3': 3, 'MA5': 5, 'MA10': 10, 'MA20': 20, 'MA60': 60}
     ma_list = list(ma_config.keys())
     ma = request.args.get('ma', 'MA5')
     ma_v = ma_config[ma]

@@ -291,7 +291,11 @@ function showTooltipTrend(symbol_list, date) {
   for (symbol of symbol_list) {
     let img = document.createElement("img");
     img.src = `http://${document.domain}:${location.port}/static/imgs/${date}/${symbol}.gif`;
-    tooltipTrend.appendChild(img);
+    let a = document.createElement("a");
+    a.href = `http://${document.domain}:${location.port}/chart?date=${date}&period=F5&symbol=${symbol}`
+    a.target = 'blank';
+    a.appendChild(img);
+    tooltipTrend.appendChild(a);
   }
 
   tooltipTrend.style.display = 'block';

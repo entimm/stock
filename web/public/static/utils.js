@@ -86,6 +86,7 @@ function showTooltipTrend(symbol) {
       }
 
       infoCardDiv1.innerHTML += `
+    <div class="divider"></div>
     <div class="card-content compact-content">
       <p><strong>主题投资:</strong> ${infoData['主题投资']}</p>
       <p><strong>主营业务:</strong> ${infoData['主营业务']}</p>
