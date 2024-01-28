@@ -19,7 +19,7 @@ def astock_table2():
     ma = request.args.get('ma', 'MA3')
 
     result_dict = {}
-    result_json_file = os.path.join(RESOURCES_PATH, f'{ma}_trend.json')
+    result_json_file = os.path.join(RESOURCES_PATH, 'trends', f'{ma}_trend.json')
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
             result_dict = json.load(file)

@@ -19,7 +19,7 @@ def cal_trend_ptg(ma_v):
     direction = 1
 
     date_list = trade_date_list['date'].tail(data_len).to_list()
-    result_json_file = os.path.join(RESOURCES_PATH, f'MA{ma_v}_trend.json')
+    result_json_file = os.path.join(RESOURCES_PATH, 'trends', f'MA{ma_v}_trend.json')
     result_dict = {}
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
