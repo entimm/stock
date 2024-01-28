@@ -22,4 +22,15 @@ def get_hfq_kline(symbol, ts=None):
     return df
 
 
+def custom_compare_desc(x, y):
+    if x[1] is None or y[1] is None:
+        return 1
 
+    return y[1] - x[1]
+
+
+def custom_compare_asc(x, y):
+    if x[1] is None or y[1] is None:
+        return 1
+
+    return x[1] - y[1]

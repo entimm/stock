@@ -35,3 +35,10 @@ python cmd backtest-trend-monster
 
 echo 'download-fs-img'
 python cmd download-fs-img
+
+echo 'cal-limit-up-trend 2'
+python cmd cal-limit-up-trend 2
+echo 'cal-limit-up-trend 3'
+python cmd cal-limit-up-trend 3
+echo 'cal-limit-up-trend 5'
+python cmd cal-limit-up-trend 5

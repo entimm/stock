@@ -1,28 +1,35 @@
+import json
 import os
-import re
 
-from flask import Blueprint, render_template
+from flask import render_template, request, Blueprint
 
 from app_cache import cache
-from common.const import PUBLIC_PATH
+from common.const import RESOURCES_PATH
 from controllers import make_cache_key
 
 blueprint = Blueprint('images', __name__)
 
 
-@blueprint.route('/images_data')
-@cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
-def images_data():
-    file_list = {}
-    file_regex = re.compile(r'.*(\d{4}-\d{2}-\d{2})')
-    for root, dirs, files in os.walk(os.path.join(PUBLIC_PATH, 'static/imgs')):
-        if match := file_regex.match(root):
-            file_list[match.group(1)] = [item for item in files if item[-3:] == 'gif']
-            break
-
-    return file_list
-
-
 @blueprint.route('/images')
 def images():
-    return render_template('images.html', **{})
+    ma_list = ['MA2', 'MA3', 'MA5']
+    ma = request.args.get('ma', 'MA3')
+
+    result_dict = {}
+    result_json_file = os.path.join(RESOURCES_PATH, 'trends2', f'{ma}_trend.json')
+    if os.path.exists(result_json_file):
+        with open(result_json_file, 'r') as file:
+            result_dict = json.load(file)
+
+    result_dict = {key: result_dict[key] for key in list(result_dict.keys())[-300:]}
+
+    template_var = {
+        'data': dict(reversed(result_dict.items())),
+        'ma_list': ma_list,
+        'request_args': {
+            'socket_token': request.args.get('socket_token', '', str),
+            'ma': ma,
+        }
+    }
+
+    return render_template('images.html', **template_var)

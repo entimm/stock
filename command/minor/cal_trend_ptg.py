@@ -7,6 +7,7 @@ import click
 import pandas as pd
 
 from common import price_calculate
+from common.cmd_utils import custom_compare_desc, custom_compare_asc
 from common.const import RESOURCES_PATH
 from common.quotes import trade_date_list, fetch_local_daily
 from common.utils import ticker_name
@@ -76,15 +77,4 @@ def cal_trend_ptg(ma_v):
         json.dump(result_dict, json_file)
 
 
-def custom_compare_desc(x, y):
-    if x[1] is None or y[1] is None:
-        return 1
 
-    return y[1] - x[1]
-
-
-def custom_compare_asc(x, y):
-    if x[1] is None or y[1] is None:
-        return 1
-
-    return x[1] - y[1]
