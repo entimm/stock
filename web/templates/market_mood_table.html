@@ -1,0 +1,228 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>市场情绪表</title>
+  <link rel="stylesheet" href="/static/data_table.css">
+  <style>
+    .cell-key {
+      background-color: #d29600;
+      color: #fff;
+      position: sticky;
+      left: 0;
+      z-index: 999;
+    }
+
+    .cell-val::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 12px;
+      height: 12px;
+    }
+
+    .level-1::after {
+      background-color: #00af07;
+    }
+
+    .level-2::after {
+      background-color: #00e1e7;
+    }
+
+    .level-3::after {
+      background-color: #FFC107;
+    }
+
+    .level-4::after {
+      background-color: #FF5722;
+    }
+
+    .level-5::after {
+      background-color: #dd00ff;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    tbody tr:hover {
+      background-color: rgba(200, 200, 200, 0.3) !important;
+    }
+
+    #tooltip {
+      font-size: 15px;
+      padding: 5px;
+      white-space: nowrap;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="grid-container">
+    <table id="grid" class="striped centered"></table>
+    <div id="tooltip" style="display:none;"></div>
+  </div>
+{% endblock %}
+{% block footer %}
+  <script>
+    let data = {{ table_data | safe }};
+    let fieldList = {{ field_list | safe }};
+
+    let table = document.getElementById('grid');
+    renderGrid(data)
+
+    function renderGrid(data) {
+      table.innerHTML = '';
+
+      let thead = document.createElement('thead');
+      let headerRow = document.createElement('tr');
+
+      let headerCell = document.createElement('th');
+      headerCell.textContent = '数据';
+      headerCell.classList.add('cell-key');
+      headerRow.appendChild(headerCell);
+
+      for (let item of data) {
+        let headerCell = document.createElement('th');
+        headerCell.textContent = item['date'];
+        headerRow.appendChild(headerCell);
+      }
+      thead.appendChild(headerRow);
+
+      let tbody = document.createElement('tbody');
+
+      Object.entries(fieldList).forEach(([key, value]) => {
+        let row = document.createElement('tr');
+
+        let cell = document.createElement('td');
+        cell.textContent = value;
+        cell.classList.add('cell-key');
+        cell.setAttribute('key', key);
+        row.appendChild(cell);
+
+        for (let item of data) {
+          let cell = document.createElement('td');
+          renderCell(cell, key, item[key]);
+          cell.classList.add('cell-val');
+          row.appendChild(cell);
+        }
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+    }
+
+    function show_tooltip(cell, scoreList) {
+      let headName = getCellHeadName(cell);
+
+      tooltip.innerHTML = `
+${headName} <br/>
+${getCellKeyName(cell)}: ${cell.textContent} <br/>
+~ ${scoreList.join(' ~ ')} ~
+`;
+
+      // 计算tooltip的位置
+      let boundingRect = cell.getBoundingClientRect();
+      let tooltipX = boundingRect.right + window.pageXOffset - 10;
+      let tooltipY = boundingRect.bottom + window.pageYOffset - 10;
+
+      tooltip.style.display = 'block';
+      tooltip.style.left = tooltipX + 'px';
+      tooltip.style.top = tooltipY + 'px';
+    }
+
+    function getCellKeyName(cell) {
+      return cell.parentElement.firstChild.textContent;
+    }
+
+    function getCellHeadName(cell) {
+      let col = cell.cellIndex;
+
+      return table.querySelector('thead tr').cells[col].innerHTML;
+    }
+
+    function renderCell(cell, key, value) {
+      if (key === 'total_amount') {
+        value = (value / 10000).toFixed(2);
+      }
+      if (key === 'p_1t2') {
+        value = value.toFixed(2);
+      }
+      if (key === 'p_2t3') {
+        value = value.toFixed(2);
+      }
+      if (key === 'p_3t4') {
+        value = value.toFixed(2);
+      }
+      if (key === 'today_broke_ptg') {
+        value = value.toFixed(2);
+      }
+      if (key === 'yesterday_limit_up_cptg') {
+        value = value.toFixed(2);
+      }
+      if (key === 'yesterday_constant_cptg') {
+        value = value.toFixed(2);
+      }
+      if (key === 'yesterday_broke_cptg') {
+        value = value.toFixed(2);
+      }
+
+      cell.textContent = value;
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+      let rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName("td");
+
+        let valList = [];
+        for (let j = 1; j < cells.length; j++) {
+          let cellValue = Number(cells[j].innerText);
+          valList.push(cellValue);
+        }
+        let scoreList = calPercentileScore(valList);
+
+        let cellKey = cells[0].getAttribute('key');
+        let levels = ["level-1", "level-2", "level-3", "level-4", "level-5"];
+        if (['down_limit_num', 'down_num', 'today_broke_ptg', 'st_down_limit_num', 'big_noodle',].includes(cellKey)) {
+          levels = levels.reverse();
+        }
+
+        for (let k = 1; k < cells.length; k++) {
+          let cellValue = Number(cells[k].innerText);
+
+          if (cellValue >= scoreList[3]) {
+            cells[k].classList.add(levels[4]);
+          } else if (cellValue >= scoreList[2]) {
+            cells[k].classList.add(levels[3]);
+          } else if (cellValue >= scoreList[1]) {
+            cells[k].classList.add(levels[2]);
+          } else if (cellValue >= scoreList[0]) {
+            cells[k].classList.add(levels[1]);
+          } else {
+            cells[k].classList.add(levels[0]);
+          }
+        }
+
+        rows[i].addEventListener('mouseover', function (event) {
+          if (event.target.tagName === 'TD') {
+            let cell = event.target;
+            show_tooltip(cell, scoreList);
+          }
+        });
+      }
+    });
+
+    function calPercentileScore(arr) {
+      arr.sort((a, b) => a - b);
+
+      return [
+        arr[Math.ceil(0.1 * arr.length) - 1],
+        arr[Math.ceil(0.3 * arr.length) - 1],
+        arr[Math.ceil(0.7 * arr.length) - 1],
+        arr[Math.ceil(0.9 * arr.length) - 1],
+      ];
+    }
+  </script>
+{% endblock %}

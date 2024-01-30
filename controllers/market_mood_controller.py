@@ -9,34 +9,35 @@ from controllers import make_cache_key
 
 blueprint = Blueprint('market_mood', __name__)
 
+field_list = {
+    'highest_limit': '最高连板',
+    'cont_num1': '2板以上',
+    'cont_num2': '3板以上',
+    'up_limit_num': '涨停数',
+    'down_limit_num': '跌停数',
+    'up_num': '上涨家数',
+    'down_num': '下跌家数',
+    'total_amount': '总成交额',
+    'b1_num': '首板',
+    'b2_num': '2板',
+    'b3_num': '3板',
+    'bn_num': '高度板',
+    'p_1t2': '1进2',
+    'p_2t3': '2进3',
+    'p_3t4': '3进4',
+    'today_broke_ptg': '今日炸板率',
+    'yesterday_limit_up_cptg': '昨日涨停表现',
+    'yesterday_constant_cptg': '昨日连板表现',
+    'yesterday_broke_cptg': '昨日破板表现',
+    'strong': '强度',
+    'st_down_limit_num': 'st跌停数',
+    'st_up_limit_num': 'st涨停数',
+    'big_noodle': '大面',
+}
+
 
 @blueprint.route('/market_mood')
 def market_mood():
-    field_list = {
-        'highest_limit': '最高连板',
-        'cont_num1': '2板以上',
-        'cont_num2': '3板以上',
-        'up_limit_num': '涨停数',
-        'down_limit_num': '跌停数',
-        'up_num': '上涨家数',
-        'down_num': '下跌家数',
-        'total_amount': '总成交额',
-        'b1_num': '首板',
-        'b2_num': '2板',
-        'b3_num': '3板',
-        'bn_num': '高度板',
-        'p_1t2': '1进2',
-        'p_2t3': '2进3',
-        'p_3t4': '3进4',
-        'today_broke_ptg': '今日炸板率',
-        'yesterday_limit_up_cptg': '昨日涨停表现',
-        'yesterday_constant_cptg': '昨日连板表现',
-        'yesterday_broke_cptg': '昨日破板表现',
-        'strong': '强度',
-        'st_down_limit_num': 'st跌停数',
-        'st_up_limit_num': 'st涨停数',
-        'big_noodle': '大面',
-    }
     field = request.args.get('field', 'highest_limit', type=str)
 
     return render_template('market_mood.html', **{
@@ -60,3 +61,18 @@ def market_mood_data():
     chart_data = df[['date', field]].tail(300).to_dict(orient='records')
 
     return jsonify(chart_data)
+
+
+@blueprint.route('/market_mood_table')
+def market_mood_table():
+    file_path = os.path.join(RESOURCES_PATH, f'kaipanla.csv')
+    df = pd.read_csv(file_path)
+    df['cont_num1'] = df['b2_num'] + df['b3_num'] + df['bn_num']
+    df['cont_num2'] = df['b3_num'] + df['bn_num']
+
+    table_data = df.tail(300).to_dict(orient='records')
+
+    return render_template('market_mood_table.html', **{
+        'field_list': field_list,
+        'table_data': list(reversed(table_data)),
+    })

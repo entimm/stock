@@ -1,6 +1,6 @@
 {% extends '_layout.html' %}
 {% block head %}
-  <title>市场情绪</title>
+  <title>市场情绪图</title>
   <style>
     #chart-container {
       display: flex;
@@ -31,57 +31,73 @@
 {% block footer %}
   <script src="/static/third/echarts.min.js"></script>
   <script>
+    let fieldList = {{ field_list | safe }};
     let field = '{{ request_args.field }}';
-    fetch(`/market_mood_data?field=${field}`)
-      .then(response => response.json())
-      .then(data => {
-        const chart = echarts.init(document.getElementById('chart'));
-        const option = {
-          grid: {
-            top: '1%',
-            left: '1%',
-            right: '0%',
-            bottom: '1%',
-            containLabel: true
-          },
-          xAxis: {
-            type: 'category',
-            data: data.map(item => item['date']),
-          },
-          yAxis: {
-            type: 'value',
-            position: 'right',
-          },
-          series: [{
-            data: data.map(item => item[field]),
-            type: 'line',
-            showAllSymbol: true,
-            emphasis: {
-              focus: 'series',
+    fetchData(field);
+
+    function fetchData(field) {
+      fetch(`/market_mood_data?field=${field}`)
+        .then(response => response.json())
+        .then(data => {
+          const chart = echarts.init(document.getElementById('chart'));
+          const option = {
+            grid: {
+              top: '1%',
+              left: '1%',
+              right: '0%',
+              bottom: '1%',
+              containLabel: true
+            },
+            xAxis: {
+              type: 'category',
+              data: data.map(item => item['date']),
+            },
+            yAxis: {
+              type: 'value',
+              position: 'right',
+            },
+            series: [{
+              data: data.map(item => item[field]),
+              type: 'line',
+              showAllSymbol: true,
+              emphasis: {
+                focus: 'series',
+                lineStyle: {
+                  width: 2,
+                },
+              },
+              symbol: 'rect',
+              symbolSize: 5,
+              itemStyle: {
+                borderColor: '#f3bf11',
+                color: '#f500ff',
+              },
               lineStyle: {
-                width: 2,
+                color: '#5a6fc0'
+              }
+            }],
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                type: 'cross'
               },
             },
-            symbol: 'rect',
-            symbolSize: 5,
-            itemStyle: {
-              borderColor: '#f3bf11',
-              color: '#f500ff',
-            },
-            lineStyle: {
-              color: '#5a6fc0'
-            }
-          }],
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'cross'
-            },
-          },
-        };
-        chart.setOption(option);
-      })
-      .catch(error => console.error('Error fetching data:', error));
+          };
+          chart.setOption(option);
+        })
+        .catch(error => console.error('Error fetching data:', error));
       // circle, rect, roundRect, triangle, diamond, pin, arrow, none
+    }
+
+    document.addEventListener('keydown', function (event) {
+      let keys = Object.keys(fieldList);
+      let index = keys.indexOf(field);
+      if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
+        index += (event.code === 'ArrowDown' ? 1 : -1);
+        field = keys[(keys.length + index) % keys.length];
+        window.location.href = `/market_mood?field=${field}`
+        event.preventDefault();
+      }
+    });
   </script>
 {% endblock %}
