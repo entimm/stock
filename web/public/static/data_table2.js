@@ -288,6 +288,19 @@ function processMove(direction) {
 function showTooltipTrend(symbol_list, date) {
   tooltipTrend.textContent = '';
 
+  if (symbol_list.length === 1) {
+    let symbol = symbol_list[0];
+    let timestamp = new Date().getTime();
+    let img = document.createElement("img");
+    let code = getExchangeCode(`${symbol}`);
+    img.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif?t=${timestamp}`;
+    let a = document.createElement("a");
+    a.href = `http://${document.domain}:${location.port}/chart?date=${date}&period=D&symbol=${symbol}`
+    a.target = 'blank';
+    a.appendChild(img);
+    tooltipTrend.appendChild(a);
+  }
+
   for (symbol of symbol_list) {
     let img = document.createElement("img");
     img.src = `http://${document.domain}:${location.port}/static/imgs/${date}/${symbol}.gif`;
