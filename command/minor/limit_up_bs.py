@@ -16,7 +16,7 @@ def limit_up_bs():
 
     to_buy_list = []
     date_index = 0
-    pre_date = ''
+    pre_ts = None
     date_list = trade_date_list['date'].tail(500).to_list()
     for ts in date_list:
         date = ts.strftime('%Y%m%d')
@@ -28,8 +28,8 @@ def limit_up_bs():
         df['ts_code'] = df['ts_code'].str[:6]
 
         pre_limit_up_infos = {}
-        if pre_date:
-            file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{pre_date}.csv')
+        if pre_ts:
+            file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{pre_ts.strftime("%Y%m%d")}.csv')
             df_pre_limit_up_infos = pd.read_csv(file_path, index_col="symbol")
             df_pre_limit_up_infos = df_pre_limit_up_infos[['stock_chi_name', 'limit_up_days', 'm_days_n_boards_days', 'm_days_n_boards_boards']]
             df_pre_limit_up_infos.index = df_pre_limit_up_infos.index.astype(str).str[:6]
@@ -90,6 +90,7 @@ def limit_up_bs():
                 'buy_price': row['open'],
                 'buy_index': date_index,
                 'mode': '开盘竞价',
+                'close_price': row['close'],
                 'const_num': pre_limit_up_info[0],
                 'const_density': pre_limit_up_info[1],
             })
@@ -107,6 +108,7 @@ def limit_up_bs():
                     'buy_price': row['high'],
                     'buy_index': date_index,
                     'mode': '打板',
+                    'close_price': row['close'],
                     'const_num': pre_limit_up_info[0],
                     'const_density': pre_limit_up_info[1],
                 })
@@ -116,7 +118,25 @@ def limit_up_bs():
         to_buy_list = df['ts_code'].to_list()
 
         date_index += 1
-        pre_date = date
+        pre_ts = ts
+
+    for target_hold in holding:
+        profit = round((target_hold['close_price'] / target_hold['buy_price'] - 1) * 100, 2)
+        if 10 > profit > -10:
+            continue
+
+        result.append({
+            'symbol': target_hold['symbol'],
+            'buy_date': target_hold['buy_date'],
+            'buy_price': target_hold['buy_price'],
+            'sell_price': target_hold['close_price'],
+            'sell_date': pre_ts.strftime('%Y-%m-%d'),
+            'profit': profit,
+            'days': 0,
+            'mode': target_hold['mode'],
+            'const_num': target_hold['const_num'],
+            'const_density': target_hold['const_density'],
+        })
 
     df = pd.DataFrame(result)
     file_path = os.path.join(RESOURCES_PATH, f'limit_up_bs.csv')
