@@ -104,7 +104,8 @@ function renderGrid(data) {
         return values[1];
       });
       showTooltipTrend(symbols, colName);
-      focusMode = 'key'
+      focusMode = 'key';
+      setSelectedCell(event.target);
     }
   });
 
@@ -209,21 +210,21 @@ function getAdjacentCell(cell, direction) {
   if (!cell) {
     cell = table.querySelector('tbody tr').cells[0];
   }
-  let row = getRowIndex(cell);
-  let col = cell.cellIndex;
+  let rowIndex = getRowIndex(cell);
+  let colIndex = cell.cellIndex;
 
   let numRows = table.querySelector('tbody').childNodes.length;
   let numCols = table.querySelector('thead tr').cells.length;
 
   switch (direction) {
     case "ArrowUp":
-      return row > 0 ? table.querySelector(`tbody tr:nth-child(${row}) td:nth-child(${col + 1})`) : null;
+      return rowIndex > 0 ? table.querySelector(`tbody tr:nth-child(${rowIndex}) td:nth-child(${colIndex + 1})`) : null;
     case "ArrowRight":
-      return col < numCols - 1 ? cell.nextElementSibling : null;
+      return colIndex < numCols - 1 ? cell.nextElementSibling : null;
     case "ArrowDown":
-      return row < numRows - 1 ? table.querySelector(`tbody tr:nth-child(${row + 2}) td:nth-child(${col + 1})`) : null;
+      return rowIndex < numRows - 1 ? table.querySelector(`tbody tr:nth-child(${rowIndex + 2}) td:nth-child(${colIndex + 1})`) : null;
     case "ArrowLeft":
-      return col > 0 ? cell.previousElementSibling : null;
+      return colIndex > 0 ? cell.previousElementSibling : null;
     default:
       return null;
   }
@@ -279,7 +280,18 @@ function processMove(direction) {
     setSelectedCell(cell);
     show_tooltip(cell);
     let headName = getCellHeadName(cell);
-    showTooltipTrend([cell.getAttribute('symbol')], headName);
+
+    let symbolList = [];
+    if (cell.getAttribute('symbol')) {
+      symbolList = [cell.getAttribute('symbol')];
+    } else {
+      symbolList = data[headName].map(function (item) {
+        let values = item.split('|');
+        return values[1];
+      });
+    }
+
+    showTooltipTrend(symbolList, headName);
   }
 
   return cell;

@@ -111,13 +111,13 @@
       table.appendChild(tbody);
     }
 
-    function show_tooltip(cell, scoreList) {
+    function show_tooltip(cell, scoreList, minMax) {
       let headName = getCellHeadName(cell);
 
       tooltip.innerHTML = `
 ${headName} <br/>
 ${getCellKeyName(cell)}: ${cell.textContent} <br/>
-~ ${scoreList.join(' ~ ')} ~
+${minMax[0]} ~ ${scoreList.join(' ~ ')} ~ ${minMax[1]}
 `;
 
       // 计算tooltip的位置
@@ -208,7 +208,7 @@ ${getCellKeyName(cell)}: ${cell.textContent} <br/>
         rows[i].addEventListener('mouseover', function (event) {
           if (event.target.tagName === 'TD') {
             let cell = event.target;
-            show_tooltip(cell, scoreList);
+            show_tooltip(cell, scoreList, [Math.min(...valList), Math.max(...valList)]);
           }
         });
       }

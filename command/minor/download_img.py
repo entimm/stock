@@ -50,10 +50,11 @@ def get_symbol_list():
 def cal_limit_up_trend(ma_v):
     direction = 1
 
-    date_list = trade_date_list['date'].tail(1000).to_list()
+    date_list = trade_date_list['date'].tail(1).to_list()
     date_list = [item for item in date_list if item >= Timestamp('2024-01-26')]
     result_json_file = os.path.join(RESOURCES_PATH, 'trends2', f'MA{ma_v}_trend.json')
-    result_dict = {}
+    with open(result_json_file, 'r') as file:
+        result_dict = json.load(file)
 
     symbols = get_symbol_list()
 
