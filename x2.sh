@@ -1,11 +1,15 @@
-echo 'kaipanla-mood'
-python cmd kaipanla-mood
+echo 'download-total'
+python cmd download-total
+echo 'north-funds'
+python cmd north-funds
 
-echo 'kaipanla-notice'
-python cmd kaipanla-notice
+echo 'hot-lose'
+python cmd hot-lose
 
-echo 'kaipanla-limit-up'
-python cmd kaipanla-limit-up
+echo 'main-army-up'
+python cmd main-army-up
+echo 'main-army-down'
+python cmd main-army-down
 
-echo 'kaipanla-limit-down'
-python cmd kaipanla-limit-down
+echo 'limit-up-bs'
+python cmd limit-up-bs

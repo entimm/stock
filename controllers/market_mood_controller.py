@@ -11,16 +11,13 @@ blueprint = Blueprint('market_mood', __name__)
 
 field_list = {
     'highest_limit': '最高连板',
-    'cont_num1': '2板以上',
-    'cont_num2': '3板以上',
     'up_limit_num': '涨停数',
     'down_limit_num': '跌停数',
-    'up_num': '上涨家数',
-    'down_num': '下跌家数',
-    'total_amount': '总成交额',
     'b1_num': '首板',
     'b2_num': '2板',
     'b3_num': '3板',
+    'cont_num1': '2板以上',
+    'cont_num2': '3板以上',
     'bn_num': '高度板',
     'p_1t2': '1进2',
     'p_2t3': '2进3',
@@ -33,6 +30,9 @@ field_list = {
     'st_down_limit_num': 'st跌停数',
     'st_up_limit_num': 'st涨停数',
     'big_noodle': '大面',
+    'up_num': '上涨家数',
+    'down_num': '下跌家数',
+    'total_amount': '总成交额',
 }
 
 

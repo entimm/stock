@@ -582,6 +582,8 @@
       tooltipImg.appendChild(img2);
 
       tooltipImg.style.display = 'block';
+    }).on('mouseleave', function () {
+      tooltipImg.style.display = 'none';
     });
   </script>
 {% endblock %}

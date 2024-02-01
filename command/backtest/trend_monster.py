@@ -102,6 +102,8 @@ class Strategy:
     def sell_in_end(self, ts):
         df_hold = get_hfq_kline(self.hold.stock, ts)
         if ts in df_hold.index:
+            if df_hold.loc[ts].low == df_hold.loc[ts].high:
+                return
             self.sell(ts, df_hold.loc[ts].close)
 
     @staticmethod

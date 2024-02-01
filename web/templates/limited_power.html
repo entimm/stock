@@ -275,6 +275,7 @@
       if (event.code === 'Escape') {
         tooltip.style.display = 'none';
         tooltipTrend.style.display = 'none';
+        tooltipImg.style.display = 'none';
         stockTable.style.display = 'none';
         focusMode = 'free'
       }
@@ -615,6 +616,8 @@
       tooltipImg.appendChild(img2);
 
       tooltipImg.style.display = 'block';
+    }).on('mouseleave', function () {
+      tooltipImg.style.display = 'none';
     });
   </script>
 {% endblock %}
