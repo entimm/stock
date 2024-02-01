@@ -33,7 +33,6 @@
     }
 
 
-
     #main-grid td span.empty {
       font-style: italic;
       font-size: 8px;
@@ -67,12 +66,13 @@
       background-color: rgb(217, 255, 251);
       transform: translateX(-50%);
       left: 50%;
+      z-index: 99;
     }
 
     #stock-grid thead th {
       position: sticky;
       top: 0;
-      z-index: 1;
+      z-index: 100;
     }
 
     #stock-grid tr:hover {
@@ -81,6 +81,18 @@
 
     #hot-lose-grid {
       background-color: rgb(176, 255, 196);
+    }
+
+    #tooltip-img {
+      position: absolute;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      box-shadow: 0 10px 20px 20px rgb(0 0 0 / 10%);
+      z-index: 99;
+
+      max-width: 86%;
+      max-height: 100%;
+      overflow-y: scroll;
     }
 
   </style>
@@ -118,6 +130,7 @@
     <br>
     <div id="tooltip" style="display:none;"></div>
     <div id="tooltip-trend" class="right-top" style="display:none;"></div>
+    <div id="tooltip-img" class="right-bottom" style="display:none;"></div>
   </div>
 
   <div class="fixed-action-btn" style="top: 0; right: 10px; height: 40px">
@@ -133,6 +146,7 @@
     let focusMode = 'free';
     let table = document.getElementById('main-grid');
     let tooltipTrend = document.getElementById('tooltip-trend');
+    let tooltipImg = document.getElementById('tooltip-img');
     let selectedCell = null;
     let stockTable = document.getElementById('stock-grid');
 
@@ -197,7 +211,7 @@
           if (['30', '68'].includes(item['symbol'].slice(0, 2))) {
             name = `@${name}`;
           }
-          acc[item['const_num']].stock_list.push(name);
+          acc[item['const_num']].stock_list.push(`${name}|${item['symbol']}`);
           return acc;
         }, {});
         for (i = 1; i <= maxHeight + 1; i++) {
@@ -207,10 +221,11 @@
             tmpList[i].content = tmpList[i].num;
             if (tmpList[i].num <= 3) {
               tmpList[i].content = tmpList[i].stock_list.map(function (item) {
-                if (/#.*#/.test(item)) {
-                  item = `<span class="stock interrupt">${item}</span>`
+                let [name, symbol] = item.split('|');
+                if (/#.*#/.test(name)) {
+                  return `<span class="stock interrupt" data-symbol="${symbol}">${name}</span>`
                 }
-                return `<span class="stock">${item}</span>`;
+                return `<span class="stock" data-symbol="${symbol}">${name}</span>`;
               }).join('<br/>')
             }
           }
@@ -227,6 +242,7 @@
       if (event.code === 'Escape') {
         tooltip.style.display = 'none';
         tooltipTrend.style.display = 'none';
+        tooltipImg.style.display = 'none';
         stockTable.style.display = 'none';
         focusMode = 'free'
       }
@@ -520,7 +536,7 @@
                 cell.innerHTML = total_stock_list[preDate]
                   .filter(item => item['const_num'] >= 3 && dataList[date] && dataList[date][rowIndex].includes(item.symbol))
                   .sort((a, b) => a['const_num'] - b['const_num'])
-                  .map(item => `<span class="stock">${item['name']}</span>`)
+                  .map(item => `<span class="stock" data-symbol="${item.symbol}">${item['name']}</span>`)
                   .join('<br/>');
               } else {
                 cell.innerHTML = '';
@@ -549,5 +565,23 @@
         return nameList.includes(item['name']);
       }).sort((a, b) => a['const_num'] - b['const_num']);
     }
+
+    $('#grid-container table').on('mouseenter', 'td span.stock', function (event) {
+      tooltipImg.innerHTML = "";
+      let target = event.target;
+      let date = table.rows[0].cells[event.target.parentElement.cellIndex]?.innerHTML;
+      let symbol = target.getAttribute('data-symbol');
+      let img1 = document.createElement("img");
+      img1.src = `http://${document.domain}:${location.port}/static/imgs/${date}/${symbol}.gif`;
+      tooltipImg.appendChild(img1);
+
+      let timestamp = new Date().getTime();
+      let img2 = document.createElement("img");
+      let code = getExchangeCode(`${symbol}`);
+      img2.src = `https://image2.sinajs.cn/newchart/min/n/${code}.gif?t=${timestamp}`;
+      tooltipImg.appendChild(img2);
+
+      tooltipImg.style.display = 'block';
+    });
   </script>
 {% endblock %}
