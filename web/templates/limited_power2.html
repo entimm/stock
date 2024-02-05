@@ -98,6 +98,13 @@
   </style>
 {% endblock %}
 {% block content %}
+  <div id="fixed-links-container" class="right-top">
+    <div class="fixed-links">
+      {% for value in year_list %}
+        {{ create_link(request_args, {'year':value}, request_args.year == value, value) | safe }}
+      {% endfor %}
+    </div>
+  </div>
 
   <div id="grid-container">
     <table id="main-grid" class="striped centered"></table>
@@ -153,7 +160,7 @@
     let total_stock_list = {};
     let stockListInTable = [];
 
-    fetch(`/limited_power2_data`).then(response => response.json())
+    fetch(document.URL.replace('limited_power2', 'limited_power2_data')).then(response => response.json())
       .then(dataList => {
         total_stock_list = dataList;
         readHotLoss();
@@ -571,14 +578,16 @@
       let target = event.target;
       let date = table.rows[0].cells[event.target.parentElement.cellIndex]?.innerHTML;
       let symbol = target.getAttribute('data-symbol');
+
       let img1 = document.createElement("img");
       img1.src = `http://${document.domain}:${location.port}/static/imgs/${date}/${symbol}.gif`;
       tooltipImg.appendChild(img1);
 
       let timestamp = new Date().getTime();
-      let img2 = document.createElement("img");
       let code = getExchangeCode(`${symbol}`);
-      img2.src = `https://image2.sinajs.cn/newchart/min/n/${code}.gif?t=${timestamp}`;
+
+      let img2 = document.createElement("img");
+      img2.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif?t=${timestamp}`;
       tooltipImg.appendChild(img2);
 
       tooltipImg.style.display = 'block';

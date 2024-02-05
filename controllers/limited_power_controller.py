@@ -1,11 +1,11 @@
 import os
+from datetime import datetime
 
 import pandas as pd
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 
 from app_cache import cache
 from common.const import RESOURCES_PATH
-from common.config import config
 from common.quotes import trade_date_list
 from controllers import make_cache_key
 
@@ -17,8 +17,15 @@ XUANGUBAO_DETAIL_PATH = os.path.join(RESOURCES_PATH, 'xuangubao/details')
 @blueprint.route('/limited_power_data')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def limited_power_data():
+    year = request.args.get('year', datetime.now().year, type=int)
+    df = trade_date_list
+    if year == datetime.now().year:
+        df = df.tail(300)
+    else:
+        df = df[df['date'].dt.year == year]
+
     result_plate_list = {}
-    for ts in trade_date_list.tail(300)['date'].to_list():
+    for ts in df['date'].to_list():
         date = ts.strftime('%Y%m%d')
         date2 = ts.strftime('%Y-%m-%d')
         file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{date}.csv')
@@ -48,4 +55,11 @@ def limited_power_data():
 
 @blueprint.route('/limited_power')
 def limited_power():
-    return render_template('limited_power.html', **{})
+    year_list = list(range(2024, 2018, -1))
+    year = request.args.get('year', year_list[0], type=int)
+    return render_template('limited_power.html', **{
+        'year_list': year_list,
+        'request_args': {
+            'year': year,
+        }
+    })

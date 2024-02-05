@@ -83,6 +83,14 @@
   </style>
 {% endblock %}
 {% block content %}
+  <div id="fixed-links-container" class="right-top">
+    <div class="fixed-links">
+      {% for value in year_list %}
+        {{ create_link(request_args, {'year':value}, request_args.year == value, value) | safe }}
+      {% endfor %}
+    </div>
+  </div>
+
   <div id="grid-container">
     <table id="grid" class="striped centered"></table>
     <div id="tooltip" style="display:none;"></div>

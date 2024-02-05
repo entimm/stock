@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import pandas as pd
 from flask import Blueprint, jsonify, render_template, request
@@ -65,14 +66,26 @@ def market_mood_data():
 
 @blueprint.route('/market_mood_table')
 def market_mood_table():
+    year_list = list(range(datetime.now().year, 2018, -1))
+    year = request.args.get('year', datetime.now().year, type=int)
+
     file_path = os.path.join(RESOURCES_PATH, f'kaipanla.csv')
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(file_path, parse_dates=['date'])
+    if year == datetime.now().year:
+        df = df.tail(300)
+    else:
+        df = df[df['date'].dt.year == year]
+
     df['cont_num1'] = df['b2_num'] + df['b3_num'] + df['bn_num']
     df['cont_num2'] = df['b3_num'] + df['bn_num']
-
+    df['date'] = df['date'].dt.strftime('%Y-%m-%d')
     table_data = df.tail(300).to_dict(orient='records')
 
     return render_template('market_mood_table.html', **{
         'field_list': field_list,
+        'year_list': year_list,
         'table_data': list(reversed(table_data)),
+        'request_args': {
+            'year': year,
+        }
     })

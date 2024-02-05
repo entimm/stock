@@ -77,8 +77,8 @@ class Strategy:
                 self.plan.to_sell = True
                 self.plan.to_buy_stock = target_symbol
             # 当前的持仓票不及预期就计划第二天早盘卖掉，但是结果更不好，先不做
-            # elif not self.is_ok(self.hold.stock, ts):
-            #     self.plan.to_sell = True
+            elif not self.is_ok(self.hold.stock, ts):
+                self.plan.to_sell = True
             return
 
         if self.is_ok(target_symbol, ts):
@@ -86,8 +86,10 @@ class Strategy:
 
     def exec_sell_plan(self, ts):
         df_hold = get_hfq_kline(self.hold.stock, ts)
+        df_hold = df_hold[df_hold.index <= ts]
         if ts in df_hold.index:
-            self.sell(ts, df_hold.loc[ts].open)
+            if df_hold.loc[ts].low != df_hold.loc[ts].high:
+                self.sell(ts, df_hold.loc[ts].open)
 
     def exec_buy_plan(self, ts):
         df_buy = get_hfq_kline(self.plan.to_buy_stock, ts)
@@ -98,13 +100,6 @@ class Strategy:
                 # 开盘价小于6个点
                 if ((df_buy.iloc[-1].open / df_buy.iloc[-2].close) - 1) * 100 <= 6:
                     self.buy(ts, df_buy.loc[ts].open)
-
-    def sell_in_end(self, ts):
-        df_hold = get_hfq_kline(self.hold.stock, ts)
-        if ts in df_hold.index:
-            if df_hold.loc[ts].low == df_hold.loc[ts].high:
-                return
-            self.sell(ts, df_hold.loc[ts].close)
 
     @staticmethod
     def is_ok(symbol, ts):
@@ -158,3 +153,13 @@ class Strategy:
     def save_result_to_json(self):
         with open(RESULT_JSON_FILE, 'w') as json_file:
             json.dump(self.order_list, json_file)
+
+    def sell_in_end(self, ts):
+        df_hold = get_hfq_kline(self.hold.stock, ts)
+        df_hold = df_hold[df_hold.index <= ts]
+        if ts in df_hold.index:
+            close_change_pct = ((df_hold.iloc[-1].close / df_hold.iloc[-2].close) - 1) * 100
+            if df_hold.loc[ts].low == df_hold.loc[ts].high and close_change_pct < 0:
+                return
+            if close_change_pct >= -9.8:
+                self.sell(ts, df_hold.loc[ts].close)
