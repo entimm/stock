@@ -11,6 +11,8 @@ from common.xuangubao import row2info
 
 xuangubao_url = 'https://flash-api.xuangubao.cn/api'
 
+# 热点解读
+# https://flash-api.xuangubao.cn/api/surge_stock/stocks?date=20190508&normal=true&uplimit=true
 
 @click.command()
 def download_xuangubao_detail():

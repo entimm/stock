@@ -13,21 +13,29 @@ XUANGUBAO_DETAIL_PATH = os.path.join(RESOURCES_PATH, 'xuangubao/details')
 
 @click.command()
 def market_height():
-    result = {}
-    date_list = trade_date_list['date'].tail(500).to_list()
+    json_file = os.path.join(RESOURCES_PATH, 'market_height.json')
+    with open(json_file, 'r') as file:
+        result_dict = json.load(file)
+
+    latest_date = '2019-08-01'
+    date_list = trade_date_list['date'].to_list()
     for ts in date_list:
         date = ts.strftime('%Y%m%d')
         date2 = ts.strftime('%Y-%m-%d')
+        if date2 <= latest_date:
+            continue
+        if date2 in result_dict:
+            continue
         file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{date}.csv')
         df = pd.read_csv(file_path)
         df = df[['stock_chi_name', 'limit_up_days', 'm_days_n_boards_days', 'm_days_n_boards_boards', 'first_limit_up', 'last_limit_up', 'symbol']]
         df = df[~df['stock_chi_name'].str.contains("ST")]
         df['name'] = df.apply(transform_function, axis=1)
         df = df.groupby('limit_up_days').apply(lambda group: group['name'].to_list())
-        result[date2] = dict(sorted(df.to_dict().items()))
+        result_dict[date2] = dict(sorted(df.to_dict().items()))
 
-    with open(os.path.join(RESOURCES_PATH, 'market_height.json'), 'w') as json_file:
-        json.dump(result, json_file)
+    with open(json_file, 'w') as json_file:
+        json.dump(result_dict, json_file)
 
 
 def transform_function(row):

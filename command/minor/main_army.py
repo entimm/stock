@@ -10,11 +10,19 @@ from common.quotes import trade_date_list
 
 @click.command()
 def main_army_up():
-    result = {}
+    result_dict = {}
+    result_json_file = os.path.join(RESOURCES_PATH, f'main_army_up.json')
+    latest_date = '1990-01-01'
+    if os.path.exists(result_json_file):
+        with open(result_json_file, 'r') as file:
+            result_dict = json.load(file)
+            latest_date = list(result_dict.keys())[-1]
 
-    for ts in trade_date_list['date'].tail(500).to_list():
+    for ts in trade_date_list['date'].to_list():
         date = ts.strftime('%Y%m%d')
         date2 = ts.strftime('%Y-%m-%d')
+        if date2 <= latest_date:
+            continue
         csv_file = os.path.join(TOTAL_PATH, f'data_{date}.csv')
         if not os.path.exists(csv_file): continue
         df = pd.read_csv(csv_file)
@@ -26,20 +34,27 @@ def main_army_up():
         df = df[['ts_code', 'pct_chg', 'amount']]
         df['amount'] = round(df['amount'] / 100000, 2)
         df = df.sort_values(by='amount', ascending=False)
-        result[date2] = df.to_dict(orient='records')
+        result_dict[date2] = df.to_dict(orient='records')
 
-    result_json_file = os.path.join(RESOURCES_PATH, f'main_army_up.json')
     with open(result_json_file, 'w') as json_file:
-        json.dump(result, json_file)
+        json.dump(result_dict, json_file)
 
 
 @click.command()
 def main_army_down():
-    result = {}
+    result_dict = {}
+    result_json_file = os.path.join(RESOURCES_PATH, f'main_army_down.json')
+    latest_date = '1990-01-01'
+    if os.path.exists(result_json_file):
+        with open(result_json_file, 'r') as file:
+            result_dict = json.load(file)
+            latest_date = list(result_dict.keys())[-1]
 
-    for ts in trade_date_list['date'].tail(500).to_list():
+    for ts in trade_date_list['date'].to_list():
         date = ts.strftime('%Y%m%d')
         date2 = ts.strftime('%Y-%m-%d')
+        if date2 <= latest_date:
+            continue
         csv_file = os.path.join(TOTAL_PATH, f'data_{date}.csv')
         if not os.path.exists(csv_file): continue
         df = pd.read_csv(csv_file)
@@ -51,8 +66,8 @@ def main_army_down():
         df = df[['ts_code', 'pct_chg', 'amount']]
         df['amount'] = round(df['amount'] / 100000, 2)
         df = df.sort_values(by='amount', ascending=False)
-        result[date2] = df.to_dict(orient='records')
+        result_dict[date2] = df.to_dict(orient='records')
 
     result_json_file = os.path.join(RESOURCES_PATH, f'main_army_down.json')
     with open(result_json_file, 'w') as json_file:
-        json.dump(result, json_file)
+        json.dump(result_dict, json_file)

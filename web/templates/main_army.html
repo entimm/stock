@@ -9,6 +9,9 @@
       {% for key, value in direction_list.items() %}
         {{ create_link(request_args, {'direction':key}, request_args.direction == key, value['name']) | safe }}
       {% endfor %}
+      {% for value in year_list %}
+        {{ create_link(request_args, {'year':value}, request_args.year == value, value) | safe }}
+      {% endfor %}
     </div>
   </div>
   <div style="clear: both;"></div>

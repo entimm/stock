@@ -15,6 +15,14 @@
   </style>
 {% endblock %}
 {% block content %}
+  <div id="fixed-links-container" class="right-top">
+    <div class="fixed-links">
+      {% for value in year_list %}
+        {{ create_link(request_args, {'year':value}, request_args.year == value, value) | safe }}
+      {% endfor %}
+    </div>
+  </div>
+
   <div id="chart-container">
     <div id="chart"></div>
   </div>
@@ -22,7 +30,7 @@
 {% block footer %}
   <script src="/static/third/echarts.min.js"></script>
   <script>
-    fetch(`/market_height_data`)
+    fetch(document.URL.replace('market_height', 'market_height_data'))
       .then(response => response.json())
       .then(raw => {
         const data = {};

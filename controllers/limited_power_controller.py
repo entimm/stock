@@ -55,7 +55,7 @@ def limited_power_data():
 
 @blueprint.route('/limited_power')
 def limited_power():
-    year_list = list(range(2024, 2018, -1))
+    year_list = list(range(datetime.now().year, 2018, -1))
     year = request.args.get('year', year_list[0], type=int)
     return render_template('limited_power.html', **{
         'year_list': year_list,
