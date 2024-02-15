@@ -14,6 +14,7 @@ field_list = {
     'highest_limit': '最高连板',
     'up_limit_num': '涨停数',
     'down_limit_num': '跌停数',
+    'up_down_limit_rate': '涨跌停比',
     'b1_num': '首板',
     'b2_num': '2板',
     'b3_num': '3板',
@@ -30,9 +31,11 @@ field_list = {
     'strong': '强度',
     'st_down_limit_num': 'st跌停数',
     'st_up_limit_num': 'st涨停数',
+    'st_up_down_limit_rate': 'st涨跌停比',
     'big_noodle': '大面',
     'up_num': '上涨家数',
     'down_num': '下跌家数',
+    'up_down_rate': '涨跌比',
     'total_amount': '总成交额',
 }
 
@@ -54,8 +57,13 @@ def market_mood():
 def market_mood_data():
     file_path = os.path.join(RESOURCES_PATH, f'kaipanla.csv')
     df = pd.read_csv(file_path)
+
     df['cont_num1'] = df['b2_num'] + df['b3_num'] + df['bn_num']
     df['cont_num2'] = df['b3_num'] + df['bn_num']
+
+    df['up_down_limit_rate'] = round(df['up_limit_num'] / (df['up_limit_num'] + df['down_limit_num']) * 100, 2)
+    df['st_up_down_limit_rate'] = round(df['st_up_limit_num'] / (df['st_up_limit_num'] + df['st_down_limit_num']) * 100, 2)
+    df['up_down_rate'] = round(df['up_num'] / (df['up_num'] + df['down_num']) * 100, 2)
 
     field = request.args.get('field', 'highest_limit', type=str)
 
@@ -78,6 +86,11 @@ def market_mood_table():
 
     df['cont_num1'] = df['b2_num'] + df['b3_num'] + df['bn_num']
     df['cont_num2'] = df['b3_num'] + df['bn_num']
+
+    df['up_down_limit_rate'] = round(df['up_limit_num'] / (df['up_limit_num'] + df['down_limit_num']) * 100, 2)
+    df['st_up_down_limit_rate'] = round(df['st_up_limit_num'] / (df['st_up_limit_num'] + df['st_down_limit_num']) * 100, 2)
+    df['up_down_rate'] = round(df['up_num'] / (df['up_num'] + df['down_num']) * 100, 2)
+
     df['date'] = df['date'].dt.strftime('%Y-%m-%d')
     table_data = df.tail(300).to_dict(orient='records')
 

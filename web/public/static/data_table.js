@@ -284,3 +284,17 @@ function processMove(direction) {
 
   return cell;
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  let urlParams = new URLSearchParams(window.location.search);
+  let date = urlParams.get('date');
+  if (!date) return;
+
+  for(element of document.querySelectorAll('#grid thead th')) {
+    if (element.textContent === date) {
+      document.getElementById('grid-container').scrollLeft = element.getBoundingClientRect().left;
+      return;
+    }
+  }
+
+});

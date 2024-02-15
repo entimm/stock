@@ -99,9 +99,13 @@ def fetch_local_history(date_str, symbol, period_enum):
     if date_object.month <= 3:
         csv_file = f"{config['local_kline_1min_path']}/{date_object.year - 1}_yssj/{symbol}.csv"
         if os.path.exists(csv_file):
-            df_last_year = read_local_csv(csv_file)
-
-            df = pd.concat([df_last_year, df])
+            df2 = read_local_csv(csv_file)
+            df = pd.concat([df2, df])
+    if date_object.month >= 9:
+        csv_file = f"{config['local_kline_1min_path']}/{date_object.year + 1}_yssj/{symbol}.csv"
+        if os.path.exists(csv_file):
+            df2 = read_local_csv(csv_file)
+            df = pd.concat([df, df2])
 
     if period_enum in [PeriodEnum.F5, PeriodEnum.F15, PeriodEnum.F30]:
         df = resample_kline(df, period_enum)
