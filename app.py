@@ -44,6 +44,7 @@ controllers = [
     'astock_table2',
     'astock_table3',
     'images',
+    'loog',
 ]
 
 for controller in controllers:

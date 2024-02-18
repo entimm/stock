@@ -1,0 +1,154 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>龙头</title>
+  <style>
+    #grid-container {
+      width: 1800px;
+      margin: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    th {
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    td, th {
+      padding: 0;
+      white-space: nowrap;
+      width: 100px;
+      position: relative;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    #grid tr:hover {
+      background-color: rgba(0, 139, 125, 0.5);
+    }
+
+    .red1 {
+      color: #FF8800;
+    }
+
+    .red2 {
+      color: #ff0000;
+    }
+
+    .red3 {
+      color: #f500ff;
+    }
+
+    .green1 {
+      color: #00f7ff;
+    }
+
+    .green2 {
+      color: #00ff00;
+    }
+
+    .green3 {
+      color: #1619de;
+    }
+
+    .divide {
+      border-top: 2px solid rgba(255, 0, 0, 0.2) !important;
+    }
+
+    .select-row {
+      background-color: rgba(255, 0, 0, 0.15) !important;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="grid-container">
+    <table id="grid" class="striped centered z-depth-5">
+      <thead>
+      <tr>
+        <th>序号</th>
+        <th>名称</th>
+        <th>代码</th>
+        <th>日期</th>
+      </tr>
+      </thead>
+      <tbody id="table-content"></tbody>
+    </table>
+    <div id="tooltip-trend" style="display:none;"></div>
+  </div>
+  <div class="fixed-action-btn" style="top: 0; right: 10px; height: 40px">
+    <a class="btn-floating btn waves-effect waves-light orange z-depth-5" onclick="openRelateKlineMode()">
+      K线
+    </a>
+  </div>
+{% endblock %}
+{% block footer %}
+  <script src="/static/third/socket.io.min.js"></script>
+  <script src="/static/socket_utils.js"></script>
+  <script>
+    let socketToken = '{{ request.args.get('socket_token', '') }}';
+    let table = document.getElementById('grid');
+
+    function getKlineParams(row) {
+      let symbol = row.cells[2].textContent;
+      let date = row.cells[3].textContent;
+      let time = '';
+      let price = ''
+
+      return {symbol, date, time, price}
+    }
+  </script>
+  <script src="/static/data_list.js"></script>
+  <script>
+    const period = '{{ request_args.get('period', 'F5') }}';
+    let tooltipTrend = document.getElementById('tooltip-trend');
+    fetch(document.URL.replace('loog', 'loog_data')).then(response => response.json())
+      .then(jsonData => {
+        const reversedKeys = Object.keys(jsonData).reverse();
+        const tableContent = document.getElementById('table-content');
+        let lastYear = ''
+        reversedKeys.forEach(key => {
+          const item = jsonData[key];
+          const row = tableContent.insertRow();
+
+          row.insertCell(0).innerHTML = key;
+          row.insertCell(1).innerHTML = item['name'];
+          row.insertCell(2).innerHTML = item['symbol'];
+          row.insertCell(3).innerHTML = item['date'];
+
+
+          if (lastYear && lastYear !== new Date(item['date']).getFullYear()) {
+            row.classList.add('divide');
+          }
+          lastYear = new Date(item['date']).getFullYear()
+
+          row.addEventListener('click', (event) => {
+            setSelectedRow(event.target.parentNode);
+            openKline(row);
+          });
+
+          row.addEventListener('mouseover', function (event) {
+            showTooltipTrend(item['symbol']);
+            adjTooltipTrendPosition(event.target);
+          });
+        });
+      });
+
+    function openKline(row) {
+      let klineParams = getKlineParams(row);
+      if (socketToken) {
+        socketEmit(klineParams.symbol, klineParams.date, '', klineParams.price);
+        return;
+      }
+      window.open(`/chart?date=${klineParams.date}&symbol=${klineParams.symbol}&price=${klineParams.price}&period=D&chart_engine=1`, "_blank");
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'Escape') {
+        tooltipTrend.style.display = 'none';
+      }
+    });
+  </script>
+{% endblock %}
