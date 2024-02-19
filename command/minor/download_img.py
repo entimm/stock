@@ -20,16 +20,27 @@ from controllers.limited_power_controller import XUANGUBAO_DETAIL_PATH
 def download_fs_img():
     for ts in trade_date_list.tail(1)['date'].to_list()[::-1]:
         date_str2 = ts.strftime('%Y-%m-%d')
-        img_path = os.path.join(PUBLIC_PATH, 'static/imgs', date_str2)
-        if not os.path.exists(img_path):
-            os.mkdir(img_path)
+
+        min_img_path = os.path.join(PUBLIC_PATH, 'static/imgs/min', date_str2)
+        if not os.path.exists(min_img_path):
+            os.mkdir(min_img_path)
+
+        daily_img_path = os.path.join(PUBLIC_PATH, 'static/imgs/daily', date_str2)
+        if not os.path.exists(daily_img_path):
+            os.mkdir(daily_img_path)
 
         for symbol in get_symbol_list():
             code = get_exchange_code(symbol)
             timestamp = int(time.time())
-            target_file = os.path.join(img_path, f'{symbol}.gif')
+
+            target_file = os.path.join(min_img_path, f'{symbol}.gif')
             if not os.path.exists(target_file):
                 img_url = 'https://image2.sinajs.cn/newchart/min/n/{}.gif?t={}'.format(code, timestamp)
+                download_image(img_url, target_file)
+
+            target_file = os.path.join(daily_img_path, f'{symbol}.gif')
+            if not os.path.exists(target_file):
+                img_url = 'https://image2.sinajs.cn/newchart/daily/n/{}.gif?t={}'.format(code, timestamp)
                 download_image(img_url, target_file)
 
 

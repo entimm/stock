@@ -142,7 +142,7 @@
         socketEmit(klineParams.symbol, klineParams.date, '', klineParams.price);
         return;
       }
-      window.open(`/chart?date=${klineParams.date}&symbol=${klineParams.symbol}&price=${klineParams.price}&period=D&chart_engine=1`, "_blank");
+      window.open(`/chart?date=${klineParams.date}&symbol=${klineParams.symbol}&price=${klineParams.price}&period=${period}`, "_blank");
     }
 
     document.addEventListener('keydown', function (event) {

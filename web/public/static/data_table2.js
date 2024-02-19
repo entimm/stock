@@ -1,4 +1,5 @@
 let selectedCell = null;
+let showDaily = false;
 let focusMode = 'cursor';
 let tooltipTrend = document.getElementById('tooltip-trend2');
 let tooltip = document.getElementById('tooltip');
@@ -297,15 +298,15 @@ function processMove(direction) {
   return cell;
 }
 
-function showTooltipTrend(symbol_list, date) {
+function showTooltipTrend(symbolList, date) {
   tooltipTrend.textContent = '';
 
-  if (symbol_list.length === 1) {
-    let symbol = symbol_list[0];
+  if (symbolList.length === 1) {
+    let symbol = symbolList[0];
     let timestamp = new Date().getTime();
     let img = document.createElement("img");
     let code = getExchangeCode(`${symbol}`);
-    img.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif?t=${timestamp}`;
+    img.src = `http://${document.domain}:${location.port}/static/imgs/daily/${date}/${symbol}.gif`;
     let a = document.createElement("a");
     a.href = `http://${document.domain}:${location.port}/chart?date=${date}&period=D&symbol=${symbol}`
     a.target = 'blank';
@@ -313,9 +314,10 @@ function showTooltipTrend(symbol_list, date) {
     tooltipTrend.appendChild(a);
   }
 
-  for (symbol of symbol_list) {
+  for (symbol of symbolList) {
     let img = document.createElement("img");
-    img.src = `http://${document.domain}:${location.port}/static/imgs/${date}/${symbol}.gif`;
+
+    img.src = `http://${document.domain}:${location.port}/static/imgs/${showDaily?'daily':'min'}/${date}/${symbol}.gif`;
     let a = document.createElement("a");
     a.href = `http://${document.domain}:${location.port}/chart?date=${date}&period=F5&symbol=${symbol}`
     a.target = 'blank';
