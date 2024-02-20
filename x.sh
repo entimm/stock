@@ -13,7 +13,6 @@ echo 'download-xuangubao-detail'
 python cmd  download-xuangubao-detail
 echo 'arrange-xuangubao-detail'
 python cmd  arrange-xuangubao-detail
-
 echo 'market-height'
 python cmd market-height
 

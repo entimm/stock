@@ -267,5 +267,20 @@ ${scoreList[0]} <span class="color-E"></span> ${scoreList[1]} <span class="color
         arr[Math.ceil(0.9 * arr.length) - 1],
       ];
     }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+      let urlParams = new URLSearchParams(window.location.search);
+      let date = urlParams.get('date');
+      if (!date) return;
+
+      for(element of document.querySelectorAll('#grid thead th')) {
+        if (element.textContent === date) {
+          document.getElementById('grid-container').scrollLeft = element.getBoundingClientRect().left - 100;
+          return;
+        }
+      }
+
+    });
   </script>
 {% endblock %}

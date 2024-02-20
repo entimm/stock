@@ -181,6 +181,19 @@
 
         readHotLoss();
         renderGrid(groupDataByBk(total_stock_list));
+
+        (function () {
+          let urlParams = new URLSearchParams(window.location.search);
+          let date = urlParams.get('date');
+          if (!date) return;
+
+          for (element of document.querySelectorAll('#main-grid thead th')) {
+            if (element.textContent === date) {
+              document.getElementById('grid-container').scrollLeft = element.getBoundingClientRect().left;
+              return;
+            }
+          }
+        })();
       });
 
     let mode = 'plate_name'
@@ -235,7 +248,7 @@
           acc[item[field]].num += 1;
 
           let name = item['stock_chi_name'];
-          if (getTimeStrFromTs(item['last_limit_up']).slice(0, 5) === '09:25') {
+          if (getTimeStrFromTs(item['first_limit_up']).slice(0, 5) <= '09:25' && item['break_limit_up_times'] === 0) {
             name = `_${name}_`;
           }
           if (item['limit_up_days'] !== item[field]) {
@@ -615,14 +628,14 @@
       let symbol = target.getAttribute('data-symbol');
 
       let img1 = document.createElement("img");
-      img1.src = `http://${document.domain}:${location.port}/static/imgs/${date}/${symbol}.gif`;
+      img1.src = `http://${document.domain}:${location.port}/static/imgs/min/${date}/${symbol}.gif`;
       tooltipImg.appendChild(img1);
 
       let timestamp = new Date().getTime();
       let code = getExchangeCode(`${symbol}`);
 
       let img2 = document.createElement("img");
-      img2.src = `https://image2.sinajs.cn/newchart/daily/n/${code}.gif?t=${timestamp}`;
+      img2.src = `http://${document.domain}:${location.port}/static/imgs/daily/${date}/${symbol}.gif`;
       tooltipImg.appendChild(img2);
 
       tooltipImg.style.display = 'block';

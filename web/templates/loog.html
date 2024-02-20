@@ -26,6 +26,11 @@
       border-radius: 0;
     }
 
+    td a {
+      display: inline-block;
+      margin: 0 10px;
+    }
+
     #grid tr:hover {
       background-color: rgba(0, 139, 125, 0.5);
     }
@@ -72,6 +77,7 @@
         <th>名称</th>
         <th>代码</th>
         <th>日期</th>
+        <th>操作</th>
       </tr>
       </thead>
       <tbody id="table-content"></tbody>
@@ -113,10 +119,20 @@
           const item = jsonData[key];
           const row = tableContent.insertRow();
 
+          let year = new Date(item['date']).getFullYear()
+
           row.insertCell(0).innerHTML = key;
           row.insertCell(1).innerHTML = item['name'];
           row.insertCell(2).innerHTML = item['symbol'];
           row.insertCell(3).innerHTML = item['date'];
+          row.insertCell(4).innerHTML = `
+          <a target="_blank" href="/astock_table?date=${item['date']}&year=${year}">个股趋势</a>
+          <a target="_blank" href="/gnbk_table?date=${item['date']}&year=${year}">概念板块</a>
+          <a target="_blank" href="/main_army?date=${item['date']}&year=${year}">中军</a>
+          <a target="_blank" href="/limited_power?date=${item['date']}&year=${year}">涨停动力</a>
+          <a target="_blank" href="/limited_power2?date=${item['date']}&year=${year}">连板梯队</a>
+          <a target="_blank" href="/market_mood_table?date=${item['date']}&year=${year}">市场情绪</a>
+          `;
 
 
           if (lastYear && lastYear !== new Date(item['date']).getFullYear()) {
@@ -125,6 +141,7 @@
           lastYear = new Date(item['date']).getFullYear()
 
           row.addEventListener('click', (event) => {
+            if (event.target.tagName !== 'TD') return;
             setSelectedRow(event.target.parentNode);
             openKline(row);
           });
