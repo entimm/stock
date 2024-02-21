@@ -303,27 +303,36 @@ function showTooltipTrend(symbolList, date) {
 
   if (symbolList.length === 1) {
     let symbol = symbolList[0];
-    let timestamp = new Date().getTime();
+
     let img = document.createElement("img");
-    let code = getExchangeCode(`${symbol}`);
     img.src = `http://${document.domain}:${location.port}/static/imgs/daily/${date}/${symbol}.gif`;
     let a = document.createElement("a");
     a.href = `http://${document.domain}:${location.port}/chart?date=${date}&period=D&symbol=${symbol}`
     a.target = 'blank';
     a.appendChild(img);
     tooltipTrend.appendChild(a);
+
+    let img2 = document.createElement("img");
+    img2.src = `http://${document.domain}:${location.port}/static/imgs/min/${date}/${symbol}.gif`;
+    let a2 = document.createElement("a");
+    a2.href = `http://${document.domain}:${location.port}/chart?date=${date}&period=F5&symbol=${symbol}`
+    a2.target = 'blank';
+    a2.appendChild(img2);
+    tooltipTrend.appendChild(a2);
+
+    tooltipTrend.style.display = 'block';
+    return;
   }
 
   for (symbol of symbolList) {
     let img = document.createElement("img");
 
-    img.src = `http://${document.domain}:${location.port}/static/imgs/${showDaily?'daily':'min'}/${date}/${symbol}.gif`;
+    img.src = `http://${document.domain}:${location.port}/static/imgs/${showDaily ? 'daily' : 'min'}/${date}/${symbol}.gif`;
     let a = document.createElement("a");
-    a.href = `http://${document.domain}:${location.port}/chart?date=${date}&period=F5&symbol=${symbol}`
+    a.href = `http://${document.domain}:${location.port}/chart?date=${date}&period=${showDaily ? 'D' : 'F5'}&symbol=${symbol}`
     a.target = 'blank';
     a.appendChild(img);
     tooltipTrend.appendChild(a);
   }
-
   tooltipTrend.style.display = 'block';
 }

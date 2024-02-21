@@ -49,7 +49,9 @@ def get_symbol_list():
     for sub_ts in trade_date_list.tail(5)['date'].to_list():
         date = sub_ts.strftime('%Y%m%d')
         file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{date}.csv')
-        if not os.path.exists(file_path): continue
+        if not os.path.exists(file_path):
+            print(f'{date}数据不存在')
+            continue
         df = pd.read_csv(file_path)
         symbol_list = symbol_list.union(set(df['symbol'].str[:6].to_list()))
 
