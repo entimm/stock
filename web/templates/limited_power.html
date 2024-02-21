@@ -301,13 +301,13 @@
         focusMode = 'free'
       }
 
-      if (event.key === '1') {
+      if (event.key === 'q') {
         renderGrid(groupDataByBk(total_stock_list));
       }
-      if (event.key === '2') {
+      if (event.key === 'w') {
         renderGrid(groupDataByHeight(total_stock_list, 'limit_up_days'));
       }
-      if (event.key === '3') {
+      if (event.key === 'e') {
         renderGrid(groupDataByHeight(total_stock_list, 'm_days_n_boards_boards'));
       }
     });

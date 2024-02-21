@@ -90,10 +90,10 @@
   <script>
     document.addEventListener('keydown', function (event) {
       const maMap = {
-        '1': '2',
-        '2': '3',
-        '3': '5',
-        '4': '10',
+        'q': '2',
+        'w': '3',
+        'e': '5',
+        'r': '10',
       }
       if (Object.keys(maMap).includes(event.key)) {
         let currentUrl = new URL(window.location.href);
@@ -104,10 +104,10 @@
         window.location.href = currentUrl.toString();
       }
 
-      if (event.key === 'q') {
+      if (event.key === 'a') {
         document.getElementById('tooltip-trend2').classList.toggle('compact');
       }
-      if (event.key === 'w') {
+      if (event.key === 's') {
         showDaily = !showDaily;
       }
     });

@@ -83,9 +83,9 @@
         communicateParent(event);
       }
 
-      const validKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-      if (validKeys.includes(event.key)) {
-        const index = parseInt(event.key, 10) - 1;
+      const validKeys = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'];
+      let index = validKeys.indexOf(event.key);
+      if (index !== -1) {
         const targetLink = $('#fixed-links-container .fixed-links a').eq(index)[0];
         targetLink?.click();
       }

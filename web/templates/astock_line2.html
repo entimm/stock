@@ -30,12 +30,12 @@
   <script>
     document.addEventListener('keydown', function (event) {
       const maMap = {
-        '1': '2',
-        '2': '3',
-        '3': '5',
-        '4': '10',
-        '5': '20',
-        '6': '60',
+        'q': '2',
+        'w': '3',
+        'e': '5',
+        'r': '10',
+        't': '20',
+        'y': '60',
       }
       if (Object.keys(maMap).includes(event.key)) {
         let currentUrl = new URL(window.location.href);
