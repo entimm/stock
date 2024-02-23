@@ -109,6 +109,11 @@
       }
       if (event.key === 's') {
         showDaily = !showDaily;
+
+        let cell = document.querySelector('.select-cell');
+        if (cell.tagName === 'TH') {
+          cell.click();
+        }
       }
     });
   </script>

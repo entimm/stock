@@ -305,7 +305,7 @@ function showTooltipTrend(symbolList, date) {
     let symbol = symbolList[0];
 
     let img = document.createElement("img");
-    img.src = `http://${document.domain}:${location.port}/static/imgs/daily/${date}/${symbol}.gif`;
+    img.src = `http://${document.domain}:${location.port}/static/imgs/min/${date}/${symbol}.gif`;
     let a = document.createElement("a");
     a.href = `http://${document.domain}:${location.port}/chart?date=${date}&period=D&symbol=${symbol}`
     a.target = 'blank';
@@ -313,7 +313,7 @@ function showTooltipTrend(symbolList, date) {
     tooltipTrend.appendChild(a);
 
     let img2 = document.createElement("img");
-    img2.src = `http://${document.domain}:${location.port}/static/imgs/min/${date}/${symbol}.gif`;
+    img2.src = `http://${document.domain}:${location.port}/static/imgs/daily/${date}/${symbol}.gif`;
     let a2 = document.createElement("a");
     a2.href = `http://${document.domain}:${location.port}/chart?date=${date}&period=F5&symbol=${symbol}`
     a2.target = 'blank';
