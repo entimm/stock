@@ -7,18 +7,18 @@ from command.backtest.ma_week45 import backtest_ma_week45
 from command.convert_astock import convert_astock
 from command.convert_gnbk import convert_gnbk, convert_gnbk_trend_up, convert_gnbk_trend_down
 from command.download_total import download_total
-from command.minor.cal_trend_ptg import cal_trend_ptg
-from command.minor.convert_tdx_xls import convert_tdx_xls
-from command.minor.download_img import download_fs_img, cal_limit_up_trend
-from command.minor.hot_lose import hot_lose
-from command.minor.kaipanla import kaipanla_mood, kaipanla_limit_up, kaipanla_limit_down, kaipanla_notice
-from command.minor.limit_up_bs import limit_up_bs
-from command.minor.main_army import main_army_up, main_army_down
-from command.minor.market_height import market_height
-from command.minor.north_funds import north_funds
-from command.minor.stock_meta import stock_meta
-from command.minor.test import test
-from command.minor.xuangubao import download_xuangubao_detail, arrange_xuangubao_detail
+from command.cal_trend_ptg import cal_trend_ptg
+from command.test.convert_tdx_xls import convert_tdx_xls
+from command.download_img import download_fs_img, cal_limit_up_trend
+from command.hot_lose import hot_lose
+from command.kaipanla import kaipanla_mood, kaipanla_limit_up, kaipanla_limit_down, kaipanla_notice
+from command.limit_up_bs import limit_up_bs
+from command.main_army import main_army_up, main_army_down
+from command.market_height import market_height
+from command.north_funds import north_funds
+from command.stock_meta import stock_meta
+from command.test.test import test
+from command.xuangubao import download_xuangubao_detail, arrange_xuangubao_detail
 from command.mv_raw import mv_raw
 from command.backtest.trend_monster import backtest_trend_monster
 
