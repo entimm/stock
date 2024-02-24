@@ -43,3 +43,8 @@ echo 'cal-limit-up-trend 5'
 python cmd cal-limit-up-trend 5
 echo 'cal-limit-up-trend 10'
 python cmd cal-limit-up-trend 10
+
+echo 'cal-new-high'
+python cmd cal-new-high
+echo 'cal-new-high2'
+python cmd cal-new-high2

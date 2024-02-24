@@ -1,8 +1,6 @@
 import json
 from datetime import datetime
 
-from chan import chan_config
-from chan.chan import Chan
 from flask import render_template, Blueprint, request, url_for, redirect
 from numpy import bool_
 
@@ -80,6 +78,9 @@ def chart():
     }
 
     if show_chan:
+        from chan import chan_config
+        from chan.chan import Chan
+        
         chart_engine = 0
 
         tmp_chan_config_keys = ['force_stroke_vertex', 'force_segment_vertex', 'output_union', 'output_fractal', 'stroke_check_break', 'stroke_fix_sure']

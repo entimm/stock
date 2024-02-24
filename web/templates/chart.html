@@ -48,6 +48,7 @@
     const symbol = '{{ request_args.symbol }}';
     const indicator_ma_config = {{ indicator_config.get('ma') | safe }};
     const indicator_macd_config = {{ indicator_config.get('macd') | safe }};
+    const period = '{{ request_args.period }}';
   </script>
 
   {% if request_args.chart_engine == 0 %}

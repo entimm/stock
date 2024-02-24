@@ -90,17 +90,13 @@
   <script>
     document.addEventListener('keydown', function (event) {
       const maMap = {
-        'q': '2',
-        'w': '3',
-        'e': '5',
-        'r': '10',
-        't': '20',
-        'y': '60',
+        'q': '1',
+        'w': '2',
       }
       if (Object.keys(maMap).includes(event.key)) {
         let currentUrl = new URL(window.location.href);
         let searchParams = currentUrl.searchParams;
-        searchParams.set("ma", `MA${maMap[event.key]}`);
+        searchParams.set("mode", maMap[event.key]);
 
         history.pushState({}, '', currentUrl.toString());
         window.location.href = currentUrl.toString();

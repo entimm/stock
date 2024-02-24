@@ -162,4 +162,19 @@
       height: parentContainer.outerHeight()
     });
   });
+
+
+  {% if request_args.time %}
+    scrollToDateRange(1000 * parseInt('{{ request_args.time }}'));
+  {% elif request_args.date %}
+    scrollToDateRange('{{ request_args.date }}');
+  {% endif %}
+
+  function scrollToDateRange(date) {
+    // chart.timeScale().scrollToPosition(-1000);
+    chart.timeScale().setVisibleRange({
+      from: (new Date(date)).getTime() / 1000,
+      to: (new Date(date)).getTime() / 1000 + 86400 * 30,
+    });
+  }
 </script>

@@ -176,7 +176,6 @@
     for (const index in kline_list) {
       if (new Date(kline_list[index].timestamp).getTime() >= time) {
         targetIndex = parseInt(index);
-        console.log(targetIndex)
         break;
       }
     }
