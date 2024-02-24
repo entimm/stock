@@ -14,13 +14,12 @@ from common.utils import ticker_name
 
 
 @click.command()
-@click.argument('ma_v', default=3, type=int)
-def cal_trend_ptg(ma_v):
-    data_len = 300
+def cal_new_high2():
+    data_len = 1000
     direction = 1
 
     date_list = trade_date_list['date'].tail(data_len).to_list()
-    result_json_file = os.path.join(RESOURCES_PATH, 'trends', f'MA{ma_v}_trend.json')
+    result_json_file = os.path.join(RESOURCES_PATH, f'new_high2.json')
     result_dict = {}
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
@@ -44,11 +43,9 @@ def cal_trend_ptg(ma_v):
         one_df = fetch_local_daily(symbol=symbol).reset_index().tail(data_len + 500)
         one_df = one_df.reset_index()
 
-        one_df[f'MA{ma_v}'] = price_calculate.ma(one_df, ma_v)
-        one_df[f'MA{ma_v}_angle'] = price_calculate.ma_angle(one_df, f'MA{ma_v}')
-        condition = one_df[f'MA{ma_v}_angle'] >= 0 if direction == 1 else one_df[f'MA{ma_v}_angle'] <= 0
-        one_df[f'MA{ma_v}_trend'] = price_calculate.ma_trend(one_df, condition)
-
+        one_df[f'highest'] = one_df['close'].rolling(window=20).max()
+        one_df[f'new_high'] = one_df['highest'] == one_df['close']
+        one_df[f'freq'] = one_df['new_high'].rolling(window=60).sum()
         one_df['ptc_charge'] = ((one_df['close'] / one_df['close'].shift(1)) - 1) * 100
 
         stock_data[symbol] = one_df
@@ -59,16 +56,17 @@ def cal_trend_ptg(ma_v):
         for symbol, stock_df in stock_data.items():
             idx = stock_df[stock_df['date'] == date].index
             if not idx.empty:
-                ptc_charge = stock_df.loc[idx, 'ptc_charge'].values[0]
-                value = stock_df.loc[idx, f'MA{ma_v}_trend'].values[0]
-                temp_list.append((f'{ticker_name(symbol)}|{symbol}|{round(ptc_charge, 2)}|{round(value, 2)}', value))
+                if stock_df.loc[idx, 'new_high'].values[0]:
+                    ptc_charge = stock_df.loc[idx, 'ptc_charge'].values[0]
+                    value = stock_df.loc[idx, 'freq'].values[0]
+                    temp_list.append((f'{ticker_name(symbol)}|{symbol}|{round(ptc_charge, 2)}|{round(value, 2)}', value))
 
         # 长度不齐就补空白
         temp_list = temp_list + [('-', None)] * (len(symbols) - len(temp_list))
 
         custom_compare_method = custom_compare_desc if direction == 1 else custom_compare_asc
         sorted_list = [item[0] for item in sorted(temp_list, key=cmp_to_key(custom_compare_method))]
-        sorted_list = sorted_list[0: 30]
+        sorted_list = sorted_list[0: 100]
 
         print('sort: ' + date_str)
         result_dict[date_str] = sorted_list
