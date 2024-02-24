@@ -6,7 +6,6 @@ from functools import cmp_to_key
 import click
 import pandas as pd
 
-from common import price_calculate
 from common.cmd_utils import custom_compare_desc, custom_compare_asc
 from common.const import RESOURCES_PATH
 from common.quotes import trade_date_list, fetch_local_daily
