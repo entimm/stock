@@ -131,6 +131,9 @@
         cell.textContent = value;
         cell.classList.add('cell-key');
         cell.setAttribute('key', key);
+        cell.onclick = function () {
+          window.open(`/market_mood?field=${key}`, '_blank');
+        };
         row.appendChild(cell);
 
         for (let item of data) {
@@ -244,7 +247,7 @@ ${scoreList[0]} <span class="color-E"></span> ${scoreList[1]} <span class="color
         }
 
         rows[i].addEventListener('mouseover', function (event) {
-          if (event.target.tagName === 'TD') {
+          if (event.target.classList.contains('cell-val')) {
             let cell = event.target;
             let cellKey = cell.parentElement.cells[0].getAttribute('key');
             let levels = [Math.min(...valList), ...scoreList, Math.max(...valList)];
@@ -274,12 +277,14 @@ ${scoreList[0]} <span class="color-E"></span> ${scoreList[1]} <span class="color
       let date = urlParams.get('date');
       if (!date) return;
 
-      for(element of document.querySelectorAll('#grid thead th')) {
+      let offset = 0;
+      for (element of document.querySelectorAll('#grid thead th')) {
         if (element.textContent === date) {
-          document.getElementById('grid-container').scrollLeft = element.getBoundingClientRect().left - 1200;
+          document.getElementById('grid-container').scrollLeft = offset - window.innerWidth / 2;
           element.classList.add('target-date');
           return;
         }
+        offset += element.offsetWidth;
       }
 
     });

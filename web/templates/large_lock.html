@@ -91,10 +91,12 @@
   <script src="/static/data_list.js"></script>
   <script src="/static/third/jquery-3.7.1.min.js"></script>
   <script>
+    const period = '{{ request_args.get('period', 'F5') }}';
+
     let tooltipTrend = document.getElementById('tooltip-trend');
     let stockTable = document.getElementById('grid');
     let stockListInTable = [];
-    fetch(`/large_lock_data`).then(response => response.json())
+    fetch(document.URL.replace('large_lock', 'large_lock_data')).then(response => response.json())
       .then(dataList => {
         stockListInTable = dataList;
         show_stocks_table()

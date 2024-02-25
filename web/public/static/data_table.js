@@ -290,12 +290,20 @@ document.addEventListener("DOMContentLoaded", function () {
   let date = urlParams.get('date');
   if (!date) return;
 
-  for(element of document.querySelectorAll('#grid thead th')) {
+  let offset = 0;
+  for (element of document.querySelectorAll('#grid thead th')) {
     if (element.textContent === date) {
-      document.getElementById('grid-container').scrollLeft = element.getBoundingClientRect().left - 1200;
+      document.getElementById('grid-container').scrollLeft = offset - window.innerWidth / 2;
       element.classList.add('target-date');
-      return;
+      break;
     }
+    offset += element.offsetWidth;
   }
 
+  let symbol = urlParams.get('symbol');
+  if (!symbol) return;
+
+  for (element of document.querySelectorAll(`td[symbol="${symbol}"]`)) {
+    element.style.backgroundColor = 'red'
+  }
 });

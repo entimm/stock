@@ -16,8 +16,15 @@ KAIPANLA_LIMITUP_PATH = os.path.join(RESOURCES_PATH, 'kaipanla/limit_up')
 @blueprint.route('/large_lock_data')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def large_lock_data():
+    date_str = request.args.get('date', '', str)
+
+    date_list = trade_date_list
+    if date_str:
+        date_list = date_list[date_list['date'] <= date_str]
+        print(date_list)
+
     result_plate_list = {}
-    for ts in trade_date_list.tail(500)['date'].to_list():
+    for ts in date_list.tail(500)['date'].to_list():
         date2 = ts.strftime('%Y-%m-%d')
         file_path = os.path.join(KAIPANLA_LIMITUP_PATH, f'{date2}.csv')
         if not os.path.exists(file_path): continue

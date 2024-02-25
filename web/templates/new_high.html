@@ -107,21 +107,5 @@
         window.location.href = currentUrl.toString();
       }
     });
-
-
-    document.addEventListener("DOMContentLoaded", function () {
-      let urlParams = new URLSearchParams(window.location.search);
-      let date = urlParams.get('date');
-      if (!date) return;
-
-      for (element of document.querySelectorAll('#grid thead th')) {
-        if (element.textContent === date) {
-          document.getElementById('grid-container').scrollLeft = element.getBoundingClientRect().left - 1200;
-          element.classList.add('target-date');
-          return;
-        }
-      }
-
-    });
   </script>
 {% endblock %}

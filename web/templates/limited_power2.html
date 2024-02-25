@@ -165,20 +165,6 @@
         total_stock_list = dataList;
         readHotLoss();
         renderGrid(groupDataByHeight(total_stock_list));
-
-        (function () {
-          let urlParams = new URLSearchParams(window.location.search);
-          let date = urlParams.get('date');
-          if (!date) return;
-
-          for (element of document.querySelectorAll('#main-grid thead th')) {
-            if (element.textContent === date) {
-              document.getElementById('grid-container').scrollLeft = element.getBoundingClientRect().left - 1200;
-              element.classList.add('target-date');
-              return;
-            }
-          }
-        })();
       });
 
     let mode = 'reason'
@@ -349,6 +335,8 @@
           // show_stocks_table();
         }
       });
+
+      gotoTarget();
     }
 
     function renderCell(cell, value) {
@@ -608,5 +596,29 @@
     }).on('mouseleave', function () {
       tooltipImg.style.display = 'none';
     });
+
+
+    function gotoTarget() {
+      let urlParams = new URLSearchParams(window.location.search);
+      let date = urlParams.get('date');
+      if (!date) return;
+
+      let offset = 0;
+      for (element of document.querySelectorAll('#main-grid thead th')) {
+        if (element.textContent === date) {
+          document.getElementById('grid-container').scrollLeft = offset - window.innerWidth / 2;
+          element.classList.add('target-date');
+          break;
+        }
+        offset += element.offsetWidth;
+      }
+
+      let symbol = urlParams.get('symbol');
+      if (!symbol) return;
+
+      for (element of document.querySelectorAll(`td span[data-symbol="${symbol}"]`)) {
+        element.style.backgroundColor = 'red'
+      }
+    }
   </script>
 {% endblock %}
