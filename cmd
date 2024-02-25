@@ -3,7 +3,7 @@
 import click
 
 from command.cal_new_high import cal_new_high
-from command.cal_new_high2 import cal_new_high2
+from command.cal_new_high_freq import cal_new_high_freq
 from command.analyze import analyze
 from command.backtest.ma_week45 import backtest_ma_week45
 from command.convert_astock import convert_astock
@@ -66,7 +66,7 @@ main.add_command(download_fs_img)
 main.add_command(cal_limit_up_trend)
 
 main.add_command(cal_new_high)
-main.add_command(cal_new_high2)
+main.add_command(cal_new_high_freq)
 
 main.add_command(test)
 

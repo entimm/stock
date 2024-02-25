@@ -13,12 +13,13 @@ from common.utils import ticker_name
 
 
 @click.command()
-def cal_new_high2():
+@click.argument('freq', default=60, type=int)
+def cal_new_high_freq(freq):
     data_len = 1000
     direction = 1
 
     date_list = trade_date_list['date'].tail(data_len).to_list()
-    result_json_file = os.path.join(RESOURCES_PATH, f'new_high2.json')
+    result_json_file = os.path.join(RESOURCES_PATH, f'new_high_freq{freq}.json')
     result_dict = {}
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
@@ -44,7 +45,7 @@ def cal_new_high2():
 
         one_df[f'highest'] = one_df['close'].rolling(window=20).max()
         one_df[f'new_high'] = one_df['highest'] == one_df['close']
-        one_df[f'freq'] = one_df['new_high'].rolling(window=60).sum()
+        one_df[f'freq'] = one_df['new_high'].rolling(window=freq).sum()
         one_df['ptc_charge'] = ((one_df['close'] / one_df['close'].shift(1)) - 1) * 100
 
         stock_data[symbol] = one_df
