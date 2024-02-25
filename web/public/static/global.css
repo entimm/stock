@@ -52,6 +52,9 @@ nav ul li.active {
 th {
   background-color: #008b7d;
 }
+th.target-date {
+  background-color: #ff9100;
+}
 
 table tr td {
   border: 1px solid rgba(227, 227, 227, 0.5);

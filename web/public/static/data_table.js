@@ -292,7 +292,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   for(element of document.querySelectorAll('#grid thead th')) {
     if (element.textContent === date) {
-      document.getElementById('grid-container').scrollLeft = element.getBoundingClientRect().left;
+      document.getElementById('grid-container').scrollLeft = element.getBoundingClientRect().left - 1200;
+      element.classList.add('target-date');
       return;
     }
   }

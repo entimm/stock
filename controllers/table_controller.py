@@ -65,6 +65,7 @@ def astock_table():
             'ma': ma,
             'year': year,
             'direction': direction,
+            'date': request.args.get('date', '', str),
             'socket_token': request.args.get('socket_token', '', str),
         }
     }
@@ -97,6 +98,7 @@ def gnbk_table():
         'request_args': {
             'year': year,
             'data_type': data_type,
+            'date': request.args.get('date', '', str),
             'socket_token': request.args.get('socket_token', '', str),
         }
     }

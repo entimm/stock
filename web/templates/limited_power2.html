@@ -173,7 +173,8 @@
 
           for (element of document.querySelectorAll('#main-grid thead th')) {
             if (element.textContent === date) {
-              document.getElementById('grid-container').scrollLeft = element.getBoundingClientRect().left;
+              document.getElementById('grid-container').scrollLeft = element.getBoundingClientRect().left - 1200;
+              element.classList.add('target-date');
               return;
             }
           }

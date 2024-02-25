@@ -126,11 +126,12 @@
           row.insertCell(2).innerHTML = item['symbol'];
           row.insertCell(3).innerHTML = item['date'];
           row.insertCell(4).innerHTML = `
-          <a target="_blank" href="/astock_table?date=${item['date']}&year=${year}">个股趋势</a>
-          <a target="_blank" href="/gnbk_table?date=${item['date']}&year=${year}">概念板块</a>
-          <a target="_blank" href="/main_army?date=${item['date']}&year=${year}">中军</a>
-          <a target="_blank" href="/limited_power?date=${item['date']}&year=${year}">涨停动力</a>
-          <a target="_blank" href="/limited_power2?date=${item['date']}&year=${year}">连板梯队</a>
+          <a target="_blank" href="/astock_table?date=${item['date']}&year=${year}&symbol=${item['symbol']}">个股趋势</a>
+          <a target="_blank" href="/gnbk_table?date=${item['date']}&year=${year}&symbol=${item['symbol']}">概念板块</a>
+          <a target="_blank" href="/main_army?date=${item['date']}&year=${year}&symbol=${item['symbol']}">中军</a>
+          <a target="_blank" href="/new_high?date=${item['date']}&year=${year}&symbol=${item['symbol']}">新高</a>
+          <a target="_blank" href="/limited_power?date=${item['date']}&year=${year}&symbol=${item['symbol']}">涨停动力</a>
+          <a target="_blank" href="/limited_power2?date=${item['date']}&year=${year}&symbol=${item['symbol']}">连板梯队</a>
           <a target="_blank" href="/market_mood_table?date=${item['date']}&year=${year}">市场情绪</a>
           `;
 

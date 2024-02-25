@@ -6,20 +6,20 @@ from functools import cmp_to_key
 import click
 import pandas as pd
 
-from common import price_calculate
 from common.cmd_utils import custom_compare_desc, custom_compare_asc
-from common.const import RESOURCES_PATH
+from common.const import RESOURCES_PATH, YEAR
 from common.quotes import trade_date_list, fetch_local_daily
 from common.utils import ticker_name
 
 
 @click.command()
-def cal_new_high():
-    data_len = 1000
+@click.argument('year', default=YEAR, type=int)
+def cal_new_high(year):
+    data_len = 2000
     direction = 1
 
     date_list = trade_date_list['date'].tail(data_len).to_list()
-    result_json_file = os.path.join(RESOURCES_PATH, f'new_high.json')
+    result_json_file = os.path.join(RESOURCES_PATH, 'new_high', f'new_high_{year}.json')
     result_dict = {}
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
@@ -38,7 +38,7 @@ def cal_new_high():
     i = 0
     stock_data = {}
     for symbol in symbols:
-        print(f'trend-cal: {i}')
+        print(f'cal-new-high {i}: {symbol}')
         i += 1
         one_df = fetch_local_daily(symbol=symbol).reset_index().tail(data_len + 500)
         one_df = one_df.reset_index()
@@ -51,6 +51,8 @@ def cal_new_high():
         stock_data[symbol] = one_df
 
     for date in date_list:
+        if date.year != year:
+            continue
         date_str = date.strftime('%Y-%m-%d')
         temp_list = []
         for symbol, stock_df in stock_data.items():
