@@ -46,5 +46,7 @@ python cmd cal-limit-up-trend 10
 
 echo 'cal-new-high'
 python cmd cal-new-high
-echo 'cal-new-high2'
-python cmd cal-new-high2
+echo 'cal-new-high-freq 20'
+python cmd cal-new-high-freq 20
+echo 'cal-new-high-freq 60'
+python cmd cal-new-high-freq 60

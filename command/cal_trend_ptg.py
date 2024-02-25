@@ -8,19 +8,20 @@ import pandas as pd
 
 from common import price_calculate
 from common.cmd_utils import custom_compare_desc, custom_compare_asc
-from common.const import RESOURCES_PATH
+from common.const import RESOURCES_PATH, YEAR
 from common.quotes import trade_date_list, fetch_local_daily
 from common.utils import ticker_name
 
 
 @click.command()
 @click.argument('ma_v', default=3, type=int)
-def cal_trend_ptg(ma_v):
-    data_len = 300
+@click.argument('year', default=YEAR, type=int)
+def cal_trend_ptg(ma_v, year):
+    data_len = 2000
     direction = 1
 
     date_list = trade_date_list['date'].tail(data_len).to_list()
-    result_json_file = os.path.join(RESOURCES_PATH, 'trends', f'MA{ma_v}_trend.json')
+    result_json_file = os.path.join(RESOURCES_PATH, 'trends', f'MA{ma_v}_trend_{year}.json')
     result_dict = {}
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
@@ -39,7 +40,7 @@ def cal_trend_ptg(ma_v):
     i = 0
     stock_data = {}
     for symbol in symbols:
-        print(f'trend-cal: {i}')
+        print(f'trend-cal {year}-{ma_v} {i}: {symbol}')
         i += 1
         one_df = fetch_local_daily(symbol=symbol).reset_index().tail(data_len + 500)
         one_df = one_df.reset_index()
@@ -54,6 +55,8 @@ def cal_trend_ptg(ma_v):
         stock_data[symbol] = one_df
 
     for date in date_list:
+        if date.year != year:
+            continue
         date_str = date.strftime('%Y-%m-%d')
         temp_list = []
         for symbol, stock_df in stock_data.items():
@@ -68,9 +71,9 @@ def cal_trend_ptg(ma_v):
 
         custom_compare_method = custom_compare_desc if direction == 1 else custom_compare_asc
         sorted_list = [item[0] for item in sorted(temp_list, key=cmp_to_key(custom_compare_method))]
-        sorted_list = sorted_list[0: 30]
+        sorted_list = sorted_list[0: 50]
 
-        print('sort: ' + date_str)
+        print(f'sort {year}-{ma_v}: ' + date_str)
         result_dict[date_str] = sorted_list
 
     with open(result_json_file, 'w') as json_file:

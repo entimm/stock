@@ -24,8 +24,14 @@ def limited():
     }
     direction = request.args.get('direction', 1, type=int)
 
+    date_str = request.args.get('date', '', str)
+
+    date_list = trade_date_list
+    if date_str:
+        date_list = date_list[date_list['date'] <= date_str]
+
     result_dict = {}
-    for date in trade_date_list.tail(config.get('table_cols', 200))['date'].to_list():
+    for date in date_list.tail(config.get('table_cols', 300))['date'].to_list():
         date = date.strftime('%Y%m%d')
         csv_file = os.path.join(TOTAL_PATH, f'data_{date}.csv')
         if not os.path.exists(csv_file): continue

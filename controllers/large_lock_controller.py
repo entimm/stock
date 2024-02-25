@@ -21,7 +21,6 @@ def large_lock_data():
     date_list = trade_date_list
     if date_str:
         date_list = date_list[date_list['date'] <= date_str]
-        print(date_list)
 
     result_plate_list = {}
     for ts in date_list.tail(500)['date'].to_list():

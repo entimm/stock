@@ -12,6 +12,11 @@
         {{ create_link(request_args, {'ma':value}, request_args.ma == value, value) | safe }}
       {% endfor %}
     </div>
+    <div class="fixed-links">
+      {% for value in year_list %}
+        {{ create_link(request_args, {'year':value}, request_args.year == value, value) | safe }}
+      {% endfor %}
+    </div>
   </div>
   <div style="clear: both;"></div>
 

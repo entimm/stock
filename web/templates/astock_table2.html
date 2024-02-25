@@ -17,26 +17,6 @@
     table tr:nth-child(40) {
       border-bottom: 2px solid #FFD700;
     }
-
-    table tr:nth-child(50) {
-      border-bottom: 2px solid #FFFF00;
-    }
-
-    table tr:nth-child(60) {
-      border-bottom: 2px solid #ADFF2F;
-    }
-
-    table tr:nth-child(70) {
-      border-bottom: 2px solid #7FFF00;
-    }
-
-    table tr:nth-child(80) {
-      border-bottom: 2px solid #00FF00;
-    }
-
-    table tr:nth-child(90) {
-      border-bottom: 2px solid #008000;
-    }
   </style>
   <link rel="stylesheet" href="/static/data_table.css">
 {% endblock %}
@@ -45,6 +25,11 @@
     <div class="fixed-links">
       {% for value in ma_list %}
         {{ create_link(request_args, {'ma':value}, request_args.ma == value, value) | safe }}
+      {% endfor %}
+    </div>
+    <div class="fixed-links">
+      {% for value in year_list %}
+        {{ create_link(request_args, {'year':value}, request_args.year == value, value) | safe }}
       {% endfor %}
     </div>
   </div>

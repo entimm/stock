@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 
 from flask import render_template, request, Blueprint
 
@@ -13,12 +14,15 @@ blueprint = Blueprint('astock_table3', __name__)
 @blueprint.route('/astock_table3')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def astock_table3():
-    ma2_data = ma_data('MA2')
-    ma3_data = ma_data('MA3')
-    ma5_data = ma_data('MA5')
-    ma10_data = ma_data('MA10')
-    ma20_data = ma_data('MA20')
-    ma60_data = ma_data('MA60')
+    year_list = list(range(datetime.now().year, 2017, -1))
+    year = request.args.get('year', year_list[0], type=int)
+
+    ma2_data = ma_data('MA2', year)
+    ma3_data = ma_data('MA3', year)
+    ma5_data = ma_data('MA5', year)
+    ma10_data = ma_data('MA10', year)
+    ma20_data = ma_data('MA20', year)
+    ma60_data = ma_data('MA60', year)
 
     result_dict = {}
     for key in ma2_data.keys():
@@ -26,7 +30,9 @@ def astock_table3():
 
     template_var = {
         'data': dict(reversed(result_dict.items())),
+        'year_list': year_list,
         'request_args': {
+            'year': year,
             'socket_token': request.args.get('socket_token', '', str),
         }
     }
@@ -34,9 +40,9 @@ def astock_table3():
     return render_template('astock_table3.html', **template_var)
 
 
-def ma_data(ma):
+def ma_data(ma, year):
     result_dict = {}
-    result_json_file = os.path.join(RESOURCES_PATH, 'trends', f'{ma}_trend.json')
+    result_json_file = os.path.join(RESOURCES_PATH, 'trends', f'{ma}_trend_{year}.json')
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
             result_dict = json.load(file)

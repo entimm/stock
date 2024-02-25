@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 
 from flask import render_template, request, Blueprint
 
@@ -16,8 +17,11 @@ def astock_table2():
     ma_list = ['MA2', 'MA3', 'MA5', 'MA10', 'MA20', 'MA60']
     ma = request.args.get('ma', 'MA3')
 
+    year_list = list(range(datetime.now().year, 2017, -1))
+    year = request.args.get('year', year_list[0], type=int)
+
     result_dict = {}
-    result_json_file = os.path.join(RESOURCES_PATH, 'trends', f'{ma}_trend.json')
+    result_json_file = os.path.join(RESOURCES_PATH, 'trends', f'{ma}_trend_{year}.json')
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
             result_dict = json.load(file)
@@ -27,7 +31,9 @@ def astock_table2():
     template_var = {
         'data': dict(reversed(result_dict.items())),
         'ma_list': ma_list,
+        'year_list': year_list,
         'request_args': {
+            'year': year,
             'socket_token': request.args.get('socket_token', '', str),
             'ma': ma,
         }
