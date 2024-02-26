@@ -12,7 +12,7 @@ blueprint = Blueprint('images', __name__)
 
 @blueprint.route('/images')
 def images():
-    ma_list = ['MA2', 'MA3', 'MA5', 'MA10']
+    ma_list = ['MA2', 'MA3', 'MA5', 'MA10', 'MA20', 'MA60']
     ma = request.args.get('ma', 'MA3')
 
     result_dict = {}
