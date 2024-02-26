@@ -26,7 +26,7 @@ def astock_table3():
 
     result_dict = {}
     for key in ma2_data.keys():
-        result_dict[key] = ma2_data[key][0:5] + ma3_data[key][0:5] + ma5_data[key][0:5] + ma10_data[key][0:5] + ma20_data[key][0:5] + ma60_data[key][0:5]
+        result_dict[key] = ma2_data[key][0:8] + ma3_data[key][0:8] + ma5_data[key][0:8] + ma10_data[key][0:8] + ma20_data[key][0:8] + ma60_data[key][0:8]
 
     template_var = {
         'data': dict(reversed(result_dict.items())),

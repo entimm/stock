@@ -126,7 +126,9 @@
           row.insertCell(2).innerHTML = item['symbol'];
           row.insertCell(3).innerHTML = item['date'];
           row.insertCell(4).innerHTML = `
-          <a target="_blank" href="/astock_table?date=${item['date']}&year=${year}&symbol=${item['symbol']}">个股趋势</a>
+          <a target="_blank" href="/astock_table?date=${item['date']}&year=${year}&symbol=${item['symbol']}">趋势1</a>
+          <a target="_blank" href="/astock_table2?date=${item['date']}&year=${year}&symbol=${item['symbol']}">趋势2</a>
+          <a target="_blank" href="/astock_table3?date=${item['date']}&year=${year}&symbol=${item['symbol']}">趋势3</a>
           <a target="_blank" href="/gnbk_table?date=${item['date']}&year=${year}&symbol=${item['symbol']}">概念板块</a>
           <a target="_blank" href="/main_army?date=${item['date']}&year=${year}&symbol=${item['symbol']}">中军</a>
           <a target="_blank" href="/new_high?date=${item['date']}&year=${year}&symbol=${item['symbol']}">新高</a>

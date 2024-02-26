@@ -148,6 +148,10 @@
           }
         };
         chart.setOption(option);
+
+        window.addEventListener('resize', function () {
+          chart.resize();
+        });
       })
       .catch(error => console.error('Error fetching data:', error));
 
