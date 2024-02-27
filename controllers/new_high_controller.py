@@ -22,16 +22,18 @@ def new_high():
     result_json_file = os.path.join(RESOURCES_PATH, 'new_high', f'new_high_{year}.json')
     match mode:
         case 2:
-            result_json_file = os.path.join(RESOURCES_PATH, 'new_high', f'new_high_freq60_{year}.json')
+            result_json_file = os.path.join(RESOURCES_PATH, 'new_high', f'new_high_freq60_20_{year}.json')
         case 3:
-            result_json_file = os.path.join(RESOURCES_PATH, 'new_high', f'new_high_freq20_{year}.json')
+            result_json_file = os.path.join(RESOURCES_PATH, 'new_high', f'new_high_freq20_20_{year}.json')
+        case 4:
+            result_json_file = os.path.join(RESOURCES_PATH, 'new_high', f'new_high_freq12_5_{year}.json')
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
             result_dict = json.load(file)
 
     result_dict = {key: result_dict[key] for key in list(result_dict.keys())[-300:]}
 
-    mode_list = {1: '强度', 2: '慢频', 3: '快频'}
+    mode_list = {1: '强度', 2: '60-20', 3: '20-20', 4: '12-5'}
 
     template_var = {
         'data': dict(reversed(result_dict.items())),

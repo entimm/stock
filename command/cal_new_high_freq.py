@@ -14,13 +14,14 @@ from common.utils import ticker_name
 
 @click.command()
 @click.argument('freq', default=60, type=int)
+@click.argument('high_windows', default=20, type=int)
 @click.argument('year', default=YEAR, type=int)
-def cal_new_high_freq(freq, year):
+def cal_new_high_freq(freq, high_windows, year):
     data_len = 2000
     direction = 1
 
     date_list = trade_date_list['date'].tail(data_len).to_list()
-    result_json_file = os.path.join(RESOURCES_PATH, 'new_high', f'new_high_freq{freq}_{year}.json')
+    result_json_file = os.path.join(RESOURCES_PATH, 'new_high', f'new_high_freq{freq}_{high_windows}_{year}.json')
     result_dict = {}
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
@@ -44,7 +45,7 @@ def cal_new_high_freq(freq, year):
         one_df = fetch_local_daily(symbol=symbol).reset_index().tail(data_len + 500)
         one_df = one_df.reset_index()
 
-        one_df[f'highest'] = one_df['close'].rolling(window=20).max()
+        one_df[f'highest'] = one_df['close'].rolling(window=high_windows).max()
         one_df[f'new_high'] = one_df['highest'] == one_df['close']
         one_df[f'freq'] = one_df['new_high'].rolling(window=freq).sum()
         one_df['ptc_charge'] = ((one_df['close'] / one_df['close'].shift(1)) - 1) * 100

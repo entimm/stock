@@ -28,7 +28,6 @@ def new_stock():
     df['list_week'] = df['list_date'].dt.to_period('M').astype(str)
 
     csv_file = os.path.join(TOTAL_PATH, f'data_{date_int}.csv')
-    print(csv_file)
     if os.path.exists(csv_file):
         quotes_df = pd.read_csv(csv_file)
         df = pd.merge(df, quotes_df, on='ts_code')

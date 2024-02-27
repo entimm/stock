@@ -176,7 +176,7 @@
             acc.push(item);
 
             return acc;
-          }, []));
+          }, [])).sort((a, b) => (b['m_days_n_boards_boards'] - a['m_days_n_boards_boards']));
         });
 
         readHotLoss();

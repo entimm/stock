@@ -50,3 +50,5 @@ echo 'cal-new-high-freq 20'
 python cmd cal-new-high-freq 20
 echo 'cal-new-high-freq 60'
 python cmd cal-new-high-freq 60
+echo 'cal-new-high-freq 12 5'
+python cmd cal-new-high-freq 12 5

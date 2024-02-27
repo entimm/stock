@@ -15,8 +15,6 @@ from common.quotes import trade_date_list, fetch_local_daily
 from common.utils import get_exchange_code, ticker_name
 from controllers.limited_power_controller import XUANGUBAO_DETAIL_PATH
 
-trade_date_list = trade_date_list[trade_date_list['date'] <= Timestamp('2024-02-26')]
-
 @click.command()
 def download_fs_img():
     for ts in trade_date_list.tail(1)['date'].to_list()[::-1]:
