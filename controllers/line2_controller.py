@@ -32,6 +32,8 @@ def line2():
     index_symbols = ['999999', '399006']
     symbols += index_symbols
 
+    symbols = set(symbols)
+
     for symbol in symbols:
         df = fetch_local_plus_real(symbol, period_enum, 1)[start:end]
         df = df.tail(length) if flag == 0 else df.head(length)

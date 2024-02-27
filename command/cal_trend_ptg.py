@@ -40,7 +40,7 @@ def cal_trend_ptg(ma_v, year):
     i = 0
     stock_data = {}
     for symbol in symbols:
-        print(f'trend-cal {year}-{ma_v} {i}: {symbol}')
+        # print(f'trend-cal {year}-{ma_v} {i}: {symbol}')
         i += 1
         one_df = fetch_local_daily(symbol=symbol).reset_index().tail(data_len + 500)
         one_df = one_df.reset_index()

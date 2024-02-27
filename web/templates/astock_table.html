@@ -93,4 +93,23 @@
       }
     }
   </script>
+
+  <script>
+    document.addEventListener('keydown', function (event) {
+      const maMap = {
+        'q': '5',
+        'w': '10',
+        'e': '20',
+        'r': '60',
+      }
+      if (Object.keys(maMap).includes(event.key)) {
+        let currentUrl = new URL(window.location.href);
+        let searchParams = currentUrl.searchParams;
+        searchParams.set("ma", `MA${maMap[event.key]}`);
+
+        history.pushState({}, '', currentUrl.toString());
+        window.location.href = currentUrl.toString();
+      }
+    });
+  </script>
 {% endblock %}

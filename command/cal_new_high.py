@@ -38,7 +38,7 @@ def cal_new_high(year):
     i = 0
     stock_data = {}
     for symbol in symbols:
-        print(f'cal-new-high {i}: {symbol}')
+        # print(f'cal-new-high {i}: {symbol}')
         i += 1
         one_df = fetch_local_daily(symbol=symbol).reset_index().tail(data_len + 500)
         one_df = one_df.reset_index()

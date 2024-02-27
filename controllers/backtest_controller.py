@@ -78,7 +78,7 @@ def generate_order(trades, initial_capital=1000000):
             hold_vol = 0
             hold_amount = 0
 
-            order[trade["date"]] = {
+            order[buy_date] = {
                 'capital': round(capital + hold_amount, 2),
                 'symbol': trade.get('symbol', ''),
                 'name': ticker_name(trade.get('symbol', '')),

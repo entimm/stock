@@ -181,14 +181,16 @@
       mode = 'reason';
       let groupData = {}
       Object.keys(dataList).reverse().forEach(function (date) {
-        groupData[date] = Object.values(dataList[date].reduce((acc, {reason, name}) => {
-          acc[reason] ||= {name: reason, content: reason, num: 0, stock_list: []};
+        groupData[date] = Object.values(dataList[date].reduce((acc, {reason, name, const_num}) => {
+          acc[reason] ||= {name: reason, content: reason, num: 0, height: 1, stock_list: []};
           acc[reason].num += 1;
           acc[reason].stock_list.push(name);
+          acc[reason].height = Math.max(acc[reason].height, const_num);
+
           return acc;
         }, {}));
         groupData[date].map(item => {
-          item['content'] += `<sub>${item['num']}</sub>`;
+          item['content'] = `<sup>${item['height']}</sup>` + item['content'] + `<sub>${item['num']}</sub>`;
           return item;
         });
         groupData[date].sort((a, b) => b.num - a.num)
@@ -206,7 +208,7 @@
         let tmpList = dataList[date].reduce((acc, item) => {
           let name = item['name'];
           maxHeight = Math.max(maxHeight, item['const_num']);
-          acc[item['const_num']] ||= {name: item['const_num'], content: 0, num: 0, stock_list: []};
+          acc[item['const_num']] ||= {name: item['const_num'], content: 0, num: 0, height: 1, stock_list: []};
           acc[item['const_num']].num += 1;
 
           if (getTimeStrFromTs(item['last_limit_ts']).slice(0, 5) === '09:25') {

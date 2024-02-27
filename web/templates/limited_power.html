@@ -205,14 +205,15 @@
         groupData[date] = Object.values(dataList[date].reduce((acc, item) => {
           let relatedPlates = item['related_plates'];
           for (let relatedPlate of relatedPlates) {
-            acc[relatedPlate['plate_name']] ||= {name: relatedPlate['plate_name'], content: relatedPlate['plate_name'], num: 0, stock_list: [], desc: relatedPlate['plate_reason'] ?? '空'};
+            acc[relatedPlate['plate_name']] ||= {name: relatedPlate['plate_name'], content: relatedPlate['plate_name'], num: 0, height: 1, stock_list: [], desc: relatedPlate['plate_reason'] ?? '空'};
             acc[relatedPlate['plate_name']].num += 1;
+            acc[relatedPlate['plate_name']].height = Math.max(acc[relatedPlate['plate_name']].height, item['m_days_n_boards_boards']);
             acc[relatedPlate['plate_name']].stock_list.push(item['stock_chi_name']);
           }
           return acc;
         }, {}));
         groupData[date].map(item => {
-          item['content'] += `<sub>${item['num']}</sub>`;
+          item['content'] = `<sup>${item['height']}</sup>` + item['content'] + `<sub>${item['num']}</sub>`;
           return item;
         });
         groupData[date].sort((a, b) => b.num - a.num);

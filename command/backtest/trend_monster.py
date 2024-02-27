@@ -118,7 +118,7 @@ class Strategy:
             'price': round(price, 2),
             'action': 'BUY',
         }
-        print(buy_info)
+        # print(buy_info)
         self.order_list.append(buy_info)
         self.hold.stock = self.plan.to_buy_stock
         self.hold.buy_ts = ts
@@ -131,7 +131,7 @@ class Strategy:
             'price': round(price, 2),
             'action': 'SELL',
         }
-        print(sell_info)
+        # print(sell_info)
         self.order_list.append(sell_info)
         self.hold.stock = ''
         self.plan.to_sell = False

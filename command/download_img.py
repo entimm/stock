@@ -76,7 +76,7 @@ def cal_limit_up_trend(ma_v):
     i = 0
     stock_data = {}
     for symbol in symbols:
-        print(f'trend-cal: {i}')
+        # print(f'trend-cal: {i}')
         i += 1
         one_df = fetch_local_daily(symbol=symbol).reset_index().tail(len(date_list) + 200)
         one_df = one_df.reset_index()
