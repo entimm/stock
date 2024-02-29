@@ -26,6 +26,8 @@ def main_army_up():
         csv_file = os.path.join(TOTAL_PATH, f'data_{date}.csv')
         if not os.path.exists(csv_file): continue
         df = pd.read_csv(csv_file)
+        if not len(df):
+            continue
 
         df = df[df['ts_code'].str.endswith(('SH', 'SZ'))]
         df['ts_code'] = df['ts_code'].str[:6]
@@ -58,6 +60,8 @@ def main_army_down():
         csv_file = os.path.join(TOTAL_PATH, f'data_{date}.csv')
         if not os.path.exists(csv_file): continue
         df = pd.read_csv(csv_file)
+        if not len(df):
+            continue
 
         df = df[df['ts_code'].str.endswith(('SH', 'SZ'))]
         df['ts_code'] = df['ts_code'].str[:6]
