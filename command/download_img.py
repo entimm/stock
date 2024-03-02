@@ -1,5 +1,7 @@
+import errno
 import json
 import os
+import sys
 import time
 from functools import cmp_to_key
 
@@ -50,7 +52,7 @@ def get_symbol_list():
         file_path = os.path.join(XUANGUBAO_DETAIL_PATH, f'detail-{date}.csv')
         if not os.path.exists(file_path):
             print(f'{date}数据不存在')
-            continue
+            sys.exit(errno.EACCES)
         df = pd.read_csv(file_path)
         symbol_list = symbol_list.union(set(df['symbol'].str[:6].to_list()))
 

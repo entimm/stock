@@ -6,6 +6,7 @@ from command.cal_new_high import cal_new_high
 from command.cal_new_high_freq import cal_new_high_freq
 from command.analyze import analyze
 from command.backtest.ma_week45 import backtest_ma_week45
+from command.const_limit import const_limit
 from command.convert_astock import convert_astock
 from command.convert_gnbk import convert_gnbk, convert_gnbk_trend_up, convert_gnbk_trend_down
 from command.download_total import download_total
@@ -67,6 +68,8 @@ main.add_command(cal_limit_up_trend)
 
 main.add_command(cal_new_high)
 main.add_command(cal_new_high_freq)
+
+main.add_command(const_limit)
 
 main.add_command(test)
 

@@ -10,7 +10,8 @@ blueprint = Blueprint('trade_history2', __name__)
 
 @blueprint.route('/trade_history2_data')
 def trade_history_data():
-    csv_file = os.path.join(RESOURCES_PATH, '水哥交割单.csv')
+    name = request.args.get('name', '水哥割股', type=str)
+    csv_file = os.path.join(RESOURCES_PATH, '交割单', f'{name}.csv')
     df = pd.read_csv(csv_file, dtype={1: str})
 
     return df.to_dict(orient='records')

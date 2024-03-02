@@ -1,3 +1,5 @@
+set -e
+
 echo 'download-total'
 python cmd download-total
 echo 'north-funds'

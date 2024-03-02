@@ -12,12 +12,14 @@ def loog_data():
     result_list = []
     for year, items in loog.items():
         for item in items:
-            date, symbol, name = item.split('|')
+            date, symbol, name, tags, desc = item.split('|')
             result_list.append({
                 'year': year,
                 'name': name,
                 'symbol': symbol,
                 'date': date,
+                'tags': tags,
+                'desc': desc,
             })
 
     return result_list

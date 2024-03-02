@@ -75,4 +75,22 @@
       }
     }
   </script>
+
+  <script>
+    document.addEventListener('keydown', function (event) {
+      const map = {
+        'q': 'ANGLE',
+        'w': 'TREND-UP',
+        'e': 'TREND-DOWN',
+      }
+      if (Object.keys(map).includes(event.key)) {
+        let currentUrl = new URL(window.location.href);
+        let searchParams = currentUrl.searchParams;
+        searchParams.set("data_type", map[event.key]);
+
+        history.pushState({}, '', currentUrl.toString());
+        window.location.href = currentUrl.toString();
+      }
+    });
+  </script>
 {% endblock %}

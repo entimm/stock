@@ -1,5 +1,7 @@
+import errno
 import json
 import os
+import sys
 
 import click
 import pandas as pd
@@ -27,7 +29,7 @@ def download_xuangubao_detail():
         url = f'{xuangubao_url}/pool/detail?pool_name=limit_up&date={date_str2}'
         data_dict = send_request(url)
         if data_dict['data'] is None:
-            continue
+            sys.exit(errno.EACCES)
 
         for item in data_dict['data']:
             surge_reason = item.get('surge_reason', {})

@@ -122,12 +122,12 @@
           row.insertCell(2).innerHTML = item['证券代码'];
           row.insertCell(3).innerHTML = String(item['证券名称']);
           row.insertCell(4).innerHTML = item['操作'];
-          row.insertCell(5).innerHTML = item['成交数量'];
-          row.insertCell(6).innerHTML = item['成交均价'].toFixed(2);
-          row.insertCell(7).innerHTML = item['成交金额'].toFixed(2);
-          row.insertCell(8).innerHTML = item['发生金额'].toFixed(2);
-          row.insertCell(9).innerHTML = item['资金余额'].toFixed(2);
-          row.insertCell(10).innerHTML = item['本次金额'].toFixed(2);
+          row.insertCell(5).innerHTML = item['成交数量'] ? item['成交数量'].toFixed(0) : '';
+          row.insertCell(6).innerHTML = item['成交均价'] ? item['成交均价'].toFixed(2) : '';
+          row.insertCell(7).innerHTML = item['成交金额'] ? item['成交金额'].toFixed(2) : '';
+          row.insertCell(8).innerHTML = item['发生金额'] ? item['发生金额'].toFixed(2) : '';
+          row.insertCell(9).innerHTML = item['资金余额'] ? item['资金余额'].toFixed(2) : '';
+          row.insertCell(10).innerHTML = item['本次金额'] ? item['本次金额'].toFixed(2) : '';
 
           row.addEventListener('click', (event) => {
             setSelectedRow(event.target.parentNode);

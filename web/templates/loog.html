@@ -28,7 +28,15 @@
 
     td a {
       display: inline-block;
-      margin: 0 10px;
+      margin: 0 1px;
+      color: #fff;
+      padding: 0 3px;
+      border-radius: 5px;
+      background-color: rgba(35, 11, 245, 0.68);
+    }
+
+    tr td:nth-child(6) {
+      text-align: left!important;
     }
 
     #grid tr:hover {
@@ -77,6 +85,8 @@
         <th>名称</th>
         <th>代码</th>
         <th>日期</th>
+        <th>评级</th>
+        <th>描述</th>
         <th>操作</th>
       </tr>
       </thead>
@@ -125,7 +135,9 @@
           row.insertCell(1).innerHTML = item['name'];
           row.insertCell(2).innerHTML = item['symbol'];
           row.insertCell(3).innerHTML = item['date'];
-          row.insertCell(4).innerHTML = `
+          row.insertCell(4).innerHTML = item['tags'];
+          row.insertCell(5).innerHTML = item['desc'];
+          row.insertCell(6).innerHTML = `
           <a target="_blank" href="/astock_table?date=${item['date']}&year=${year}&symbol=${item['symbol']}">趋势1</a>
           <a target="_blank" href="/astock_table2?date=${item['date']}&year=${year}&symbol=${item['symbol']}">趋势2</a>
           <a target="_blank" href="/astock_table3?date=${item['date']}&year=${year}&symbol=${item['symbol']}">趋势3</a>

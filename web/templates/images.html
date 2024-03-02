@@ -1,6 +1,6 @@
 {% extends '_layout.html' %}
 {% block head %}
-  <title>个股趋势表2</title>
+  <title>多分时图</title>
   <style>
     table tr:nth-child(10) {
       border-bottom: 2px solid #f700ff;
@@ -90,17 +90,18 @@
   <script>
     document.addEventListener('keydown', function (event) {
       const maMap = {
-        'q': '2',
-        'w': '3',
-        'e': '5',
-        'r': '10',
-        't': '20',
-        'y': '60',
+        'q': '连板',
+        'w': 'MA2',
+        'e': 'MA3',
+        'r': 'MA5',
+        't': 'MA10',
+        'y': 'MA20',
+        'u': 'MA60',
       }
       if (Object.keys(maMap).includes(event.key)) {
         let currentUrl = new URL(window.location.href);
         let searchParams = currentUrl.searchParams;
-        searchParams.set("ma", `MA${maMap[event.key]}`);
+        searchParams.set("ma", `${maMap[event.key]}`);
 
         history.pushState({}, '', currentUrl.toString());
         window.location.href = currentUrl.toString();

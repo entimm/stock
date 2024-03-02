@@ -1,5 +1,7 @@
+import errno
 import json
 import os
+import sys
 from datetime import datetime
 
 import click
@@ -30,7 +32,7 @@ def kaipanla_mood():
     data_dict = send_request(url)
     if data_dict['errcode'] != '0':
         print('ChangeStatistics接口请求错误')
-        exit()
+        sys.exit(errno.EACCES)
     market_mood_list = {entry["Day"]: entry for entry in data_dict['info']}
 
     cur_day = datetime.now().strftime("%Y-%m-%d")
@@ -44,7 +46,7 @@ def kaipanla_mood():
         data_dict = send_request(url)
         if data_dict['errcode'] != '0':
             print(f'HisZhangFuDetail接口请求错误, day={day}')
-            exit()
+            sys.exit(errno.EACCES)
 
         info['date'] = day
         info['strong'] = market_mood_list[day]['strong']
@@ -64,7 +66,7 @@ def kaipanla_mood():
         data_dict = send_request(url)
         if data_dict['errcode'] != '0':
             print(f'ZhangTingExpression接口请求错误, day={day}')
-            exit()
+            sys.exit(errno.EACCES)
 
         info['b1_num'] = data_dict['info'][0]
         info['b2_num'] = data_dict['info'][1]
@@ -156,7 +158,7 @@ def request_kaipanla_page_data(url_template, day, index, page_size, list_field):
     data_dict = send_request(url)
     if data_dict['errcode'] != '0':
         print(f'HisDaBanList接口请求错误, day={day}')
-        exit()
+        sys.exit(errno.EACCES)
 
     data_list = data_dict[list_field]
 

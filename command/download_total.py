@@ -1,4 +1,6 @@
+import errno
 import os
+import sys
 
 import click
 import tushare as ts
@@ -14,6 +16,8 @@ def download_total():
     for current_date in trade_date_list['date'].to_list()[::-1]:
         current_date = current_date.strftime('%Y%m%d')
         df = pro.daily(trade_date=current_date)
+        if not len(df):
+            sys.exit(errno.EACCES)
 
         file_path = os.path.join(TOTAL_PATH, f'data_{current_date}.csv')
 

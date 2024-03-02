@@ -12,11 +12,14 @@ blueprint = Blueprint('images', __name__)
 
 @blueprint.route('/images')
 def images():
-    ma_list = ['MA2', 'MA3', 'MA5', 'MA10', 'MA20', 'MA60']
+    ma_list = ['连板', 'MA2', 'MA3', 'MA5', 'MA10', 'MA20', 'MA60']
     ma = request.args.get('ma', 'MA3')
 
     result_dict = {}
     result_json_file = os.path.join(RESOURCES_PATH, 'trends2', f'{ma}_trend.json')
+    if ma == '连板':
+        result_json_file = os.path.join(RESOURCES_PATH, 'trends2', f'const_limit.json')
+
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
             result_dict = json.load(file)

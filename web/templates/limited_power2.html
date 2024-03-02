@@ -581,14 +581,15 @@
       tooltipImg.innerHTML = "";
       let target = event.target;
       let date = table.rows[0].cells[event.target.parentElement.cellIndex]?.innerHTML;
+      let nextDate = table.rows[0].cells[event.target.parentElement.cellIndex - 1]?.innerHTML;
+      let next2Date = table.rows[0].cells[event.target.parentElement.cellIndex - 2]?.innerHTML;
       let symbol = target.getAttribute('data-symbol');
 
-      let img1 = document.createElement("img");
-      img1.src = `http://${document.domain}:${location.port}/static/imgs/min/${date}/${symbol}.gif`;
-      tooltipImg.appendChild(img1);
-
-      let timestamp = new Date().getTime();
-      let code = getExchangeCode(`${symbol}`);
+      [next2Date, nextDate, date].forEach(function (param) {
+        let img = document.createElement("img");
+        img.src = `http://${document.domain}:${location.port}/static/imgs/min/${param}/${symbol}.gif`;
+        tooltipImg.appendChild(img);
+      });
 
       let img2 = document.createElement("img");
       img2.src = `http://${document.domain}:${location.port}/static/imgs/daily/${date}/${symbol}.gif`;

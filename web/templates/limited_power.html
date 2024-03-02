@@ -120,6 +120,7 @@
         <th data-k="symbol">代码</th>
         <th data-k="stock_chi_name">名称</th>
         <th data-k="plates">题材</th>
+        <th data-k="plates">事件</th>
         <th data-k="m_days_n_boards_boards">连板</th>
         <th data-k="first_limit_up">首次上板时间</th>
         <th data-k="last_limit_up">最后上板时间</th>
@@ -190,7 +191,6 @@
     function switchTable() {
       if (mode === 'plate_name') {
         renderGrid(groupDataByHeight(total_stock_list, 'limit_up_days'));
-
       } else if (mode === 'limit_up_days') {
         renderGrid(groupDataByHeight(total_stock_list, 'm_days_n_boards_boards'));
       } else {
@@ -469,6 +469,7 @@
           <td>${jsonData['symbol']}</td>
           <td>${jsonData['stock_chi_name']}</td>
           <td>${jsonData['related_plates'].map(item => item['plate_name']).join('<br/>')}</td>
+          <td class="reason">${jsonData['related_plates'].map(item => item['plate_reason']).join('<br/>')}</td>
           <td>${jsonData['m_days_n_boards_boards'] > 0 ? jsonData['m_days_n_boards_days'] + '天' + jsonData['m_days_n_boards_boards'] + '板' : '首板'}</td>
           <td>${getTimeStrFromTs(jsonData['first_limit_up'])}</td>
           <td> ${getTimeStrFromTs(jsonData['last_limit_up'])}</td>
@@ -617,14 +618,15 @@
       tooltipImg.innerHTML = "";
       let target = event.target;
       let date = table.rows[0].cells[event.target.parentElement.cellIndex]?.innerHTML;
+      let nextDate = table.rows[0].cells[event.target.parentElement.cellIndex - 1]?.innerHTML;
+      let next2Date = table.rows[0].cells[event.target.parentElement.cellIndex - 2]?.innerHTML;
       let symbol = target.getAttribute('data-symbol');
 
-      let img1 = document.createElement("img");
-      img1.src = `http://${document.domain}:${location.port}/static/imgs/min/${date}/${symbol}.gif`;
-      tooltipImg.appendChild(img1);
-
-      let timestamp = new Date().getTime();
-      let code = getExchangeCode(`${symbol}`);
+      [next2Date, nextDate, date].forEach(function (param) {
+        let img = document.createElement("img");
+        img.src = `http://${document.domain}:${location.port}/static/imgs/min/${param}/${symbol}.gif`;
+        tooltipImg.appendChild(img);
+      });
 
       let img2 = document.createElement("img");
       img2.src = `http://${document.domain}:${location.port}/static/imgs/daily/${date}/${symbol}.gif`;

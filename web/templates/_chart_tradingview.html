@@ -171,10 +171,21 @@
   {% endif %}
 
   function scrollToDateRange(date) {
-    // chart.timeScale().scrollToPosition(-1000);
-    chart.timeScale().setVisibleRange({
-      from: (new Date(date)).getTime() / 1000,
-      to: (new Date(date)).getTime() / 1000 + 86400 * 30,
-    });
+    // chart.timeScale().setVisibleRange({
+    //   from: (new Date(date)).getTime() / 1000,
+    //   to: (new Date(date)).getTime() / 1000 + 86400 * 30,
+    // });
+
+    let targetIndex = 0;
+    for (const index in klineList) {
+      if (klineList[index].time * 1000 >= new Date(date).getTime() + 86400 * 1000) {
+        targetIndex = parseInt(index);
+        break;
+      }
+    }
+
+    chart.timeScale().scrollToPosition(targetIndex - klineList.length);
+
+
   }
 </script>

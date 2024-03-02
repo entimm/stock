@@ -99,12 +99,7 @@ function renderGrid(data) {
 
   thead.addEventListener('click', function (event) {
     if (event.target.tagName === 'TH') {
-      let colName = event.target.textContent;
-      let symbols = data[colName].map(function (item) {
-        let values = item.split('|');
-        return values[1];
-      });
-      showTooltipTrend(symbols, colName);
+      showTooltipTrend(event.target);
       focusMode = 'key';
       setSelectedCell(event.target);
     }
@@ -118,7 +113,7 @@ function renderGrid(data) {
       let clickX = event.clientX - cellRect.left;
 
       if (clickX < cellRect.width / 2) {
-        highlightCells(cell.textContent);
+        highlightCells(cell.getAttribute('symbol'));
       } else {
         let symbol = cell.getAttribute('symbol');
         if (!symbol) return;
@@ -127,8 +122,7 @@ function renderGrid(data) {
 
         setSelectedCell(cell);
         show_tooltip(cell);
-        showTooltipTrend([symbol], headName);
-
+        showTooltipTrend(cell);
 
         let date = /^\d{4}-\d{2}-\d{2}$/.test(headName) ? headName : '';
         openDialog(symbol, date);
@@ -162,15 +156,18 @@ function debounce(func, delay) {
 }
 
 const debouncedFunction = debounce(function (cell) {
-  let headName = getCellHeadName(cell);
-  showTooltipTrend([cell.getAttribute('symbol')], headName)
+  showTooltipTrend(cell)
 }, 200);
 
 function renderCell(cell, value, i) {
+  if (!value) return;
   value = value.split('|');
   let symbol = value[1];
   let is20cm = ['30', '68'].includes(symbol?.slice(0, 2));
-  cell.textContent = is20cm ? (`@${value[0]}`) : value[0];
+  cell.innerHTML = is20cm ? (`@${value[0]}`) : value[0];
+  if (value[2] === 'ZT') {
+    cell.innerHTML += `<sub>${value[3]}</sub>`;
+  }
   if (cell.textContent === "") {
     cell.classList.add("table-empty" + parseInt(i / 20));
     return;
@@ -237,6 +234,18 @@ function getCellHeadName(cell) {
   return table.querySelector('thead tr').cells[col].innerHTML;
 }
 
+function getNextCellHeadName(cell) {
+  let col = cell.cellIndex;
+
+  return table.querySelector('thead tr').cells[col - 1]?.innerHTML;
+}
+
+function getNext2CellHeadName(cell) {
+  let col = cell.cellIndex;
+
+  return table.querySelector('thead tr').cells[col - 2]?.innerHTML;
+}
+
 function setSelectedCell(cell) {
   if (selectedCell) {
     selectedCell.classList.remove('select-cell')
@@ -249,7 +258,7 @@ function highlightCells(value) {
   let cells = document.querySelectorAll('td');
   color = getRandomColor();
   for (let cell of cells) {
-    if (cell.textContent === value) {
+    if (cell.getAttribute('symbol') === value) {
       if (cell.style.backgroundColor) {
         cell.style.backgroundColor = "";
         cell.style.color = '#000';
@@ -280,37 +289,43 @@ function processMove(direction) {
     focusMode = 'key';
     setSelectedCell(cell);
     show_tooltip(cell);
-    let headName = getCellHeadName(cell);
-
-    let symbolList = [];
-    if (cell.getAttribute('symbol')) {
-      symbolList = [cell.getAttribute('symbol')];
-    } else {
-      symbolList = data[headName].map(function (item) {
-        let values = item.split('|');
-        return values[1];
-      });
-    }
-
-    showTooltipTrend(symbolList, headName);
+    showTooltipTrend(cell);
   }
 
   return cell;
 }
 
-function showTooltipTrend(symbolList, date) {
+function showTooltipTrend(cell) {
+  let date = getCellHeadName(cell);
+  let nextDate = getNextCellHeadName(cell);
+  let next2Date = getNext2CellHeadName(cell);
+
+  let symbolList = [];
+  if (cell.getAttribute('symbol')) {
+    symbolList = [cell.getAttribute('symbol')];
+  } else if (cell.tagName === 'TH') {
+    symbolList = data[date].map(function (item) {
+      let values = item.split('|');
+      return values[1];
+    });
+  } else {
+    return;
+  }
+
   tooltipTrend.textContent = '';
 
   if (symbolList.length === 1) {
     let symbol = symbolList[0];
 
-    let img = document.createElement("img");
-    img.src = `http://${document.domain}:${location.port}/static/imgs/min/${date}/${symbol}.gif`;
-    let a = document.createElement("a");
-    a.href = `http://${document.domain}:${location.port}/chart?date=${date}&period=D&symbol=${symbol}`
-    a.target = 'blank';
-    a.appendChild(img);
-    tooltipTrend.appendChild(a);
+    [next2Date, nextDate, date].forEach(function (param) {
+      let img = document.createElement("img");
+      img.src = `http://${document.domain}:${location.port}/static/imgs/min/${param}/${symbol}.gif`;
+      let a = document.createElement("a");
+      a.href = `http://${document.domain}:${location.port}/chart?date=${param}&period=D&symbol=${symbol}`
+      a.target = 'blank';
+      a.appendChild(img);
+      tooltipTrend.appendChild(a);
+    })
 
     let img2 = document.createElement("img");
     img2.src = `http://${document.domain}:${location.port}/static/imgs/daily/${date}/${symbol}.gif`;

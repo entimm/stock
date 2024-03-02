@@ -291,6 +291,18 @@
     }
   });
 
+  chart.subscribeAction('onCandleBarClick', function (evnet) {
+    let date = new Date(evnet.data.timestamp);
+    date = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+    let currentUrl = new URL(window.location.href);
+    let searchParams = currentUrl.searchParams;
+    searchParams.set("date", date);
+
+    history.pushState({}, '', currentUrl.toString());
+    window.location.href = currentUrl.toString();
+  });
+
 </script>
 {% if request_args is defined and request_args.show_chan %}
   {% include "_chart_kline_chan.html" %}

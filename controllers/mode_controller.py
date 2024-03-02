@@ -50,11 +50,11 @@ def mode_bomb_limit(df):
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
 def mode():
     mode_list: list = [
-        ('次阳', mode_follow_bull,),
-        ('缩调', mode_shrink_adj,),
         ('连板', mode_cont_limited_up,),
         ('首板', mode_first_limited_up,),
         ('炸板', mode_bomb_limit,),
+        ('次阳', mode_follow_bull,),
+        ('缩调', mode_shrink_adj,),
     ]
     mode = request.args.get('mode', 0, type=int)
     directory_path = os.path.join(RAW_V2_PATH, '全部Ａ股')
