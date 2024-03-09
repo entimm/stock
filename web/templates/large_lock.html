@@ -136,7 +136,7 @@
 
         tr.addEventListener('mouseover', function (event) {
           showTooltipTrend(jsonData['symbol']);
-          adjTooltipTrendPosition(event.target);
+          adjTooltipTrendPosition(tooltipTrend, event.target);
         });
       });
     }

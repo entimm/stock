@@ -144,7 +144,7 @@ function showTooltipTrend(symbol) {
     });
 }
 
-function adjTooltipTrendPosition(cell) {
+function adjTooltipTrendPosition(tooltipTrend, cell) {
   const screenHeight = window.innerHeight;
   const isTopHalf = cell.getBoundingClientRect().top <= screenHeight / 2;
   tooltipTrend.classList.toggle('right-bottom', isTopHalf);

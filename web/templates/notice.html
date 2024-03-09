@@ -100,7 +100,7 @@
         if (event.target.classList.contains('stock')) {
           let symbol = event.target.getAttribute('data-v');
           showTooltipTrend(symbol);
-          adjTooltipTrendPosition(event.target);
+          adjTooltipTrendPosition(tooltipTrend, event.target);
         }
       });
 

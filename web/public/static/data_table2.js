@@ -335,6 +335,7 @@ function showTooltipTrend(cell) {
     a2.appendChild(img2);
     tooltipTrend.appendChild(a2);
 
+    adjTooltipTrendPosition(tooltipTrend, cell);
     tooltipTrend.style.display = 'block';
     return;
   }
@@ -349,5 +350,6 @@ function showTooltipTrend(cell) {
     a.appendChild(img);
     tooltipTrend.appendChild(a);
   }
+  adjTooltipTrendPosition(tooltipTrend, cell);
   tooltipTrend.style.display = 'block';
 }

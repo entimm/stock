@@ -88,7 +88,7 @@
     }
 
     #tooltip-img {
-      position: absolute;
+      position: fixed;
       background-color: #fff;
       border: 1px solid #ccc;
       box-shadow: 0 10px 20px 20px rgb(0 0 0 / 10%);
@@ -339,6 +339,7 @@
       });
 
       tbody.addEventListener('click', function (event) {
+        if (event.altKey) return;
         if (event.target.tagName === 'TD') {
           let cell = event.target;
           let stock_num = cell.getAttribute('stock_num');
@@ -360,7 +361,7 @@
         }
 
         if (event.target.classList.contains('stock')) {
-          highlightStocks(event.target.textContent);
+          highlightStocks(event.target.getAttribute('data-symbol'));
         }
       });
       tbody.addEventListener('mouseover', function (event) {
@@ -413,7 +414,7 @@
       let cells = document.querySelectorAll('span.stock');
       color = getRandomColor();
       for (let cell of cells) {
-        if (cell.textContent.replaceAll(/[_#@]/g, '') === value.replaceAll(/[_#@]/g, '')) {
+        if (cell.getAttribute('data-symbol') === value) {
           if (cell.style.backgroundColor) {
             cell.style.backgroundColor = "";
             cell.style.color = '';
@@ -510,9 +511,9 @@
     stockTable.getElementsByTagName('tbody')[0].addEventListener('click', (event) => {
       if (event.target.tagName === 'TD') {
         let tr = event.target.parentElement;
-        let trList = tr.querySelectorAll('td');
-        let date = trList[0].textContent;
-        let symbol = trList[1].textContent;
+        let tdList = tr.querySelectorAll('td');
+        let date = tdList[0].textContent;
+        let symbol = tdList[1].textContent;
         window.open(`/chart?date=${date}&period=F5&symbol=${symbol}`, "_blank");
       }
     });
@@ -595,6 +596,7 @@
           document.getElementById('hot-lose-grid').appendChild(tbody);
 
           tbody.addEventListener('click', function (event) {
+            if (event.altKey) return;
             if (event.target.tagName === 'TD') {
               let colName = table.rows[0].cells[event.target.cellIndex + 1]?.innerHTML;
               changeStockListInTable2(colName, Array.from(event.target.getElementsByTagName('span')).map(item => item.textContent));
@@ -602,7 +604,7 @@
               return;
             }
             if (['m_days_n_boards_boards', 'limit_up_days'].includes(mode) && event.target.classList.contains('stock')) {
-              highlightStocks(event.target.textContent);
+              highlightStocks(event.target.getAttribute('data-symbol'));
             }
           });
         });
@@ -633,6 +635,7 @@
       tooltipImg.appendChild(img2);
 
       tooltipImg.style.display = 'block';
+      adjTooltipTrendPosition(tooltipImg, event.target);
     }).on('mouseleave', function () {
       tooltipImg.style.display = 'none';
     });
@@ -660,5 +663,16 @@
         element.style.backgroundColor = 'red'
       }
     }
+
+    document.getElementById('grid-container').addEventListener('click', function (event) {
+      if (event.type === 'click' && event.altKey) {
+        let symbol = event.target.getAttribute('data-symbol');
+        let cellIndex = event.target.parentNode.cellIndex;
+        let date = table.rows[0].cells[cellIndex].innerHTML;
+        if (symbol) {
+          window.open(`/chart?date=${date}&period=F5&symbol=${symbol}`, "_blank");
+        }
+      }
+    });
   </script>
 {% endblock %}

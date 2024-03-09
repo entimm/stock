@@ -125,7 +125,7 @@ function renderGrid(data) {
         setSelectedCell(cell);
         show_tooltip(cell);
         showTooltipTrend(symbol);
-        adjTooltipTrendPosition(cell);
+        adjTooltipTrendPosition(tooltipTrend, cell);
 
         let headName = getCellHeadName(cell);
         let date = /^\d{4}-\d{2}-\d{2}$/.test(headName) ? headName : '';
@@ -161,7 +161,7 @@ function debounce(func, delay) {
 
 const debouncedFunction = debounce(function (cell) {
   showTooltipTrend(cell.getAttribute('symbol') ?? '')
-  adjTooltipTrendPosition(cell);
+  adjTooltipTrendPosition(tooltipTrend, cell);
 }, 200);
 
 function renderCell(cell, value, i) {
@@ -279,7 +279,7 @@ function processMove(direction) {
     setSelectedCell(cell);
     show_tooltip(cell);
     showTooltipTrend(cell.getAttribute('symbol') ?? '');
-    adjTooltipTrendPosition(cell);
+    adjTooltipTrendPosition(tooltipTrend, cell);
   }
 
   return cell;
