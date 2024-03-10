@@ -79,8 +79,14 @@
       background-color: rgba(0, 139, 125, 0.5);
     }
 
+    #large-lock-grid {
+      background-color: rgb(255, 176, 176);
+    }
     #hot-lose-grid {
       background-color: rgb(176, 255, 196);
+    }
+    #hot-lose-grid tr:nth-child(1) {
+      background-color: rgb(105, 224, 133);
     }
 
     #tooltip-img {
@@ -93,6 +99,13 @@
       max-width: 86%;
       max-height: 100%;
       overflow-y: scroll;
+    }
+
+    #main-grid td, #large-lock-grid td, #hot-lose-grid td {
+      max-width: 120px;
+      width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
   </style>
@@ -108,7 +121,8 @@
 
   <div id="grid-container">
     <table id="main-grid" class="striped centered"></table>
-    <table id="hot-lose-grid" class="striped centered"></table>
+    <table id="large-lock-grid" class="striped centered"></table>
+    <table id="hot-lose-grid" class="centered"></table>
     <table id="stock-grid" class="striped centered z-depth-5" style="display: none;">
       <thead>
       <tr>
@@ -163,6 +177,7 @@
     fetch(document.URL.replace('limited_power2', 'limited_power2_data')).then(response => response.json())
       .then(dataList => {
         total_stock_list = dataList;
+        readLargeLock();
         readHotLoss();
         renderGrid(groupDataByHeight(total_stock_list));
       });
@@ -423,14 +438,15 @@
     }
 
     function show_stocks_table() {
+      tooltipImg.style.display = 'none';
       stockTable.style.display = 'block';
       let tbody = stockTable.getElementsByTagName('tbody')[0];
       tbody.innerHTML = '';
       stockListInTable.forEach(function (jsonData) {
         const tr = document.createElement('tr')
         tr.innerHTML = `
-          <td data-v=${jsonData['date']}>${jsonData['date']}</td>
-          <td>${jsonData['symbol']}</td>
+          <td class="date-td" data-v=${jsonData['date']}>${jsonData['date']}</td>
+          <td class="symbol-td">${jsonData['symbol']}</td>
           <td>${jsonData['name']}</td>
           <td data-v=${jsonData['limit_ts']}>${getTimeStrFromTs(jsonData['limit_ts'])}</td>
           <td>${getTimeStrFromTs(jsonData['last_limit_ts'])}</td>
@@ -447,8 +463,12 @@
           <td>${jsonData['together_num']}</td>
       `;
         tbody.appendChild(tr);
-        $(tr).hover(function () {
+        $(tr).find('.symbol-td').hover(function () {
+          tooltipImg.style.display = 'none';
           showTooltipTrend(jsonData['symbol']);
+        });
+        $(tr).find('.date-td').hover(function () {
+          showTooltipImg(jsonData['symbol'], jsonData['date']);
         });
         $(stockTable).mouseleave(function () {
           tooltipTrend.style.display = 'none';
@@ -492,7 +512,7 @@
         if (cell.tagName !== 'TD') return;
         if (cell) {
           let colName = table.rows[0].cells[cell.cellIndex].innerHTML;
-          focusMode = 'selected'
+          focusMode = 'selected';
           show_tooltip(cell);
           setSelectedCell(cell);
 
@@ -529,6 +549,28 @@
       stockListInTable = total_stock_list[colName].filter(item => String(item[mode]) === cell.getAttribute('name'));
     }
 
+    function readLargeLock() {
+      let tbody = document.createElement('tbody');
+      let dateList = Object.keys(total_stock_list).reverse();
+
+      let row = document.createElement('tr');
+      large_lock(row, dateList);
+      tbody.appendChild(row);
+      document.getElementById('large-lock-grid').appendChild(tbody);
+
+      tbody.addEventListener('click', function (event) {
+        if (event.altKey) return;
+        if (event.target.tagName === 'TD') {
+          let date = table.rows[0].cells[event.target.cellIndex]?.innerHTML;
+          changeStockListInTable2(date, Array.from(event.target.getElementsByTagName('span')).map(item => item.getAttribute('data-symbol')));
+          show_stocks_table();
+          return;
+        }
+        if (['const_num'].includes(mode) && event.target.classList.contains('stock')) {
+          highlightStocks(event.target.getAttribute('data-symbol'));
+        }
+      });
+    }
     function readHotLoss() {
       fetch('/hot_lose_data').then(response => response.json())
         .then(dataList => {
@@ -546,9 +588,9 @@
               row.appendChild(cell);
               if (preDate) {
                 cell.innerHTML = total_stock_list[preDate]
-                  .filter(item => item['const_num'] >= 3 && dataList[date] && dataList[date][rowIndex].includes(item.symbol))
+                  .filter(item => item['const_num'] >= 2 && dataList[date] && dataList[date][rowIndex].includes(item.symbol))
                   .sort((a, b) => a['const_num'] - b['const_num'])
-                  .map(item => `<span class="stock" data-symbol="${item.symbol}">${item['name']}</span>`)
+                  .map(item => `<span class="stock" data-symbol="${item.symbol}">${item['name']}<sub>${item.const_num}</sub></span>`)
                   .join('<br/>');
               } else {
                 cell.innerHTML = '';
@@ -561,8 +603,8 @@
           tbody.addEventListener('click', function (event) {
             if (event.altKey) return;
             if (event.target.tagName === 'TD') {
-              let colName = table.rows[0].cells[event.target.cellIndex + 1]?.innerHTML;
-              changeStockListInTable2(colName, Array.from(event.target.getElementsByTagName('span')).map(item => item.textContent));
+              let date = table.rows[0].cells[event.target.cellIndex + 1]?.innerHTML;
+              changeStockListInTable2(date, Array.from(event.target.getElementsByTagName('span')).map(item => item.getAttribute('data-symbol')));
               show_stocks_table();
               return;
             }
@@ -573,19 +615,56 @@
         });
     }
 
-    function changeStockListInTable2(colName, nameList) {
-      stockListInTable = total_stock_list[colName].filter(item => {
-        return nameList.includes(item['name']);
+    function large_lock(row, dateList) {
+      for (let index in dateList) {
+        index = parseInt(index);
+        let date = dateList[index];
+        let cell = document.createElement('td');
+        row.appendChild(cell);
+        cell.innerHTML = total_stock_list[date]
+          .filter(
+            item => item['const_num'] >= 1 &&
+              item['last_limit_ts'] === item['limit_ts'] &&
+              getTimeStrFromTs(item['last_limit_ts']).slice(0, 5) === '09:25' &&
+              item['limit_amount'] >= 10 ** 8 * 1
+          )
+          .sort((a, b) => a['const_num'] - b['const_num'])
+          .map(item => `<span class="stock" data-symbol="${item.symbol}"><sup>${(item['limit_amount'] / 10 ** 8 * 1).toFixed(1)}</sup>${item['name']}<sub>${item.const_num}</sub></span>`)
+          .join('<br/>');
+      }
+    }
+
+    function changeStockListInTable2(date, symbolList) {
+      stockListInTable = total_stock_list[date].filter(item => {
+        return symbolList.includes(item['symbol']);
       }).sort((a, b) => a['const_num'] - b['const_num']);
     }
 
     $('#grid-container table').on('mouseenter', 'td span.stock', function (event) {
       tooltipImg.innerHTML = "";
       let target = event.target;
-      let date = table.rows[0].cells[event.target.parentElement.cellIndex]?.innerHTML;
-      let nextDate = table.rows[0].cells[event.target.parentElement.cellIndex - 1]?.innerHTML;
-      let next2Date = table.rows[0].cells[event.target.parentElement.cellIndex - 2]?.innerHTML;
+      if (event.target.tagName != 'SPAN') {
+        target = event.target.parentElement;
+      }
       let symbol = target.getAttribute('data-symbol');
+      let date = table.rows[0].cells[target.parentElement.cellIndex]?.innerHTML;
+      exeShowTooltipImg(symbol, date, target.parentElement.cellIndex);
+    }).on('mouseleave', function () {
+      tooltipImg.style.display = 'none';
+    });
+
+    function showTooltipImg(symbol, date) {
+      tooltipTrend.style.display = 'none';
+      tooltipImg.innerHTML = "";
+      let cellIndex = Array.from(table.rows[0].cells).findIndex(function(cell) {
+          return cell.innerHTML === date;
+      });
+      exeShowTooltipImg(symbol, date, cellIndex);
+    }
+
+    function exeShowTooltipImg(symbol, date, cellIndex) {
+      let nextDate = table.rows[0].cells[cellIndex - 1]?.innerHTML;
+      let next2Date = table.rows[0].cells[cellIndex - 2]?.innerHTML;
 
       [next2Date, nextDate, date].forEach(function (param) {
         let img = document.createElement("img");
@@ -599,10 +678,7 @@
 
       adjTooltipTrendPosition(tooltipImg, event.target);
       tooltipImg.style.display = 'block';
-    }).on('mouseleave', function () {
-      tooltipImg.style.display = 'none';
-    });
-
+    }
 
     function gotoTarget() {
       let urlParams = new URLSearchParams(window.location.search);

@@ -55,7 +55,7 @@
       }
     });
 
-    fetch(`/notice_data`).then(response => response.json())
+    fetch(document.URL.replace('notice', 'notice_data')).then(response => response.json())
       .then(dataList => {
         renderGrid(Object.fromEntries(Object.entries(dataList).reverse()));
       });

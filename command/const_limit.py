@@ -39,7 +39,7 @@ def const_limit(year):
         df = df[df['limit_up_days'] >= 2]
         df = df.sort_values(by='limit_up_days', ascending=False)
 
-        df['show'] = df['stock_chi_name'].astype(str) + '|' + df.index.astype(str) + '|0|' + df['limit_up_days'].astype(str)
+        df['show'] = df['stock_chi_name'].astype(str) + '|' + df.index.astype(str) + '|ZT|' + df['limit_up_days'].astype(str)
         result_dict[date2] = df['show'].to_list()
 
     with open(result_json_file, 'w') as json_file:
