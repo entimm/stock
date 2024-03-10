@@ -20,7 +20,7 @@ def hot_lose_data():
     result = {}
     with open(JSON_FILE, 'r') as file:
         hot_lose_data = json.load(file)
-    for ts in trade_date_list.tail(config.get('table_cols', 200))['date'].to_list():
+    for ts in trade_date_list['date'].to_list():
         date2 = ts.strftime('%Y-%m-%d')
         result[date2] = hot_lose_data.get(date2, [])
 
