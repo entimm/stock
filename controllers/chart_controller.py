@@ -69,6 +69,7 @@ def chart():
             'chart_engine': chart_engine,
             'show_chan': show_chan,
             'socket_token': socket_token,
+            'year': date[0:4],
             'date': date,
             'time': time,
             'n': limit,
@@ -80,7 +81,7 @@ def chart():
     if show_chan:
         from chan import chan_config
         from chan.chan import Chan
-        
+
         chart_engine = 0
 
         tmp_chan_config_keys = ['force_stroke_vertex', 'force_segment_vertex', 'output_union', 'output_fractal', 'stroke_check_break', 'stroke_fix_sure']

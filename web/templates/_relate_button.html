@@ -1,0 +1,39 @@
+<div class="fixed-action-btn">
+  <a class="btn-floating btn-sm red">
+    <i class="material-icons">👀</i>
+  </a>
+  <ul>
+    <li><a class="btn-floating" target="_blank" href="/gnbk_table?date={{ request_args.date }}&year={{ request_args.year }}&symbol={{ request_args.symbol }}">概念板块</a></li>
+    <li><a class="btn-floating" target="_blank" href="/main_army?date={{ request_args.date }}&year={{ request_args.year }}&symbol={{ request_args.symbol }}">中军</a></li>
+    <li><a class="btn-floating" target="_blank" href="/limited_power?date={{ request_args.date }}&year={{ request_args.year }}&symbol={{ request_args.symbol }}">涨停动力</a></li>
+    <li><a class="btn-floating" target="_blank" href="/limited_power2?date={{ request_args.date }}&year={{ request_args.year }}&symbol={{ request_args.symbol }}">连板梯队</a></li>
+    <li><a class="btn-floating" target="_blank" href="/market_mood_table?date={{ request_args.date }}&year={{ request_args.year }}">市场情绪</a></li>
+    <li><a class="btn-floating" target="_blank" href="/astock_table?date={{ request_args.date }}&year={{ request_args.year }}&symbol={{ request_args.symbol }}">趋势1</a></li>
+    <li><a class="btn-floating" target="_blank" href="/astock_table2?date={{ request_args.date }}&year={{ request_args.year }}&symbol={{ request_args.symbol }}">趋势2</a></li>
+    <li><a class="btn-floating" target="_blank" href="/astock_table3?date={{ request_args.date }}&year={{ request_args.year }}&symbol={{ request_args.symbol }}">趋势3</a></li>
+    <li><a class="btn-floating" target="_blank" href="/new_high?date={{ request_args.date }}&year={{ request_args.year }}&symbol={{ request_args.symbol }}">新高</a></li>
+    <li><a class="btn-floating" target="_blank" href="/new_stock?date={{ request_args.date }}">新股</a></li>
+    <li><a class="btn-floating" target="_blank" href="/large_lock?date={{ request_args.date }}">大单一字</a></li>
+  </ul>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var elems = document.querySelectorAll('.fixed-action-btn');
+    var instances = M.FloatingActionButton.init(elems, {
+      direction: 'top',
+      hoverEnabled: false,
+    });
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if ($('#search-dialog').hasClass('open')) return;
+
+    const validKeys = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x'];
+    let index = validKeys.indexOf(event.key);
+    if (index !== -1) {
+      const targetLink = $('.fixed-action-btn ul li a').eq(index)[0];
+      targetLink?.click();
+    }
+  });
+</script>
