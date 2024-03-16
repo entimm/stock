@@ -46,6 +46,7 @@ controllers = [
     'images',
     'loog',
     'new_high',
+    'earth2sky',
 ]
 
 for controller in controllers:

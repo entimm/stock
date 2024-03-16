@@ -1,0 +1,93 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>地天板</title>
+  <style>
+    #grid-container {
+      width: 1800px;
+      margin: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    th {
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    td, th {
+      padding: 0;
+      white-space: nowrap;
+      width: 100px;
+      position: relative;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    #grid tr:hover {
+      background-color: rgba(0, 139, 125, 0.5);
+    }
+
+    #grid tr td:nth-child(4) {
+      text-align: left;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="fixed-links-container" class="right-top z-depth-5" style="top: 500px;">
+    <div class="fixed-links">
+      {% for value in data_type_list %}
+        {{ create_link(request_args, {'data_type':value}, request_args.data_type == value, value) | safe }}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="grid-container">
+    <table id="grid" class="striped centered z-depth-5">
+      <thead>
+      <tr>
+        <th>序号</th>
+        <th>日期</th>
+        <th>证券</th>
+        <th>描述</th>
+      </tr>
+      </thead>
+      <tbody id="table-content"></tbody>
+    </table>
+  </div>
+  <div class="fixed-action-btn" style="top: 0; right: 10px; height: 40px">
+    <a class="btn-floating btn waves-effect waves-light orange z-depth-5" onclick="openRelateKlineMode()">
+      K线
+    </a>
+  </div>
+{% endblock %}
+{% block footer %}
+  <script>
+    const period = '{{ request_args.get('period', 'F5') }}';
+    const tableContent = document.getElementById('table-content');
+    fetch(document.URL.replace('earth2sky', 'earth2sky_data')).then(response => response.json())
+      .then(jsonData => {
+        const reversedKeys = Object.keys(jsonData).reverse();
+        reversedKeys.forEach(key => {
+          const item = jsonData[key];
+          const row = tableContent.insertRow();
+          row.insertCell(0).innerHTML = key;
+          row.insertCell(1).innerHTML = getDateStrFromTs(item['TimeMin']) + ' ' + getTimeStrFromTs(item['TimeMin']);
+          row.insertCell(2).innerHTML = item['StockList'].map(item => `<span class="stock" data-v="${item[0]}">${item[1]}</span>`).join(' | ');
+          row.insertCell(3).innerHTML = item['Detail'];
+        });
+      });
+
+    tableContent.addEventListener('click', function (event) {
+      let target = event.target;
+      if (target.classList.contains('stock')) {
+        let symbol = target.getAttribute('data-v');
+        let datetimeStr = target.parentNode.parentNode.childNodes[1].innerHTML;
+        let date = datetimeStr.substr(0, 10);
+        window.open(`/chart?date=${date}&period=F5&symbol=${symbol}`, "_blank");
+      }
+    });
+  </script>
+{% endblock %}
