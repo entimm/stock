@@ -172,7 +172,8 @@
     let stockTable = document.getElementById('stock-grid');
 
     let total_stock_list = {};
-    let stockListInTable = []
+    let stockListInTable = [];
+    let mode = '';
 
     fetch(document.URL.replace('limited_power', 'limited_power_data')).then(response => response.json())
       .then(dataList => {
@@ -193,12 +194,10 @@
         });
 
         readHotLoss();
-        renderGrid(groupDataByBk(total_stock_list));
-
-
+        renderGrid(groupDataByHeight(total_stock_list, 'limit_up_days'));
       });
 
-    let mode = 'plate_name'
+
 
     function switchTable() {
       if (mode === 'plate_name') {
@@ -602,7 +601,7 @@
                 cell.innerHTML = total_stock_list[preDate]
                   .filter(item => item['m_days_n_boards_boards'] >= 2 && dataList[date] && dataList[date][rowIndex].includes(item.symbol))
                   .sort((a, b) => a['m_days_n_boards_boards'] - b['m_days_n_boards_boards'])
-                  .map(item => `<span class="stock" data-symbol="${item.symbol}">${item['stock_chi_name']}<sub>${item['m_days_n_boards_boards']}</sub></span>`)
+                  .map(item => `<span class="stock" data-symbol="${item.symbol}">${item['stock_chi_name']}<sub>${item['m_days_n_boards_boards']}/${item['m_days_n_boards_days']}-${item['limit_up_days']}</sub></span>`)
                   .join('<br/>');
               } else {
                 cell.innerHTML = '';
@@ -625,6 +624,8 @@
               highlightStocks(event.target.getAttribute('data-symbol'));
             }
           });
+
+          gotoTarget();
         });
     }
 
@@ -637,7 +638,7 @@
     $('#grid-container table').on('mouseenter', 'td span.stock', function (event) {
       tooltipImg.innerHTML = "";
       let target = event.target;
-      if (event.target.tagName != 'SPAN') {
+      if (event.target.tagName !== 'SPAN') {
         target = event.target.parentElement;
       }
       let symbol = target.getAttribute('data-symbol');

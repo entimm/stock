@@ -173,16 +173,15 @@
 
     let total_stock_list = {};
     let stockListInTable = [];
+    let mode = '';
 
     fetch(document.URL.replace('limited_power2', 'limited_power2_data')).then(response => response.json())
       .then(dataList => {
         total_stock_list = dataList;
         readLargeLock();
         readHotLoss();
-        renderGrid(groupDataByHeight(total_stock_list));
+        renderGrid(groupDataByHeight(total_stock_list))
       });
-
-    let mode = 'reason'
 
     function switchTable() {
       if (mode === 'reason') {
@@ -612,6 +611,8 @@
               highlightStocks(event.target.getAttribute('data-symbol'));
             }
           });
+
+          gotoTarget();
         });
     }
 
@@ -643,7 +644,7 @@
     $('#grid-container table').on('mouseenter', 'td span.stock', function (event) {
       tooltipImg.innerHTML = "";
       let target = event.target;
-      if (event.target.tagName != 'SPAN') {
+      if (event.target.tagName !== 'SPAN') {
         target = event.target.parentElement;
       }
       let symbol = target.getAttribute('data-symbol');

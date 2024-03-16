@@ -30,6 +30,7 @@
     </div>
     <div class="fixed-links">
       <span class="symbol">{{ request_args.symbol }} - </span><span class="symbol-name">{{ ticker_name }}</span>
+      <h6><i>{{ request_args.date }}</i></h6>
     </div>
   </div>
 
@@ -82,16 +83,16 @@
         openSearchDialog();
         return;
       }
-      if (window.self !== window.top) {
-        communicateParent(event);
-        return;
-      }
 
       const validKeys = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'];
       let index = validKeys.indexOf(event.key);
       if (index !== -1) {
         const targetLink = $('#fixed-links-container .fixed-links a').eq(index)[0];
         targetLink?.click();
+      }
+
+      if (window.self !== window.top) {
+        communicateParent(event);
       }
     });
   </script>

@@ -29,13 +29,25 @@
     #grid tr:hover {
       background-color: rgba(0, 139, 125, 0.5);
     }
-
     .select-row {
       background-color: rgba(255, 0, 0, 0.15) !important;
+    }
+    #fixed-links-container.right-top {
+      position: fixed;
+      top: 520px;
+      margin-right: 0;
     }
   </style>
 {% endblock %}
 {% block content %}
+  <div id="fixed-links-container" class="right-top z-depth-5">
+    <div class="fixed-links">
+      {% for value in file_list %}
+        {{ create_link(request_args, {'name':value}, request_args.name == value, value) | safe }}
+      {% endfor %}
+    </div>
+  </div>
+
   <div id="grid-container">
     <table id="grid" class="striped centered z-depth-5">
       <thead>
