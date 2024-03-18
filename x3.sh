@@ -1,5 +1,7 @@
 set -e
 
+python cmd tip
+
 echo 'download-xuangubao-detail'
 python cmd  download-xuangubao-detail
 echo 'arrange-xuangubao-detail'

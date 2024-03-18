@@ -21,6 +21,7 @@ from command.market_height import market_height
 from command.north_funds import north_funds
 from command.stock_meta import stock_meta
 from command.test.test import test
+from command.test.tip import tip
 from command.xuangubao import download_xuangubao_detail, arrange_xuangubao_detail
 from command.mv_raw import mv_raw
 from command.backtest.trend_monster import backtest_trend_monster
@@ -72,6 +73,7 @@ main.add_command(cal_new_high_freq)
 main.add_command(const_limit)
 
 main.add_command(test)
+main.add_command(tip)
 
 if __name__ == '__main__':
     main()

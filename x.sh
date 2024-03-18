@@ -1,5 +1,7 @@
 set -e
 
+python cmd tip
+
 echo 'mv-raw'
 python cmd mv-raw
 echo 'convert-astock'
