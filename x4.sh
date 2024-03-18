@@ -1,5 +1,7 @@
 set -e
 
+python cmd tip
+
 echo 'kaipanla-mood'
 python cmd kaipanla-mood
 

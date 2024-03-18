@@ -1,5 +1,7 @@
 set -e
 
+python cmd tip
+
 echo 'download-total'
 python cmd download-total
 echo 'north-funds'
