@@ -26,7 +26,7 @@ def cal_trend_ptg(ma_v, year):
     if os.path.exists(result_json_file):
         with open(result_json_file, 'r') as file:
             result_dict = json.load(file)
-            latest_date = list(result_dict.keys())[-1]
+            latest_date = list(result_dict.keys())[-2]
 
         if latest_date:
             date_list = [item for item in date_list if item > datetime.strptime(latest_date, "%Y-%m-%d")]
