@@ -234,16 +234,10 @@ function getCellHeadName(cell) {
   return table.querySelector('thead tr').cells[col].innerHTML;
 }
 
-function getNextCellHeadName(cell) {
+function getNextCellHeadName(cell, n = 1) {
   let col = cell.cellIndex;
 
-  return table.querySelector('thead tr').cells[col - 1]?.innerHTML;
-}
-
-function getNext2CellHeadName(cell) {
-  let col = cell.cellIndex;
-
-  return table.querySelector('thead tr').cells[col - 2]?.innerHTML;
+  return table.querySelector('thead tr').cells[col - n]?.innerHTML;
 }
 
 function setSelectedCell(cell) {
@@ -298,7 +292,8 @@ function processMove(direction) {
 function showTooltipTrend(cell) {
   let date = getCellHeadName(cell);
   let nextDate = getNextCellHeadName(cell);
-  let next2Date = getNext2CellHeadName(cell);
+  let next2Date = getNextCellHeadName(cell, 2);
+  let next3Date = getNextCellHeadName(cell, 3);
 
   let symbolList = [];
   if (cell.getAttribute('symbol')) {
@@ -317,7 +312,7 @@ function showTooltipTrend(cell) {
   if (symbolList.length === 1) {
     let symbol = symbolList[0];
 
-    [next2Date, nextDate, date].forEach(function (param) {
+    [next3Date, next2Date, nextDate, date].forEach(function (param) {
       let img = document.createElement("img");
       img.src = `http://${document.domain}:${location.port}/static/imgs/min/${param}/${symbol}.gif`;
       let a = document.createElement("a");
