@@ -502,6 +502,7 @@
         $(tr).find('.symbol-td').hover(function () {
           tooltipImg.style.display = 'none';
           showTooltipTrend(jsonData['symbol']);
+          adjTooltipTrendPosition(tooltipTrend, event.target);
         });
         $(tr).find('.date-td').hover(function () {
           showTooltipImg(jsonData['symbol'], jsonData['date']);
@@ -640,6 +641,8 @@
     }
 
     $('#grid-container table').on('mouseenter', 'td span.stock', function (event) {
+      tooltipTrend.style.display = 'none';
+      tooltipImg.style.display = 'none';
       tooltipImg.innerHTML = "";
       let target = event.target;
       if (event.target.tagName !== 'SPAN') {
@@ -647,8 +650,14 @@
       }
       let symbol = target.getAttribute('data-symbol');
       let date = table.rows[0].cells[target.parentElement.cellIndex]?.innerHTML;
-      exeShowTooltipImg(symbol, date, target.parentElement.cellIndex);
+      if (event.altKey) {
+        showTooltipTrend(symbol);
+        adjTooltipTrendPosition(tooltipTrend, event.target);
+      } else {
+        exeShowTooltipImg(symbol, date, target.parentElement.cellIndex);
+      }
     }).on('mouseleave', function () {
+      tooltipTrend.style.display = 'none';
       tooltipImg.style.display = 'none';
     });
 
