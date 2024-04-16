@@ -174,6 +174,7 @@
     let tooltipImg = document.getElementById('tooltip-img');
     let selectedCell = null;
     let stockTable = document.getElementById('stock-grid');
+    let hoverMode = 'localToolTip';
 
     let total_stock_list = {};
     let stockListInTable = [];
@@ -314,6 +315,9 @@
       }
       if (event.key === 'e') {
         renderGrid(groupDataByHeight(total_stock_list, 'm_days_n_boards_boards'));
+      }
+      if (event.key === 'a') {
+        hoverMode = hoverMode == 'latestTooltip' ? 'localToolTip' : 'latestTooltip';
       }
     });
 
@@ -650,7 +654,7 @@
       }
       let symbol = target.getAttribute('data-symbol');
       let date = table.rows[0].cells[target.parentElement.cellIndex]?.innerHTML;
-      if (event.altKey) {
+      if (hoverMode === 'latestTooltip') {
         showTooltipTrend(symbol);
         adjTooltipTrendPosition(tooltipTrend, event.target);
       } else {
