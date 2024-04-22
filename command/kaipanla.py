@@ -152,6 +152,36 @@ def kaipanla_limit_down():
         df.to_csv(file_path, index=False)
 
 
+@click.command()
+def kaipanla_bid():
+    for ts in trade_date_list.tail(100)['date'].to_list():
+        day = ts.strftime('%Y-%m-%d')
+        file_path = os.path.join(RESOURCES_PATH, 'kaipanla', 'bid', f'{day}.csv')
+        if os.path.exists(file_path):
+            continue
+
+        url = '{}?Day={}&Filter=0&FilterGem=0&FilterMotherboard=0&FilterTIB=0&Index={}&Is_st=1&Order=1&PhoneOSNew=2&PidType=8&Type=18&VerSion=5.12.0.9&a=HisDaBanList&apiv=w34&c=HisHomeDingPan&st={}'
+        stock_list = request_kaipanla_page_data(url, day, 0, 50, 'list')
+        stock_list = [{
+            'symbol': item[0],  # 股票代码
+            'name': item[1],  # 股票名称
+            'atc_ptc_change': item[4],  # 实际涨幅
+            'block': item[11],  # 板块
+            'act_flow_amount': item[15],  # 实际流通
+            'bid_limit_up_amount': item[18],  # 涨停委买额
+            'bid_ptc_change': item[19],  # 竞价涨幅
+            'bid_net_amount': item[20],  # 竞价净额
+            'bid_turnover': item[21],  # 竞价换手
+            'bid_amount': item[22],  # 竞价成交额
+        } for item in stock_list]
+
+        if not stock_list:
+            continue
+
+        df = pd.json_normalize(stock_list)
+        df.to_csv(file_path, index=False)
+
+
 def request_kaipanla_page_data(url_template, day, index, page_size, list_field):
     url = url_template.format(kaipanla_url, day, index, page_size)
     print(url)

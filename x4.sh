@@ -13,3 +13,6 @@ python cmd kaipanla-limit-up
 
 echo 'kaipanla-limit-down'
 python cmd kaipanla-limit-down
+
+echo 'kaipanla-bid'
+python cmd kaipanla-bid

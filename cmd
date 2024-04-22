@@ -14,7 +14,7 @@ from command.cal_trend_ptg import cal_trend_ptg
 from command.test.convert_tdx_xls import convert_tdx_xls
 from command.download_img import download_fs_img, cal_limit_up_trend
 from command.hot_lose import hot_lose
-from command.kaipanla import kaipanla_mood, kaipanla_limit_up, kaipanla_limit_down, kaipanla_notice
+from command.kaipanla import kaipanla_mood, kaipanla_limit_up, kaipanla_limit_down, kaipanla_bid, kaipanla_notice
 from command.limit_up_bs import limit_up_bs
 from command.main_army import main_army_up, main_army_down
 from command.market_height import market_height
@@ -50,6 +50,7 @@ main.add_command(north_funds)
 main.add_command(kaipanla_mood)
 main.add_command(kaipanla_limit_up)
 main.add_command(kaipanla_limit_down)
+main.add_command(kaipanla_bid)
 main.add_command(kaipanla_notice)
 
 main.add_command(download_xuangubao_detail)
