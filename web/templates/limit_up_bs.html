@@ -160,15 +160,16 @@
         {'condition': price >= 30, 'className': 'red3'},
         {'condition': price >= 20, 'className': 'red2'},
         {'condition': price >= 10, 'className': 'red1'},
-        {'condition': price <= -10, 'className': 'green3'},
+        {'condition': price <= -30, 'className': 'green3'},
         {'condition': price <= -20, 'className': 'green2'},
-        {'condition': price <= -30, 'className': 'green1'},
+        {'condition': price <= -10, 'className': 'green1'},
       ];
-      colorClasses.forEach((dotClass) => {
+      for (dotClass of colorClasses) {
         if (dotClass.condition) {
           element.classList.add('dot', dotClass.className);
+          break;
         }
-      });
+      }
     }
 
     function openKline(row) {

@@ -327,11 +327,12 @@
         {'condition': price <= -10, 'className': 'green2'},
         {'condition': price <= -20, 'className': 'green1'},
       ];
-      colorClasses.forEach((dotClass) => {
+      for (dotClass of colorClasses) {
         if (dotClass.condition) {
           element.classList.add('dot', dotClass.className);
+          break;
         }
-      });
+      }
     }
 
     function formatDate(date) {

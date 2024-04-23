@@ -100,11 +100,12 @@
         {'condition': price <= -10000, 'className': 'green2'},
         {'condition': price <= -30000, 'className': 'green1'},
       ];
-      colorClasses.forEach((dotClass) => {
+      for (dotClass of colorClasses) {
         if (dotClass.condition) {
           element.classList.add('dot', dotClass.className);
+          break;
         }
-      });
+      }
     }
   </script>
 {% endblock %}
