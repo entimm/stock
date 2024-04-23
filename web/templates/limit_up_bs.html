@@ -119,6 +119,9 @@
         let lastDate = ''
         reversedKeys.forEach(key => {
           const item = jsonData[key];
+
+          if (Math.abs(item['profit'] / 10) < 2) return;
+
           const row = tableContent.insertRow();
 
           row.insertCell(0).innerHTML = key;
