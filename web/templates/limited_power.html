@@ -175,6 +175,7 @@
     let selectedCell = null;
     let stockTable = document.getElementById('stock-grid');
     let hoverMode = 'localToolTip';
+    let showBigLimitUp = false;
 
     let total_stock_list = {};
     let stockListInTable = [];
@@ -201,8 +202,6 @@
         readHotLoss();
         renderGrid(groupDataByHeight(total_stock_list, 'limit_up_days'));
       });
-
-
 
     function switchTable() {
       if (mode === 'plate_name') {
@@ -261,7 +260,7 @@
             name = `#${name}#`;
           }
 
-          if (['30', '68'].includes(item['symbol'].slice(0, 2))) {
+          if (date >= '2020-08-24' && ['30', '68'].includes(item['symbol'].slice(0, 2))) {
             name = `@${name}`;
           }
           acc[item[field]].stock_list.push(`${name}|${item['symbol']}`);
@@ -280,7 +279,22 @@
                   return `<span class="stock interrupt" data-symbol="${symbol}">${name}</span>`
                 }
                 return `<span class="stock" data-symbol="${symbol}">${name}</span>`;
-              }).join('<br/>')
+              }).join('<br/>');
+            } else if (showBigLimitUp) {
+
+              // 20厘米的标的显示
+              bigStockList = tmpList[i].stock_list.filter(function (stock) {
+                return stock.includes('@');
+              });
+              if (i >= 2) {
+                tmpList[i].content = tmpList[i].content + '<br/>' + bigStockList.map(function (item) {
+                  let [name, symbol] = item.split('|');
+                  if (/#.*#/.test(name)) {
+                    return `<span class="stock interrupt" data-symbol="${symbol}">${name}</span>`
+                  }
+                  return `<span class="stock" data-symbol="${symbol}">${name}</span>`;
+                }).join('<br/>');
+              }
             }
           }
         }
@@ -311,13 +325,19 @@
         renderGrid(groupDataByBk(total_stock_list));
       }
       if (event.key === 'w') {
+        if (mode === 'limit_up_days') {
+          showBigLimitUp = !showBigLimitUp;
+        }
         renderGrid(groupDataByHeight(total_stock_list, 'limit_up_days'));
       }
       if (event.key === 'e') {
+        if (mode === 'm_days_n_boards_boards') {
+          showBigLimitUp = !showBigLimitUp;
+        }
         renderGrid(groupDataByHeight(total_stock_list, 'm_days_n_boards_boards'));
       }
       if (event.key === 'a') {
-        hoverMode = hoverMode == 'latestTooltip' ? 'localToolTip' : 'latestTooltip';
+        hoverMode = hoverMode === 'latestTooltip' ? 'localToolTip' : 'latestTooltip';
       }
     });
 

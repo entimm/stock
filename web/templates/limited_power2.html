@@ -175,6 +175,7 @@
     let selectedCell = null;
     let stockTable = document.getElementById('stock-grid');
     let hoverMode = 'localToolTip';
+    let showBigLimitUp = false;
 
     let total_stock_list = {};
     let stockListInTable = [];
@@ -236,7 +237,7 @@
           if (item['const_desc'].includes('天')) {
             name = `#${name}#`;
           }
-          if (['30', '68'].includes(item['symbol'].slice(0, 2))) {
+          if (date >= '2020-08-24' && ['30', '68'].includes(item['symbol'].slice(0, 2))) {
             name = `@${name}`;
           }
           acc[item['const_num']].stock_list.push(`${name}|${item['symbol']}`);
@@ -255,6 +256,20 @@
                 }
                 return `<span class="stock" data-symbol="${symbol}">${name}</span>`;
               }).join('<br/>')
+            } else if (showBigLimitUp) {
+              // 20厘米的标的显示
+              bigStockList = tmpList[i].stock_list.filter(function (stock) {
+                return stock.includes('@');
+              });
+              if (i >= 2) {
+                tmpList[i].content = tmpList[i].content + '<br/>' + bigStockList.map(function (item) {
+                  let [name, symbol] = item.split('|');
+                  if (/#.*#/.test(name)) {
+                    return `<span class="stock interrupt" data-symbol="${symbol}">${name}</span>`
+                  }
+                  return `<span class="stock" data-symbol="${symbol}">${name}</span>`;
+                }).join('<br/>');
+              }
             }
           }
         }
@@ -278,10 +293,14 @@
         renderGrid(groupDataByBk(total_stock_list));
       }
       if (event.key === 'w') {
+        if (mode === 'const_num') {
+          showBigLimitUp = !showBigLimitUp;
+        }
+
         renderGrid(groupDataByHeight(total_stock_list));
       }
       if (event.key === 'a') {
-        hoverMode = hoverMode == 'latestTooltip' ? 'localToolTip' : 'latestTooltip';
+        hoverMode = hoverMode === 'latestTooltip' ? 'localToolTip' : 'latestTooltip';
       }
     });
 
