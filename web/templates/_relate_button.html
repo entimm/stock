@@ -14,6 +14,7 @@
     <li><a class="btn-floating" target="_blank" href="/new_high?date={{ request_args.date }}&year={{ request_args.year }}&symbol={{ request_args.symbol }}">新高</a></li>
     <li><a class="btn-floating" target="_blank" href="/new_stock?date={{ request_args.date }}">新股</a></li>
     <li><a class="btn-floating" target="_blank" href="/large_lock?date={{ request_args.date }}">大单一字</a></li>
+    <li><a class="btn-floating" target="_blank" href="/bid?date={{ request_args.date }}">竞价</a></li>
   </ul>
 </div>
 
@@ -29,7 +30,7 @@
   document.addEventListener('keydown', function (event) {
     if ($('#search-dialog').hasClass('open')) return;
 
-    const validKeys = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x'];
+    const validKeys = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c'];
     let index = validKeys.indexOf(event.key);
     if (index !== -1) {
       const targetLink = $('.fixed-action-btn ul li a').eq(index)[0];
