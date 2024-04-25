@@ -25,6 +25,7 @@
       {{ create_link(request_args, {'show_chan': (not request_args.show_chan)}, request_args.show_chan == 1, '缠论') | safe }}
       <a href="https://basic.10jqka.com.cn/{{ request_args.symbol }}/" target="_blank">同花顺F10</a>
       <a href="https://www.dabanke.com/gupiao-{{ request_args.symbol }}.html" target="_blank">打板客</a>
+      <a href="http://ddx.gubit.cn/ddx.php?code={{ request_args.symbol }}" target="_blank">查股网</a>
       <a href="#" target="_blank">新窗口</a>
       <a href="#" onclick="openSearchDialog()">搜索</a>
     </div>
