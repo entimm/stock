@@ -79,6 +79,8 @@
 
     document.addEventListener('keydown', function (event) {
       if ($('#search-dialog').hasClass('open')) return;
+      if (event.ctrlKey) return;
+      if (event.metaKey) return;
 
       if (['Space'].includes(event.code)) {
         openSearchDialog();

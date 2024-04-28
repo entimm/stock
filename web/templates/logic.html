@@ -1,6 +1,6 @@
 {% extends '_layout.html' %}
 {% block head %}
-  <title>龙头</title>
+  <title>逻辑</title>
   <style>
     #grid-container {
       width: 1800px;
@@ -85,7 +85,7 @@
         <th>名称</th>
         <th>代码</th>
         <th>日期</th>
-        <th>评级</th>
+        <th>类型</th>
         <th>描述</th>
       </tr>
       </thead>
@@ -119,7 +119,7 @@
   <script>
     const period = '{{ request_args.get('period', 'F5') }}';
     let tooltipTrend = document.getElementById('tooltip-trend');
-    fetch(document.URL.replace('loog', 'loog_data')).then(response => response.json())
+    fetch(document.URL.replace('logic', 'logic_data')).then(response => response.json())
       .then(jsonData => {
         const reversedKeys = Object.keys(jsonData).reverse();
         const tableContent = document.getElementById('table-content');
@@ -135,7 +135,7 @@
           row.insertCell(2).innerHTML = item['symbol'];
           row.insertCell(3).innerHTML = item['date'];
           row.insertCell(4).innerHTML = item['tags'];
-          row.insertCell(5).innerHTML = item['desc'];
+          row.insertCell(5).innerHTML = item['desc']
 
 
           if (lastYear && lastYear !== new Date(item['date']).getFullYear()) {

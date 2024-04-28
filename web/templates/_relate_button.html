@@ -29,6 +29,8 @@
 
   document.addEventListener('keydown', function (event) {
     if ($('#search-dialog').hasClass('open')) return;
+      if (event.ctrlKey) return;
+      if (event.metaKey) return;
 
     const validKeys = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c'];
     let index = validKeys.indexOf(event.key);

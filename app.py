@@ -48,6 +48,7 @@ controllers = [
     'new_high',
     'earth2sky',
     'bid',
+    'logic',
 ]
 
 for controller in controllers:
