@@ -117,7 +117,7 @@
   </script>
   <script src="/static/data_list.js"></script>
   <script>
-    const period = '{{ request_args.get('period', 'F5') }}';
+    const period = '{{ request_args.get('period', 'D') }}';
     let tooltipTrend = document.getElementById('tooltip-trend');
     fetch(document.URL.replace('loog', 'loog_data')).then(response => response.json())
       .then(jsonData => {
