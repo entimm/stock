@@ -509,7 +509,7 @@
           <td class="date-td">${jsonData['date']}</td>
           <td class="symbol-td">${jsonData['symbol']}</td>
           <td>${jsonData['stock_chi_name']}</td>
-          <td>${jsonData['related_plates'].map(item => item['plate_name']).join('<br/>')}</td>
+          <td>${jsonData['related_plates'].map(item => '<span class="plate">' + item['plate_name'] + '</span>').join('<br/>')}</td>
           <td class="reason">${jsonData['related_plates'].map(item => item['plate_reason']).join('<br/>')}</td>
           <td>${jsonData['m_days_n_boards_boards'] > 0 ? jsonData['m_days_n_boards_days'] + '天' + jsonData['m_days_n_boards_boards'] + '板' : '首板'}</td>
           <td>${jsonData['limit_up_days']}</td>
@@ -562,6 +562,17 @@
         let symbol = tdList[1].textContent;
         window.open(`/chart?date=${date}&period=F5&symbol=${symbol}`, "_blank");
       }
+    });
+    stockTable.addEventListener('click', (event) => {
+      if (! event.target.classList.contains('plate')) return;
+      let tr = event.target.parentElement.parentElement;
+      let tdList = tr.querySelectorAll('td');
+      let date = tdList[0].textContent;
+      let plate = event.target.textContent;
+      stockListInTable = total_stock_list[date].filter(item => {
+        return item['related_plates'].map(item => item['plate_name']).includes(plate);
+      });
+      show_stocks_table();
     });
   </script>
 

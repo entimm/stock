@@ -82,9 +82,11 @@
     #large-lock-grid {
       background-color: rgb(255, 176, 176);
     }
+
     #hot-lose-grid {
       background-color: rgb(176, 255, 196);
     }
+
     #hot-lose-grid tr:nth-child(1) {
       background-color: rgb(105, 224, 133);
     }
@@ -483,7 +485,7 @@
           <td>${jsonData['act_turnover']}%</td>
           <td>${(jsonData['act_flow_amount'] / 10 ** 8).toFixed(2)}亿</td>
           <td>${jsonData['block']}</td>
-          <td>${jsonData['reason']}</td>
+          <td><span class="plate">${jsonData['reason']}</span></td>
           <td>${(jsonData['limit_amount'] / 10 ** 8).toFixed(2)}亿</td>
           <td>${(jsonData['max_limit_amount'] / 10 ** 8).toFixed(2)}亿</td>
           <td>${jsonData['together_num']}</td>
@@ -529,6 +531,18 @@
         let symbol = tdList[1].textContent;
         window.open(`/chart?date=${date}&period=F5&symbol=${symbol}`, "_blank");
       }
+    });
+
+    stockTable.addEventListener('click', (event) => {
+      if (!event.target.classList.contains('plate')) return;
+      let tr = event.target.parentElement.parentElement;
+      let tdList = tr.querySelectorAll('td');
+      let date = tdList[0].textContent;
+      let plate = event.target.textContent;
+      stockListInTable = total_stock_list[date].filter(item => {
+        return item['reason'] === plate;
+      });
+      show_stocks_table();
     });
   </script>
 
@@ -598,6 +612,7 @@
         }
       });
     }
+
     function readHotLoss() {
       fetch('/hot_lose_data').then(response => response.json())
         .then(dataList => {
@@ -693,8 +708,8 @@
     function showTooltipImg(symbol, date) {
       tooltipTrend.style.display = 'none';
       tooltipImg.innerHTML = "";
-      let cellIndex = Array.from(table.rows[0].cells).findIndex(function(cell) {
-          return cell.innerHTML === date;
+      let cellIndex = Array.from(table.rows[0].cells).findIndex(function (cell) {
+        return cell.innerHTML === date;
       });
       exeShowTooltipImg(symbol, date, cellIndex);
     }

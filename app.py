@@ -49,6 +49,7 @@ controllers = [
     'earth2sky',
     'bid',
     'logic',
+    'review',
 ]
 
 for controller in controllers:
