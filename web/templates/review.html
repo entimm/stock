@@ -1,0 +1,139 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>逻辑</title>
+  <style>
+    #grid-container {
+      width: 1800px;
+      margin: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    th {
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    td, th {
+      padding: 0;
+      white-space: nowrap;
+      width: 100px;
+      position: relative;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    td a {
+      display: inline-block;
+      margin: 0 1px;
+      color: #fff;
+      padding: 0 3px;
+      border-radius: 5px;
+      background-color: rgba(35, 11, 245, 0.68);
+    }
+
+
+    #grid tr:hover {
+      background-color: rgba(0, 139, 125, 0.5);
+    }
+
+    #grid tr td:nth-child(1) {
+      width: 10%;
+    }
+
+    #grid tr td:nth-child(2) {
+      white-space: normal;
+      text-align: left !important;
+    }
+
+    .red1 {
+      color: #FF8800;
+    }
+
+    .red2 {
+      color: #ff0000;
+    }
+
+    .red3 {
+      color: #f500ff;
+    }
+
+    .green1 {
+      color: #00f7ff;
+    }
+
+    .green2 {
+      color: #00ff00;
+    }
+
+    .green3 {
+      color: #1619de;
+    }
+
+    .divide {
+      border-top: 2px solid rgba(255, 0, 0, 0.2) !important;
+    }
+
+    .select-row {
+      background-color: rgba(255, 0, 0, 0.15) !important;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="grid-container">
+    <table id="grid" class="striped centered z-depth-5">
+      <thead>
+      <tr>
+        <th>日期</th>
+        <th>描述</th>
+      </tr>
+      </thead>
+      <tbody id="table-content"></tbody>
+    </table>
+    <div id="tooltip-trend" style="display:none;"></div>
+  </div>
+{% endblock %}
+{% block footer %}
+  <script>
+    const period = '{{ request_args.get('period', 'F5') }}';
+    let tooltipTrend = document.getElementById('tooltip-trend');
+    fetch(document.URL.replace('review', 'review_data')).then(response => response.json())
+      .then(jsonData => {
+        const reversedKeys = Object.keys(jsonData).reverse();
+        const tableContent = document.getElementById('table-content');
+        let lastYear = ''
+        reversedKeys.forEach(key => {
+          const item = jsonData[key];
+          const row = tableContent.insertRow();
+
+          let year = new Date(item['date']).getFullYear()
+
+          row.insertCell(0).innerHTML = item['date'];
+          row.insertCell(1).innerHTML = item['desc']
+
+
+          if (lastYear && lastYear !== new Date(item['date']).getFullYear()) {
+            row.classList.add('divide');
+          }
+          lastYear = new Date(item['date']).getFullYear()
+
+          row.addEventListener('click', (event) => {
+
+          });
+
+          row.addEventListener('mouseover', function (event) {
+
+          });
+        });
+      });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'Escape') {
+        tooltipTrend.style.display = 'none';
+      }
+    });
+  </script>
+{% endblock %}
