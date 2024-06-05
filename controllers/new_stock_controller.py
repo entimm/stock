@@ -11,9 +11,9 @@ from controllers import make_cache_key
 blueprint = Blueprint('new_stock', __name__)
 
 
-@blueprint.route('/new_stock')
+@blueprint.route('/new_stock1')
 @cache.cached(timeout=12 * 60 * 60, key_prefix=make_cache_key)
-def new_stock():
+def new_stock1():
     latest_date = trade_date_list.loc[trade_date_list.index[-1], 'date']
     date_str = request.args.get('date', latest_date.strftime("%Y-%m-%d"), str)
     date_int = date_str.replace('-', '')
@@ -45,4 +45,22 @@ def new_stock():
         }
     }
     #
-    return render_template('new_stock.html', **template_var)
+    return render_template('new_stock1.html', **template_var)
+
+
+@blueprint.route('/new_stock2_data')
+def new_stock2_data():
+    df = pd.read_csv(os.path.join(RESOURCES_PATH, 'new_stock.csv'), dtype={0: str, 1: str})
+    df['首日开盘涨跌幅'] = ((df['首日开盘价'] / df['发行价'] - 1) * 100).round(2)
+    df['首日实体涨跌幅'] = ((df['首日收盘价'] / df['首日开盘价'] - 1) * 100).round(2)
+
+    return df.to_dict(orient='records')
+
+
+@blueprint.route('/new_stock2')
+def new_stock2():
+    template_var = {
+        'request_args': request.args.to_dict(),
+    }
+
+    return render_template('new_stock2.html', **template_var)

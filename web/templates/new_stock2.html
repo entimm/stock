@@ -1,0 +1,196 @@
+{% extends '_layout.html' %}
+{% block head %}
+  <title>涨停买卖</title>
+  <style>
+    #grid-container {
+      width: 1800px;
+      margin: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    th {
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    td, th {
+      padding: 0;
+      white-space: nowrap;
+      width: 100px;
+      position: relative;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    #grid tr:hover {
+      background-color: rgba(0, 139, 125, 0.5);
+    }
+
+    .red1 {
+      color: #FF8800;
+    }
+
+    .red2 {
+      color: #ff0000;
+    }
+
+    .red3 {
+      color: #f500ff;
+    }
+
+    .green1 {
+      color: #00c5c9;
+    }
+
+    .green2 {
+      color: #00cb00;
+    }
+
+    .green3 {
+      color: #1619de;
+    }
+
+    .divide {
+      border-top: 2.3px solid rgba(255, 0, 0, 0.2) !important;
+    }
+
+    .select-row {
+      background-color: rgba(255, 0, 0, 0.15) !important;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div id="grid-container">
+    <table id="grid" class="striped centered z-depth-5">
+      <thead>
+      <tr>
+        <th>序号</th>
+        <th>名称</th>
+        <th>代码</th>
+        <th>上市日期</th>
+        <th>发行价</th>
+        <th>首日开盘价</th>
+        <th>首日收盘价</th>
+        <th>首日最高价</th>
+        <th>首日最低价</th>
+        <th>首日开盘涨跌幅</th>
+        <th>首日涨跌幅</th>
+        <th>首日实体涨跌幅</th>
+      </tr>
+      </thead>
+      <tbody id="table-content"></tbody>
+    </table>
+    <div id="tooltip-trend" style="display:none;"></div>
+  </div>
+  <div class="fixed-action-btn" style="top: 0; right: 10px; height: 40px">
+    <a class="btn-floating btn waves-effect waves-light orange z-depth-5" onclick="openRelateKlineMode()">
+      K线
+    </a>
+  </div>
+{% endblock %}
+{% block footer %}
+  <script>
+    let table = document.getElementById('grid');
+    const period = '{{ request_args.get('period', 'F5') }}';
+    let selectedRow = null;
+    let tooltipTrend = document.getElementById('tooltip-trend');
+    fetch(document.URL.replace('new_stock2', 'new_stock2_data')).then(response => response.json())
+      .then(jsonData => {
+        const reversedKeys = Object.keys(jsonData).reverse();
+        const tableContent = document.getElementById('table-content');
+        reversedKeys.forEach(key => {
+          const item = jsonData[key];
+
+          const row = tableContent.insertRow();
+
+          row.insertCell(0).innerHTML = key;
+          row.insertCell(1).innerHTML = item['股票简称'];
+          row.insertCell(2).innerHTML = item['股票代码'];
+          row.insertCell(3).innerHTML = item['上市日期'];
+          row.insertCell(4).innerHTML = item['发行价'];
+          row.insertCell(5).innerHTML = item['首日开盘价'];
+          row.insertCell(6).innerHTML = item['首日收盘价'];
+          row.insertCell(7).innerHTML = item['首日最高价'];
+          row.insertCell(8).innerHTML = item['首日最低价'];
+
+          cell = row.insertCell(9);
+          cell.innerHTML = item['首日开盘涨跌幅'].toFixed(2)
+          addDotClass1(cell, item['首日开盘涨跌幅']);
+
+          cell = row.insertCell(10);
+          cell.innerHTML = item['首日涨跌幅'].toFixed(2);
+          addDotClass1(cell, item['首日涨跌幅']);
+
+          cell = row.insertCell(11);
+          cell.innerHTML = item['首日实体涨跌幅'].toFixed(2);
+          addDotClass1(cell, item['首日实体涨跌幅']);
+
+          row.addEventListener('click', (event) => {
+            setSelectedRow(event.target.parentNode);
+            openKline(row);
+          });
+
+          row.addEventListener('mouseover', function (event) {
+            showTooltipTrend(item['symbol']);
+            adjTooltipTrendPosition(tooltipTrend, event.target);
+          });
+        });
+      });
+
+    function addDotClass1(element, value) {
+      const colorClasses = [
+        {'condition': value >= 200, 'className': 'red3'},
+        {'condition': value >= 100, 'className': 'red2'},
+        {'condition': value >= 30, 'className': 'red1'},
+        {'condition': value <= -10, 'className': 'green3'},
+        {'condition': value <= -20, 'className': 'green2'},
+        {'condition': value <= -30, 'className': 'green1'},
+      ];
+      for (dotClass of colorClasses) {
+        if (dotClass.condition) {
+          element.classList.add('dot', dotClass.className);
+          break;
+        }
+      }
+    }
+
+    function addDotClass2(element, value) {
+      const colorClasses = [
+        {'condition': value >= 200, 'className': 'red3'},
+        {'condition': value >= 100, 'className': 'red2'},
+        {'condition': value >= 30, 'className': 'red1'},
+        {'condition': value <= -10, 'className': 'green3'},
+        {'condition': value <= -20, 'className': 'green2'},
+        {'condition': value <= -30, 'className': 'green1'},
+      ];
+      for (dotClass of colorClasses) {
+        if (dotClass.condition) {
+          element.classList.add('dot', dotClass.className);
+          break;
+        }
+      }
+    }
+
+    function setSelectedRow(row) {
+      if (selectedRow) {
+        selectedRow.classList.remove('select-row');
+      }
+      selectedRow = row;
+      row.classList.add('select-row');
+    }
+
+    function openKline(row) {
+      window.open(`/chart?date=${row.cells[3].innerHTML}&symbol=${row.cells[2].innerHTML}&period=D`, "_blank");
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'Escape') {
+        tooltipTrend.style.display = 'none';
+      }
+    });
+  </script>
+{% endblock %}
